@@ -280,4 +280,4 @@ Book a 1-on-1 Session with the founders, to discuss any issues, provide feedback
 
 ## Repo Activity
 
-<img width="100%" src="https://repobeats.axiom.co/api/embed/6bfca2f20f39738048b6e70ca205efde46352c3d.svg" />
+<img width="100%" src="https://repobeats.axiom.co/api/embed/2b4b4e080d21ef9174ca69bcd801145a71f67aaf.svg" />
