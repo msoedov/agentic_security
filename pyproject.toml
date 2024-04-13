@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "langalf"
-version = "0.0.1"
+version = "0.0.2"
 description = "Agentic LLM vulnerability scanner"
 authors = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
@@ -10,12 +10,13 @@ readme = "Readme.md"
 keywords = [
     "LLM vulnerability scanner",
     "llm security",
-    "adversarial attacks",
+    "llm adversarial attacks",
     "prompt injection",
     "prompt leakage",
     "prompt injection attacks",
     "prompt leakage prevention",
     "llm vulnerabilities",
+    "owasp-llm-top-10",
 ]
 packages = [{ include = "langalf", from = "." }]
 

@@ -41,7 +41,8 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return FileResponse("langalf/static/index.html")
+    langalf_path = Path(__file__).parent
+    return FileResponse(f"{langalf_path}/static/index.html")
 
 
 class LLMInfo(BaseModel):
