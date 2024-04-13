@@ -1,0 +1,5 @@
+[flake8]
+    max-line-length = 160
+    per-file-ignores =
+        # Ignore docstring lints for tests
+        *: D100, D101, D102, D103, D104, D107, D105, D202, D205, D400

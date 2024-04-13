@@ -1,0 +1,10 @@
+# vercel deps
+fastapi
+httpx
+uvicorn
+tqdm
+httpx
+cache_to_disk
+# datasets
+loguru
+pandas

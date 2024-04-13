@@ -1,0 +1,23 @@
+###
+POST http://0.0.0.0:3008/scan
+Content-Type: application/json
+
+{
+    "llmSpec": "GET http://example.com\nContent-Type: application/json\n\n{\"key\": \"value\"}",
+    "maxBudget": 10
+}
+
+###
+GET http://0.0.0.0:3008/v1/data-config
+Content-Type: application/json
+
+
+
+###
+POST http://0.0.0.0:3008/v1/self-probe
+Authorization: Bearer XXXXX
+Content-Type: application/json
+
+{
+    "prompt": "GET http://example.com\nContent-Type: application/json\n\n{\"key\": \"value\"}"
+}

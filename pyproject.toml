@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "langalf"
+version = "0.0.1"
+description = "Agentic LLM vulnerability scanner"
+authors = ["Alexander Miasoiedov <msoedov@gmail.com>"]
+maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
+repository = "https://github.com/msoedov/langalf"
+license = "MIT"
+readme = "Readme.md"
+keywords = [
+    "LLM vulnerability scanner",
+    "llm security",
+    "adversarial attacks",
+    "prompt injection",
+    "prompt leakage",
+    "prompt injection attacks",
+    "prompt leakage prevention",
+    "llm vulnerabilities",
+]
+packages = [{ include = "langalf", from = "." }]
+
+
+[tool.poetry.scripts]
+langalf = "langalf.__main__:entrypoint"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.104.1"
+uvicorn = "^0.23.2"
+fire = "^0.5.0"
+loguru = "^0.7.2"
+httpx = "^0.25.1"
+cache-to-disk = "^2.0.0"
+pandas = "^1.4.0"
+datasets = "^1.14.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.10.1"
+mypy = "^1.6.1"
+httpx = "^0.25.1"
+pytest = "^7.4.3"
+pre-commit = "^3.5.0"
+
+[tool.ruff]
+line-length = 120
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

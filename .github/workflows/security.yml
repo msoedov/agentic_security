@@ -1,0 +1,14 @@
+name: PyCharm Python Security Scanner
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  security_checks:
+    runs-on: ubuntu-latest
+    name: Execute the pycharm-security action
+    steps:
+      - uses: actions/checkout@v1
+      - name: PyCharm Python Security Scanner
+        uses: tonybaloney/pycharm-security@1.19.0
