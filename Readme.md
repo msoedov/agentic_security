@@ -200,7 +200,7 @@ In the example of custom integration, we use `/v1/self-probe` for the sake of in
 
 
 ```python
-POST https://landalf.vercel.app/v1/self-probe
+POST https://langalf-preview.vercel.app/v1/self-probe
 Authorization: Bearer XXXXX
 Content-Type: application/json
 
