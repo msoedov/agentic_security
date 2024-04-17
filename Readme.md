@@ -1,7 +1,5 @@
 <p align="center">
-  <a href="https://github.com/msoedov/langalf">
-   <img src="https://res.cloudinary.com/do9qa2bqr/image/upload/v1713002571/OIG1_bkbr0d.jpg" height=100 alt="Logo">
-  </a>
+
 
 <h1 align="center">Langalf</h1>
 
