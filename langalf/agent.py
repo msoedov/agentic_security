@@ -1,5 +1,4 @@
-"""
-Quality Assurance Testing Agent
+"""Quality Assurance Testing Agent.
 
 The goal of this agent is to perform quality assurance testing on a product or service.
 

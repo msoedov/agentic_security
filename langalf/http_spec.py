@@ -1,4 +1,4 @@
-from typing import Any
+
 import httpx
 from pydantic import BaseModel
 
@@ -14,8 +14,7 @@ class LLMSpec(BaseModel):
         return parse_http_spec(http_spec)
 
     async def probe(self, prompt: str) -> httpx.Response:
-        """
-        Sends an HTTP request using the `httpx` library.
+        """Sends an HTTP request using the `httpx` library.
 
         Replaces a placeholder in the request body with a provided prompt and returns the response.
 
@@ -42,8 +41,7 @@ class LLMSpec(BaseModel):
 
 
 def parse_http_spec(http_spec: str) -> LLMSpec:
-    """
-    Parses an HTTP specification string into a LLMSpec object.
+    """Parses an HTTP specification string into a LLMSpec object.
 
     Args:
         http_spec (str): A string representing an HTTP specification.
@@ -79,7 +77,8 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
 
 
 def escape_special_chars_for_json(prompt: str) -> str:
-    """Escapes special characters in a string for safe inclusion in a JSON template.
+    """Escapes special characters in a string for safe inclusion in a JSON
+    template.
 
     Args:
         prompt (str): The input string to be escaped.

@@ -1,5 +1,6 @@
 from inline_snapshot import snapshot
-from .data import prepare_prompts, ProbeDataset
+
+from .data import ProbeDataset, prepare_prompts
 
 
 class TestPreparePrompts:

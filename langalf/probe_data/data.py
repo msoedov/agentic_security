@@ -296,8 +296,8 @@ def load_local_csv() -> ProbeDataset:
 
 
 def dataset_from_iterator(name: str, iterator) -> list:
-    """
-    Convert an iterator into a list of prompts and create a ProbeDataset object.
+    """Convert an iterator into a list of prompts and create a ProbeDataset
+    object.
 
     Args:
         name (str): The name of the dataset.
@@ -305,7 +305,6 @@ def dataset_from_iterator(name: str, iterator) -> list:
 
     Returns:
         list: A list containing a single ProbeDataset object.
-
     """
     prompts = list(iterator)
     tokens = count_words_in_list(prompts)
