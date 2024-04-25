@@ -30,11 +30,12 @@ REFUSAL_MARKS = [
 ]
 
 
-def check_refusal(response, refusal_phrases=REFUSAL_MARKS):
-    """Check if the LLM's response contains any of the refusal phrases.
+def check_refusal(response: str, refusal_phrases: list = REFUSAL_MARKS) -> bool:
+    """
+    Check if the response contains any phrases indicating refusal to answer.
 
-    Parameters:
-    - response (str): The LLM's response to a prompt.
+    Args:
+    - response (str): The response from the language model.
     - refusal_phrases (list): A list of phrases indicating refusal to answer.
 
     Returns:
