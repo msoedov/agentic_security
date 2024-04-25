@@ -7,6 +7,7 @@ import pandas as pd
 from loguru import logger
 
 from langalf.probe_data import stenography_fn
+from langalf.probe_data.modules import adaptive_attacks
 
 IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
 
@@ -199,7 +200,10 @@ def prepare_prompts(
 
     dynamic_datasets = {
         "Steganography": lambda: Stenography(group),
-        "GPT fuzzer": lambda: ...,
+        "llm-adaptive-attacks": lambda: dataset_from_iterator(
+            "llm-adaptive-attacks", adaptive_attacks.Module(group).apply()
+        ),
+        "GPT fuzzer": lambda: [],
     }
 
     dynamic_groups = []
@@ -207,9 +211,8 @@ def prepare_prompts(
         if dataset_name in dynamic_datasets:
             logger.info(f"Loading {dataset_name}")
             ds = dynamic_datasets[dataset_name]()
-            if not hasattr(ds, "apply"):
-                continue
-            for g in ds.apply():
+
+            for g in ds:
                 dynamic_groups.append(g)
     return group + dynamic_groups
 
@@ -246,6 +249,9 @@ class Stenography:
 
     def __init__(self, prompt_groups: [ProbeDataset]):
         self.prompt_groups = prompt_groups
+
+    def __iter__(self):
+        return self.apply()
 
     def apply(self):
         for prompt_group in self.prompt_groups:
@@ -287,3 +293,23 @@ def load_local_csv() -> ProbeDataset:
         tokens=count_words_in_list(prompt_list),
         approx_cost=0.0,
     )
+
+
+def dataset_from_iterator(name: str, iterator) -> list:
+    """
+    Convert an iterator into a list of prompts and create a ProbeDataset object.
+
+    Args:
+        name (str): The name of the dataset.
+        iterator (iterator): An iterator that generates prompts.
+
+    Returns:
+        list: A list containing a single ProbeDataset object.
+
+    """
+    prompts = list(iterator)
+    tokens = count_words_in_list(prompts)
+    dataset = ProbeDataset(
+        dataset_name=name, metadata={}, prompts=prompts, tokens=tokens, approx_cost=0.0
+    )
+    return [dataset]

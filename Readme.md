@@ -1,7 +1,7 @@
 <p align="center">
 
 
-<h1 align="center">Langalf</h1>
+<h1 align="center">Agentic Security</h1>
 
 <p align="center">
     The open-source Agentic LLM Vulnerability Scanner .

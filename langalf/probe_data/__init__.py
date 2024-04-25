@@ -119,6 +119,15 @@ REGISTRY = [
         "url": "",
     },
     {
+        "dataset_name": "llm-adaptive-attacks",
+        "num_prompts": 0,
+        "tokens": 0,
+        "approx_cost": 0.0,
+        "source": "Github: tml-epfl/llm-adaptive-attacks",
+        "selected": False,
+        "url": "https://github.com/tml-epfl/llm-adaptive-attacks",
+    },
+    {
         "dataset_name": "Custom CSV",
         "num_prompts": len(load_local_csv().prompts),
         "tokens": load_local_csv().tokens,
