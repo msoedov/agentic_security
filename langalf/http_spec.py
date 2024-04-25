@@ -1,3 +1,4 @@
+from typing import Any
 import httpx
 from pydantic import BaseModel
 
@@ -12,7 +13,18 @@ class LLMSpec(BaseModel):
     def from_string(cls, http_spec: str):
         return parse_http_spec(http_spec)
 
-    async def probe(self, prompt):
+    async def probe(self, prompt: str) -> httpx.Response:
+        """
+        Sends an HTTP request using the `httpx` library.
+
+        Replaces a placeholder in the request body with a provided prompt and returns the response.
+
+        Args:
+            prompt (str): The prompt to be included in the request body.
+
+        Returns:
+            httpx.Response: The response object containing the result of the HTTP request.
+        """
         async with httpx.AsyncClient() as client:
             response = await client.request(
                 method=self.method,
@@ -30,17 +42,27 @@ class LLMSpec(BaseModel):
 
 
 def parse_http_spec(http_spec: str) -> LLMSpec:
-    # Splitting the spec by lines
+    """
+    Parses an HTTP specification string into a LLMSpec object.
+
+    Args:
+        http_spec (str): A string representing an HTTP specification.
+
+    Returns:
+        LLMSpec: An object representing the parsed HTTP specification, with attributes for the method, URL, headers, and body.
+    """
+
+    # Split the spec by lines
     lines = http_spec.strip().split("\n")
 
-    # Extracting the method and URL from the first line
-    first_line_parts = lines[0].split(" ")
-    method = first_line_parts[0]
-    url = first_line_parts[1]  # Remove scheme for consistency
+    # Extract the method and URL from the first line
+    method, url = lines[0].split(" ")[0:2]
 
-    # Parsing headers and body
+    # Initialize headers and body
     headers = {}
     body = ""
+
+    # Iterate over the remaining lines
     reading_headers = True
     for line in lines[1:]:
         if line == "":
@@ -56,24 +78,22 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     return LLMSpec(method=method, url=url, headers=headers, body=body)
 
 
-def escape_special_chars_for_json(prompt):
-    """Escapes special characters in a string for safe inclusion in a JSON
-    template.
+def escape_special_chars_for_json(prompt: str) -> str:
+    """Escapes special characters in a string for safe inclusion in a JSON template.
 
     Args:
-    prompt (str): The input string to be escaped.
+        prompt (str): The input string to be escaped.
 
     Returns:
-    str: The escaped string.
+        str: The escaped string.
     """
-    # Replace backslash first to avoid double escaping backslashes
-    escaped_prompt = prompt.replace("\\", "\\\\")  # Escape backslashes
+    # Escape backslashes first to avoid double escaping
+    escaped_prompt = prompt.replace("\\", "\\\\")
 
     # Escape other special characters
-    escaped_prompt = escaped_prompt.replace('"', '\\"')  # Escape double quotes
-    escaped_prompt = escaped_prompt.replace("\n", "\\n")  # Escape new lines
-    escaped_prompt = escaped_prompt.replace("\r", "\\r")  # Escape carriage returns
-    escaped_prompt = escaped_prompt.replace("\t", "\\t")  # Escape tabs
-    # Add more replacements here if needed
+    escaped_prompt = escaped_prompt.replace('"', '\\"')
+    escaped_prompt = escaped_prompt.replace("\n", "\\n")
+    escaped_prompt = escaped_prompt.replace("\r", "\\r")
+    escaped_prompt = escaped_prompt.replace("\t", "\\t")
 
     return escaped_prompt
