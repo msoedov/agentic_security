@@ -286,6 +286,7 @@
           v-bind:style="{width: progressWidth}">
 
         </div>
+        <img :src="imageUrl" alt="Generated Plot">
         <div
           class="rounded-lg border bg-card text-card-foreground shadow-sm"
           data-v0-t="card">
@@ -419,6 +420,7 @@ Content-Type: application/json
           errorMsg: '',
           maskMode: false,
           okMsg: '',
+          reportImageUrl: '',
           selectedConfig: 0,
           configs: [
             { name: 'Custom API', prompts: 40000, customInstructions: 'Requires api spec' },
@@ -549,9 +551,30 @@ Content-Type: application/json
                 last.last = false;
                 this.mainTable.push(event);
                 event.last = true;
+                // this.newRow()
             }
             this.okMsg = `New event: ${event.module}: ${event.progress}%`;
 
+          },
+          newRow: async function() {
+            console.log('New row');
+            let payload = {
+                table: this.mainTable,
+            };
+            const response = await fetch(`${URL}/plot.jpeg`, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+                  // Convert image response to a data URL for the <img> src
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => {
+              this.reportImageUrl = reader.result;
+            };
           },
           startScan: async function() {
             let payload = {

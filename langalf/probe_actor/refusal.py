@@ -31,8 +31,7 @@ REFUSAL_MARKS = [
 
 
 def check_refusal(response: str, refusal_phrases: list = REFUSAL_MARKS) -> bool:
-    """
-    Check if the response contains any phrases indicating refusal to answer.
+    """Check if the response contains any phrases indicating refusal to answer.
 
     Args:
     - response (str): The response from the language model.

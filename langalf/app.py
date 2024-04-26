@@ -3,7 +3,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from loguru import logger
@@ -13,6 +13,7 @@ from .http_spec import LLMSpec
 from .probe_actor import fuzzer
 from .probe_actor.refusal import REFUSAL_MARKS
 from .probe_data import REGISTRY
+from .report_chart import plot_security_report
 
 logger.remove(0)
 logger.add(
@@ -138,3 +139,13 @@ async def failures_csv():
     if not Path("failures.csv").exists():
         return {"error": "No failures found"}
     return FileResponse("failures.csv")
+
+
+class Table(BaseModel):
+    table: list[dict]
+
+
+@app.post("/plot.jpeg", response_class=Response)
+async def get_plot(table: Table):
+    buf = plot_security_report(table.table)
+    return StreamingResponse(buf, media_type="image/jpeg")

@@ -1,6 +1,5 @@
 <p align="center">
 
-
 <h1 align="center">Agentic Security</h1>
 
 <p align="center">
@@ -35,16 +34,13 @@
 
 ## Features
 
- - Comprehensive Threat Detection 🛡️: Scans for a wide array of LLM vulnerabilities including prompt injection, jailbreaking, hallucinations, biases, and other malicious exploitation attempts.
- - OWASP Top 10 for LLMs scan: to test the list of the most critical LLM vulnerabilities.
- - Privacy-centric Architecture 🔒: Ensures that all data scanning and analysis occur on-premise or in a local environment, with no external data transmission, maintaining strict data privacy.
- - Comprehensive Reporting Tools 📊: Offers detailed reports of vulnerability, helping teams to quickly understand and respond to security incidents.
- - Customizable Rule Sets 🛠️: Allows users to define custom attack rules and parameters to meet specific prompt attacks needs and compliance standards.
-
-
+- Comprehensive Threat Detection 🛡️: Scans for a wide array of LLM vulnerabilities including prompt injection, jailbreaking, hallucinations, biases, and other malicious exploitation attempts.
+- OWASP Top 10 for LLMs scan: to test the list of the most critical LLM vulnerabilities.
+- Privacy-centric Architecture 🔒: Ensures that all data scanning and analysis occur on-premise or in a local environment, with no external data transmission, maintaining strict data privacy.
+- Comprehensive Reporting Tools 📊: Offers detailed reports of vulnerability, helping teams to quickly understand and respond to security incidents.
+- Customizable Rule Sets 🛠️: Allows users to define custom attack rules and parameters to meet specific prompt attacks needs and compliance standards.
 
 Note: Please be aware that Langalf is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
-
 
 ## 📦 Installation
 
@@ -77,7 +73,6 @@ langalf --port=PORT --host=HOST
 
 ```
 
-
 ## LLM kwargs
 
 Langalf uses plain text HTTP spec like:
@@ -97,13 +92,14 @@ Content-Type: application/json
 
 Where `<<PROMPT>>` will be replaced with the actual attack vector during the scan, insert the `Bearer XXXXX` header value with your app credentials.
 
-
 ### Adding LLM integration templates
 
 TBD
+
 ```
 ....
 ```
+
 ## Adding own dataset
 
 To add your own dataset you can place one or multiples csv files with `prompt` column, this data will be loaded on `langalf` startup
@@ -116,6 +112,7 @@ To add your own dataset you can place one or multiples csv files with `prompt` c
 ## Extending dataset collections
 
 1. Add new metadata to langalf.probe_data.REGISTRY
+
 ```python
     {
         "dataset_name": "markush1/LLM-Jailbreak-Classifier",
@@ -130,7 +127,6 @@ To add your own dataset you can place one or multiples csv files with `prompt` c
 ```
 
 and implement loader into
-
 
 ```python
 @dataclass
@@ -192,10 +188,10 @@ class Stenography:
                     approx_cost=0.0,
                 )
 ```
+
 ## Probe endpoint
 
 In the example of custom integration, we use `/v1/self-probe` for the sake of integration testing.
-
 
 ```python
 POST https://langalf-preview.vercel.app/v1/self-probe
@@ -207,6 +203,7 @@ Content-Type: application/json
 }
 
 ```
+
 This endpoint randomly mimics the refusal of a fake LLM.
 
 ```python
@@ -243,14 +240,12 @@ For more detailed information on how to use Langalf, including advanced features
 
 ## Roadmap and Future Goals
 
-- [ ] Expand dataset variety
-- [ ] Introduce two new attack vectors
-- [ ] Develop initial attacker LLM
-- [ ] Complete integration of OWASP Top 10 classification
+- \[ \] Expand dataset variety
+- \[ \] Introduce two new attack vectors
+- \[ \] Develop initial attacker LLM
+- \[ \] Complete integration of OWASP Top 10 classification
 
 Note: All dates are tentative and subject to change based on project progress and priorities.
-
-
 
 ## 👋 Contributing
 
