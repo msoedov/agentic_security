@@ -1,4 +1,4 @@
-from langalf.probe_actor.refusal import check_refusal
+from agentic_security.probe_actor.refusal import check_refusal
 
 
 class TestCheckRefusal:

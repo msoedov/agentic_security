@@ -6,8 +6,8 @@ from functools import lru_cache
 import pandas as pd
 from loguru import logger
 
-from langalf.probe_data import stenography_fn
-from langalf.probe_data.modules import adaptive_attacks
+from agentic_security.probe_data import stenography_fn
+from agentic_security.probe_data.modules import adaptive_attacks
 
 IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
 

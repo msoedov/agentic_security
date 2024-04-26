@@ -4,7 +4,7 @@ import sys
 import fire
 import uvicorn
 
-from langalf.app import app
+from agentic_security.app import app
 
 
 class T:

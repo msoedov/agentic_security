@@ -82,7 +82,7 @@ REGISTRY = [
         "url": "",
     },
     {
-        "dataset_name": "Langalf",
+        "dataset_name": "Agentic Security",
         "num_prompts": 0,
         "tokens": 0,
         "approx_cost": 0.0,

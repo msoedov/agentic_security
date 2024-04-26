@@ -1,4 +1,4 @@
-from langalf.http_spec import LLMSpec, parse_http_spec
+from agentic_security.http_spec import LLMSpec, parse_http_spec
 
 
 class TestParseHttpSpec:

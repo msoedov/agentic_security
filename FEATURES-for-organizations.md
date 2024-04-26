@@ -1,6 +1,6 @@
-# Langalf - Features for Organizations
+# Agentic Security - Features for Organizations
 
-This feature list outlines the advanced capabilities of Langalf to assist in integrating high-security, low-latency language model applications into organizational infrastructure, with a particular focus on detecting and preventing prompt injection and jailbreak attempts.
+This feature list outlines the advanced capabilities of Agentic Security to assist in integrating high-security, low-latency language model applications into organizational infrastructure, with a particular focus on detecting and preventing prompt injection and jailbreak attempts.
 
 ## 1. Exclusive Pentest with a 40k Jailbreak Dataset
 
@@ -16,6 +16,6 @@ Implements feedback loops and LLMOps for continuous monitoring and improvement, 
 
 ## 4. Reduced dependencies
 
-Self-Contained Runtime Environment: Langalf operates within a self-contained runtime. This significantly lowers the barrier to entry for organizations by minimizing the complexity typically associated with setting up and maintaining LLM applications and infra.
+Self-Contained Runtime Environment: Agentic Security operates within a self-contained runtime. This significantly lowers the barrier to entry for organizations by minimizing the complexity typically associated with setting up and maintaining LLM applications and infra.
 
 This library approach not only simplifies the architecture but also reduces potential points of failure and latency issues associated with external dependencies

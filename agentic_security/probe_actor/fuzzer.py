@@ -4,8 +4,8 @@ import httpx
 from loguru import logger
 from pydantic import BaseModel
 
-from langalf.probe_actor.refusal import refusal_heuristic
-from langalf.probe_data.data import prepare_prompts
+from agentic_security.probe_actor.refusal import refusal_heuristic
+from agentic_security.probe_data.data import prepare_prompts
 
 IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
 

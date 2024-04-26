@@ -10,13 +10,13 @@
     <br />
 
 <p>
-<img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/msoedov/langalf" />
-<img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/msoedov/langalf" />
-<img alt="" src="https://img.shields.io/github/repo-size/msoedov/langalf" />
-<img alt="Downloads" src="https://static.pepy.tech/badge/langalf" />
-<img alt="GitHub Issues" src="https://img.shields.io/github/issues/msoedov/langalf" />
-<img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr/msoedov/langalf" />
-<img alt="Github License" src="https://img.shields.io/github/license/msoedov/langalf" />
+<img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/msoedov/agentic_security" />
+<img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/msoedov/agentic_security" />
+<img alt="" src="https://img.shields.io/github/repo-size/msoedov/agentic_security" />
+<img alt="Downloads" src="https://static.pepy.tech/badge/agentic_security" />
+<img alt="GitHub Issues" src="https://img.shields.io/github/issues/msoedov/agentic_security" />
+<img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr/msoedov/agentic_security" />
+<img alt="Github License" src="https://img.shields.io/github/license/msoedov/agentic_security" />
 </p>
   </p>
 </p>
@@ -40,23 +40,23 @@
 - Comprehensive Reporting Tools 📊: Offers detailed reports of vulnerability, helping teams to quickly understand and respond to security incidents.
 - Customizable Rule Sets 🛠️: Allows users to define custom attack rules and parameters to meet specific prompt attacks needs and compliance standards.
 
-Note: Please be aware that Langalf is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
+Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
 
 ## 📦 Installation
 
-To get started with Langalf, simply install the package using pip:
+To get started with Agentic Security, simply install the package using pip:
 
 ```shell
-pip install langalf
+pip install agentic_security
 ```
 
 ## ⛓️ Quick Start
 
 ```shell
-langalf
+agentic_security
 
-2024-04-13 13:21:31.157 | INFO     | langalf.probe_data.data:load_local_csv:273 - Found 1 CSV files
-2024-04-13 13:21:31.157 | INFO     | langalf.probe_data.data:load_local_csv:274 - CSV files: ['prompts.csv']
+2024-04-13 13:21:31.157 | INFO     | agentic_security.probe_data.data:load_local_csv:273 - Found 1 CSV files
+2024-04-13 13:21:31.157 | INFO     | agentic_security.probe_data.data:load_local_csv:274 - CSV files: ['prompts.csv']
 INFO:     Started server process [18524]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
@@ -64,18 +64,18 @@ INFO:     Uvicorn running on http://0.0.0.0:8718 (Press CTRL+C to quit)
 ```
 
 ```shell
-python -m langalf
+python -m agentic_security
 # or
-langalf --help
+agentic_security --help
 
 
-langalf --port=PORT --host=HOST
+agentic_security --port=PORT --host=HOST
 
 ```
 
 ## LLM kwargs
 
-Langalf uses plain text HTTP spec like:
+Agentic Security uses plain text HTTP spec like:
 
 ```http
 POST https://api.openai.com/v1/chat/completions
@@ -102,16 +102,16 @@ TBD
 
 ## Adding own dataset
 
-To add your own dataset you can place one or multiples csv files with `prompt` column, this data will be loaded on `langalf` startup
+To add your own dataset you can place one or multiples csv files with `prompt` column, this data will be loaded on `agentic_security` startup
 
 ```
-2024-04-13 13:21:31.157 | INFO     | langalf.probe_data.data:load_local_csv:273 - Found 1 CSV files
-2024-04-13 13:21:31.157 | INFO     | langalf.probe_data.data:load_local_csv:274 - CSV files: ['prompts.csv']
+2024-04-13 13:21:31.157 | INFO     | agentic_security.probe_data.data:load_local_csv:273 - Found 1 CSV files
+2024-04-13 13:21:31.157 | INFO     | agentic_security.probe_data.data:load_local_csv:274 - CSV files: ['prompts.csv']
 ```
 
 ## Extending dataset collections
 
-1. Add new metadata to langalf.probe_data.REGISTRY
+1. Add new metadata to agentic_security.probe_data.REGISTRY
 
 ```python
     {
@@ -194,7 +194,7 @@ class Stenography:
 In the example of custom integration, we use `/v1/self-probe` for the sake of integration testing.
 
 ```python
-POST https://langalf-preview.vercel.app/v1/self-probe
+POST https://agentic_security-preview.vercel.app/v1/self-probe
 Authorization: Bearer XXXXX
 Content-Type: application/json
 
@@ -236,7 +236,7 @@ TBD
 
 ## Documentation
 
-For more detailed information on how to use Langalf, including advanced features and customization options, please refer to the official documentation.
+For more detailed information on how to use Agentic Security, including advanced features and customization options, please refer to the official documentation.
 
 ## Roadmap and Future Goals
 
@@ -249,19 +249,19 @@ Note: All dates are tentative and subject to change based on project progress an
 
 ## 👋 Contributing
 
-Contributions to Langalf are welcome! If you'd like to contribute, please follow these steps:
+Contributions to Agentic Security are welcome! If you'd like to contribute, please follow these steps:
 
 - Fork the repository on GitHub
 - Create a new branch for your changes
 - Commit your changes to the new branch
 - Push your changes to the forked repository
-- Open a pull request to the main Langalf repository
+- Open a pull request to the main Agentic Security repository
 
 Before contributing, please read the contributing guidelines.
 
 ## License
 
-Langalf is released under the Apache License v2.
+Agentic Security is released under the Apache License v2.
 
 ## Contact us
 
@@ -269,7 +269,7 @@ Langalf is released under the Apache License v2.
 
 <a href="https://cal.com/alexander-myasoedov-go2tfs/30min"><img src="https://cal.com/book-with-cal-dark.svg" alt="Book us with Cal.com"></a>
 
-Book a 1-on-1 Session with the founders, to discuss any issues, provide feedback, or explore how we can improve langalf for you.
+Book a 1-on-1 Session with the founders, to discuss any issues, provide feedback, or explore how we can improve agentic_security for you.
 
 ## Repo Activity
 

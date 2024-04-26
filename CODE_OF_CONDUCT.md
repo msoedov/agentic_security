@@ -1,4 +1,4 @@
-# Langalf Code of Conduct
+# Agentic Security Code of Conduct
 
 In the interest of fostering an open and welcoming environment, we as
 contributors and maintainers pledge to make participation in our project and our
@@ -28,7 +28,7 @@ Examples of unacceptable behavior by participants include:
 - Conduct which could reasonably be considered inappropriate for the forum in
   which it occurs.
 
-All Langalf forums and spaces are meant for professional interactions, and any behavior which could reasonably be considered inappropriate in a professional setting is unacceptable.
+All Agentic Security forums and spaces are meant for professional interactions, and any behavior which could reasonably be considered inappropriate in a professional setting is unacceptable.
 
 ## Our Responsibilities
 
@@ -38,9 +38,9 @@ Project maintainers have the right and responsibility to remove, edit, or reject
 
 ## Scope
 
-This Code of Conduct applies to all content on Langalf website, Langalf’s GitHub organization, or any other official Langalf web presence allowing for community interactions, as well as at all official Langalf events, whether offline or online.
+This Code of Conduct applies to all content on Agentic Security website, Agentic Security’s GitHub organization, or any other official Agentic Security web presence allowing for community interactions, as well as at all official Agentic Security events, whether offline or online.
 
-The Code of Conduct also applies within project spaces and in public spaces whenever an individual is representing Langalf or its community. Examples of representing a project or community include using an official project e-mail address, posting via an official social media account, or acting as an appointed or de facto representative at an online or offline event.
+The Code of Conduct also applies within project spaces and in public spaces whenever an individual is representing Agentic Security or its community. Examples of representing a project or community include using an official project e-mail address, posting via an official social media account, or acting as an appointed or de facto representative at an online or offline event.
 
 ## Conflict Resolution
 
@@ -62,7 +62,7 @@ Please note that if you are experiencing or witnessing a discriminatory practice
 
 ## Reporting Violations
 
-Violations of the Code of Conduct can be reported to Langalf via email to code_of_conduct@tangln.com. Project maintainers will determine whether the Code of Conduct was violated, and will issue an appropriate sanction, possibly including a written warning or expulsion from the project, project sponsored spaces, or project forums. We ask that you make a good-faith effort to resolve your conflict via the conflict resolution policy before submitting a report.
+Violations of the Code of Conduct can be reported to Agentic Security via email to code_of_conduct@tangln.com. Project maintainers will determine whether the Code of Conduct was violated, and will issue an appropriate sanction, possibly including a written warning or expulsion from the project, project sponsored spaces, or project forums. We ask that you make a good-faith effort to resolve your conflict via the conflict resolution policy before submitting a report.
 
 Violations of the Code of Conduct can occur in any setting, even those unrelated to the project. We will only consider complaints about conduct that has occurred within one year of the report.
 

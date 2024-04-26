@@ -1,15 +1,15 @@
 {
-    "devCommand": "uvicorn langalf.app:app --host 0.0.0.0 --port 3000",
+    "devCommand": "uvicorn agentic_security.app:app --host 0.0.0.0 --port 3000",
     "builds": [
         {
-            "src": "langalf/app.py",
+            "src": "agentic_security/app.py",
             "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "langalf/app.py"
+            "dest": "agentic_security/app.py"
         }
     ]
 }
