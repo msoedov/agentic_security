@@ -21,26 +21,20 @@
   </p>
 </p>
 
+## Features
+
+- Customizable Rule Sets or Agent based attacks🛠️
+- Comprehansive fuzzing for any LLMs 🧪
+- LLM API integration and stress testing 🛠️
+- Wide range of fuzzing and attack techniques 🌀
+
+
+Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
+
 ## About the Project 🧙
 
 <img width="100%" alt="booking-screen" src="https://res.cloudinary.com/do9qa2bqr/image/upload/v1713002396/1-ezgif.com-video-to-gif-converter_s2hsro.gif">
 
-<p align="center"></p>
-<h3 align="center">LLM threat vectors scanner</h3>
-
-|   |   |
-| --- | --- |
-| <b>Prebuilt Datasets of Prompts</b><br /><br /><br/><b>Focused on OWASP top 10 LLM</b><br /><br /><br /><b>Integration under 1 min</b><br />| <img src="https://res.cloudinary.com/do9qa2bqr/image/upload/v1713002416/12-ezgif.com-video-to-gif-converter_jspzmx.gif" /> |
-
-## Features
-
-- Comprehensive Threat Detection 🛡️: Scans for a wide array of LLM vulnerabilities including prompt injection, jailbreaking, hallucinations, biases, and other malicious exploitation attempts.
-- OWASP Top 10 for LLMs scan: to test the list of the most critical LLM vulnerabilities.
-- Privacy-centric Architecture 🔒: Ensures that all data scanning and analysis occur on-premise or in a local environment, with no external data transmission, maintaining strict data privacy.
-- Comprehensive Reporting Tools 📊: Offers detailed reports of vulnerability, helping teams to quickly understand and respond to security incidents.
-- Customizable Rule Sets 🛠️: Allows users to define custom attack rules and parameters to meet specific prompt attacks needs and compliance standards.
-
-Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
 
 ## 📦 Installation
 
