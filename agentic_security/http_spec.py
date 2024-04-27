@@ -2,6 +2,10 @@ import httpx
 from pydantic import BaseModel
 
 
+class InvalidHTTPSpecError(Exception):
+    ...
+
+
 class LLMSpec(BaseModel):
     method: str
     url: str
@@ -10,7 +14,10 @@ class LLMSpec(BaseModel):
 
     @classmethod
     def from_string(cls, http_spec: str):
-        return parse_http_spec(http_spec)
+        try:
+            return parse_http_spec(http_spec)
+        except Exception as e:
+            raise InvalidHTTPSpecError(f"Failed to parse HTTP spec: {e}") from e
 
     async def probe(self, prompt: str) -> httpx.Response:
         """Sends an HTTP request using the `httpx` library.

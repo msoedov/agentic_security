@@ -15,9 +15,16 @@ class T:
         server.run()
         return
 
+    def headless(self):
+        sys.path.append(os.path.dirname("."))
+
 
 def entrypoint():
     fire.Fire(T().server)
+
+
+def ci_entrypoint():
+    fire.Fire(T().headless)
 
 
 if __name__ == "__main__":

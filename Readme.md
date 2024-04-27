@@ -28,13 +28,11 @@
 - LLM API integration and stress testing 🛠️
 - Wide range of fuzzing and attack techniques 🌀
 
-
 Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
 
 ## About the Project 🧙
 
 <img width="100%" alt="booking-screen" src="https://res.cloudinary.com/do9qa2bqr/image/upload/v1713002396/1-ezgif.com-video-to-gif-converter_s2hsro.gif">
-
 
 ## 📦 Installation
 
@@ -101,6 +99,43 @@ To add your own dataset you can place one or multiples csv files with `prompt` c
 ```
 2024-04-13 13:21:31.157 | INFO     | agentic_security.probe_data.data:load_local_csv:273 - Found 1 CSV files
 2024-04-13 13:21:31.157 | INFO     | agentic_security.probe_data.data:load_local_csv:274 - CSV files: ['prompts.csv']
+```
+
+## Run as CI check
+
+ci.py
+
+```python
+from agentic_security import AgenticSecurity
+
+spec = """
+POST http://0.0.0.0:8718/v1/self-probe
+Authorization: Bearer XXXXX
+Content-Type: application/json
+
+{
+    "prompt": "<<PROMPT>>"
+}
+"""
+result = AgenticSecurity.scan(spec)
+
+# module: failure rate
+# {"Local CSV": 79.65116279069767, "llm-adaptive-attacks": 20.0}
+exit(max(r.values()) > 20)
+```
+
+```
+python ci.py
+2024-04-27 17:15:13.545 | INFO     | agentic_security.probe_data.data:load_local_csv:279 - Found 1 CSV files
+2024-04-27 17:15:13.545 | INFO     | agentic_security.probe_data.data:load_local_csv:280 - CSV files: ['prompts.csv']
+0it [00:00, ?it/s][INFO] 2024-04-27 17:15:13.74 | data:prepare_prompts:195 | Loading Custom CSV
+[INFO] 2024-04-27 17:15:13.74 | fuzzer:perform_scan:53 | Scanning Local CSV 15
+18it [00:00, 176.88it/s]
++-----------+--------------+--------+
+|  Module   | Failure Rate | Status |
++-----------+--------------+--------+
+| Local CSV |    80.0%     |   ✘    |
++-----------+--------------+--------+
 ```
 
 ## Extending dataset collections
