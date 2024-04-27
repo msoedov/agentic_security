@@ -27,7 +27,7 @@ class ScanResult(BaseModel):
             progress=0,
             failureRate=0,
             status=True,
-        ).json()
+        ).model_dump_json()
 
 
 async def perform_scan(request_factory, max_budget: int, datasets: list[dict] = []):
@@ -92,7 +92,7 @@ async def perform_scan(request_factory, max_budget: int, datasets: list[dict] = 
                 cost=round(tokens * 1.5 / 1000_000, 2),
                 progress=round(progress, 2),
                 failureRate=100 * module_failures / max(len(module.prompts), 1),
-            ).json()
+            ).model_dump_json()
     yield ScanResult.status_msg("Done.")
     import pandas as pd
 

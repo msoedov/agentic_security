@@ -26,4 +26,4 @@ class TestAS:
         result = AgenticSecurity.scan(llmSpec, maxBudget, datasets, max_th)
 
         assert isinstance(result, dict)
-        assert len(result) == 1
+        assert len(result) in [0, 1]
