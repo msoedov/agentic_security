@@ -7,7 +7,7 @@ import pandas as pd
 from loguru import logger
 
 from agentic_security.probe_data import stenography_fn
-from agentic_security.probe_data.modules import adaptive_attacks
+from agentic_security.probe_data.modules import adaptive_attacks, garak_tool
 
 IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
 
@@ -32,6 +32,7 @@ class ProbeDataset:
     prompts: list[str]
     tokens: int
     approx_cost: float
+    lazy: bool = False
 
     def metadata_summary(self):
         return {
@@ -168,10 +169,7 @@ def load_dataset_v5():
     )
 
 
-def prepare_prompts(
-    dataset_names,
-    budget,
-):
+def prepare_prompts(dataset_names, budget, tools_inbox=None):
     # ## Datasets used and cleaned:
     # markush1/LLM-Jailbreak-Classifier
     # 1. Open-Orca/OpenOrca
@@ -203,6 +201,11 @@ def prepare_prompts(
         "llm-adaptive-attacks": lambda: dataset_from_iterator(
             "llm-adaptive-attacks", adaptive_attacks.Module(group).apply()
         ),
+        "Garak": lambda: dataset_from_iterator(
+            "Garak",
+            garak_tool.Module(group, tools_inbox=tools_inbox).apply(),
+            lazy=True,
+        ),
         "GPT fuzzer": lambda: [],
     }
 
@@ -215,22 +218,6 @@ def prepare_prompts(
             for g in ds:
                 dynamic_groups.append(g)
     return group + dynamic_groups
-
-
-class MutationFn:
-    def __init__(self, mutation_fn):
-        self.mutation_fn = mutation_fn
-        self.mutation_fn_name = mutation_fn.__name__
-        self.input = ""
-        self.output = ""
-
-    def __call__(self, prompt):
-        self.input = prompt
-        self.output = self.mutation_fn(prompt)
-        return self.output
-
-    def __str__(self):
-        return f"{self.mutation_fn_name}({self.input}) => {self.output}"
 
 
 class Stenography:
@@ -295,7 +282,7 @@ def load_local_csv() -> ProbeDataset:
     )
 
 
-def dataset_from_iterator(name: str, iterator) -> list:
+def dataset_from_iterator(name: str, iterator, lazy=False) -> list:
     """Convert an iterator into a list of prompts and create a ProbeDataset
     object.
 
@@ -306,9 +293,14 @@ def dataset_from_iterator(name: str, iterator) -> list:
     Returns:
         list: A list containing a single ProbeDataset object.
     """
-    prompts = list(iterator)
-    tokens = count_words_in_list(prompts)
+    prompts = list(iterator) if not lazy else iterator
+    tokens = count_words_in_list(prompts) if not lazy else 0
     dataset = ProbeDataset(
-        dataset_name=name, metadata={}, prompts=prompts, tokens=tokens, approx_cost=0.0
+        dataset_name=name,
+        metadata={},
+        prompts=prompts,
+        tokens=tokens,
+        approx_cost=0.0,
+        lazy=lazy,
     )
     return [dataset]

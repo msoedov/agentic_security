@@ -128,6 +128,15 @@ REGISTRY = [
         "url": "https://github.com/tml-epfl/llm-adaptive-attacks",
     },
     {
+        "dataset_name": "Garak",
+        "num_prompts": 0,
+        "tokens": 0,
+        "approx_cost": 0.0,
+        "source": "Github: https://github.com/leondz/garak",
+        "selected": False,
+        "url": "https://github.com/leondz/garak",
+    },
+    {
         "dataset_name": "Custom CSV",
         "num_prompts": len(load_local_csv().prompts),
         "tokens": load_local_csv().tokens,

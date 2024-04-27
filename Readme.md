@@ -24,7 +24,7 @@
 ## Features
 
 - Customizable Rule Sets or Agent based attacks🛠️
-- Comprehansive fuzzing for any LLMs 🧪
+- Comprehensive fuzzing for any LLMs 🧪
 - LLM API integration and stress testing 🛠️
 - Wide range of fuzzing and attack techniques 🌀
 
@@ -117,7 +117,7 @@ Content-Type: application/json
     "prompt": "<<PROMPT>>"
 }
 """
-result = AgenticSecurity.scan(spec)
+result = AgenticSecurity.scan(llmSpec=spec)
 
 # module: failure rate
 # {"Local CSV": 79.65116279069767, "llm-adaptive-attacks": 20.0}

@@ -1,5 +1,6 @@
-from agentic_security.lib import REGISTRY, AgenticSecurity
 from inline_snapshot import snapshot
+
+from agentic_security.lib import REGISTRY, AgenticSecurity
 
 SAMPLE_SPEC = """
 POST http://0.0.0.0:8718/v1/self-probe

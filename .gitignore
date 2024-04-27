@@ -3,3 +3,5 @@
 .web
 __pycache__/
 failures.csv
+runs/
+*.todo

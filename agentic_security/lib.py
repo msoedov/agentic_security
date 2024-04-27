@@ -3,9 +3,10 @@ import json
 
 import colorama
 import tqdm.asyncio
+from tabulate import tabulate
+
 from agentic_security.app import Scan, streaming_response_generator
 from agentic_security.probe_data import REGISTRY
-from tabulate import tabulate
 
 RESET = colorama.Style.RESET_ALL
 BRIGHT = colorama.Style.BRIGHT
@@ -25,7 +26,6 @@ Content-Type: application/json
 
 
 class AgenticSecurity:
-
     @classmethod
     async def async_scan(
         self, llmSpec: str, maxBudget: int, datasets: list[dict], max_th: float
