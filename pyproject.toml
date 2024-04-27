@@ -36,6 +36,7 @@ pandas = ">=1.4,<3.0"
 datasets = "^1.14.0"
 tabulate = "^0.8.9"
 colorama = "^0.4.4"
+matplotlib = "^3.4.3"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=23.10.1,<25.0.0"
