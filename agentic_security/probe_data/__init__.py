@@ -88,7 +88,7 @@ REGISTRY = [
         "approx_cost": 0.0,
         "source": "Local dataset",
         "selected": True,
-        "dynamic": False,
+        "dynamic": True,
         "url": "",
     },
     {
@@ -98,6 +98,7 @@ REGISTRY = [
         "approx_cost": 0.0,
         "source": "Local dataset",
         "selected": False,
+        "dynamic": True,
         "url": "",
     },
     {
@@ -107,6 +108,7 @@ REGISTRY = [
         "approx_cost": 0.0,
         "source": "Local dataset",
         "selected": False,
+        "dynamic": True,
         "url": "",
     },
     {
@@ -116,6 +118,7 @@ REGISTRY = [
         "approx_cost": 0.0,
         "source": "Local dataset",
         "selected": False,
+        "dynamic": True,
         "url": "",
     },
     {
@@ -125,6 +128,7 @@ REGISTRY = [
         "approx_cost": 0.0,
         "source": "Github: tml-epfl/llm-adaptive-attacks",
         "selected": False,
+        "dynamic": True,
         "url": "https://github.com/tml-epfl/llm-adaptive-attacks",
     },
     {
@@ -135,6 +139,7 @@ REGISTRY = [
         "source": "Github: https://github.com/leondz/garak",
         "selected": False,
         "url": "https://github.com/leondz/garak",
+        "dynamic": True,
     },
     {
         "dataset_name": "Custom CSV",
