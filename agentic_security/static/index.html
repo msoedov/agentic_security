@@ -102,7 +102,7 @@
           <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col space-y-4">
               <div class="text-lg font-semibold">Select a config</div>
-              <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div v-for="(config, index) in configs" :key="index"
                   @click="selectConfig(index)"
                   class="border-2 rounded-lg p-4 flex flex-col items-start transition-all hover:shadow-md"
@@ -405,6 +405,18 @@ Content-Type: application/json
     "user_prompt": "<<PROMPT>>"
 }
 `,
+        `POST https://api.together.xyz/v1/chat/completions
+Authorization: Bearer $TOGETHER_API_KEY
+Content-Type: application/json
+
+{
+    "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "messages": [
+        {"role": "system", "content": "You are an expert travel guide"},
+        {"role": "user", "content": "<<PROMPT>>"}
+    ]
+}
+`,
       ]
       var app = new Vue({
         el: '#vue-app',
@@ -427,6 +439,7 @@ Content-Type: application/json
             { name: 'Open AI', prompts: 24000 },
             { name: 'Replicate', prompts: 40000 },
             { name: 'Groq', prompts: 40000 },
+            { name: 'Together.ai', prompts: 40000 },
           ],
           dataConfig: [],
         },
