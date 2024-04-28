@@ -275,7 +275,7 @@ def load_local_csv() -> ProbeDataset:
 
     return ProbeDataset(
         dataset_name="Local CSV",
-        metadata={},
+        metadata={"src": str(csv_files)},
         prompts=prompt_list,
         tokens=count_words_in_list(prompt_list),
         approx_cost=0.0,
