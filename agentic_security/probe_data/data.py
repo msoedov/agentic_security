@@ -268,11 +268,16 @@ def load_local_csv() -> ProbeDataset:
     prompt_list = []
 
     for file in csv_files:
-        df = pd.read_csv(file)
+        try:
+            df = pd.read_csv(file)
+        except Exception as e:
+            logger.error(f"Error reading {file}: {e}")
+            continue
         # Check if 'prompt' column exists
         if "prompt" in df.columns:
             prompt_list.extend(df["prompt"].tolist())
-
+        else:
+            logger.warning(f"File {file} does not contain a 'prompt' column")
     return ProbeDataset(
         dataset_name="Local CSV",
         metadata={"src": str(csv_files)},
