@@ -34,7 +34,7 @@ httpx = ">=0.25.1,<0.28.0"
 cache-to-disk = "^2.0.0"
 pandas = ">=1.4,<3.0"
 datasets = "^1.14.0"
-tabulate = "^0.8.9"
+tabulate = ">=0.8.9,<0.10.0"
 colorama = "^0.4.4"
 matplotlib = "^3.4.3"
 
