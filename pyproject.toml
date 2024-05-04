@@ -26,7 +26,7 @@ agentic_security = "agentic_security.__main__:entrypoint"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-fastapi = ">=0.109.1,<0.111.0"
+fastapi = ">=0.109.1,<0.112.0"
 uvicorn = ">=0.23.2,<0.30.0"
 fire = "^0.5.0"
 loguru = "^0.7.2"
@@ -34,7 +34,7 @@ httpx = ">=0.25.1,<0.28.0"
 cache-to-disk = "^2.0.0"
 pandas = ">=1.4,<3.0"
 datasets = "^1.14.0"
-tabulate = "^0.8.9"
+tabulate = ">=0.8.9,<0.10.0"
 colorama = "^0.4.4"
 matplotlib = "^3.4.3"
 
