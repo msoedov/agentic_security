@@ -3,9 +3,7 @@
 <h1 align="center">Agentic Security</h1>
 
 <p align="center">
-    The open-source Agentic LLM Vulnerability Scanner .
-    <br />
-    <a href="#features"><strong>Learn more »</strong></a>
+    The open-source Agentic LLM Vulnerability Scanner
     <br />
     <br />
 
