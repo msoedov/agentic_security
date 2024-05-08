@@ -1087,13 +1087,13 @@ files = [
 
 [[package]]
 name = "inline-snapshot"
-version = "0.8.2"
+version = "0.9.0"
 description = "golden master/snapshot/approval testing library which puts the values right into your source code"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "inline_snapshot-0.8.2-py3-none-any.whl", hash = "sha256:df365176dc04e8054c699981a834e4c4482cb42c34cb3378515e3f65d49a70df"},
-    {file = "inline_snapshot-0.8.2.tar.gz", hash = "sha256:b20515b7bf01675b0f6adaadfd6277ef4456cd797c0735582b07f949a908c2f7"},
+    {file = "inline_snapshot-0.9.0-py3-none-any.whl", hash = "sha256:90deee9be342a270d07d95049e525c609f9e84319e6f9d1506ae19aa2973f8d5"},
+    {file = "inline_snapshot-0.9.0.tar.gz", hash = "sha256:5f1c4f0fbf7bcbc0d05dc43822032ed4b954d3f20b01868bde7feda8d7c38817"},
 ]
 
 [package.dependencies]
@@ -3194,4 +3194,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a7bd7081eec3998a8d95b2c137c44c2ab6fa71c4b439b6bdeb5e485c2dc33046"
+content-hash = "28569362ae4d469cbb095d6d221a0c765ccdc45d6d024f5741a663e6ca5f012c"
