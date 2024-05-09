@@ -26,11 +26,19 @@
 - LLM API integration and stress testing 🛠️
 - Wide range of fuzzing and attack techniques 🌀
 
+
+| Tool                    | Source                                                                        | Integrated |
+|-------------------------|-------------------------------------------------------------------------------|------------|
+| Garak                   | [leondz/garak](https://github.com/leondz/garak2)                              | ✅          |
+| InspectAI               | [UKGovernmentBEIS/inspect_ai](https://github.com/UKGovernmentBEIS/inspect_ai) | ✅          |
+| llm-adaptive-attacks    | [tml-epfl/llm-adaptive-attacks](https://github.com/tml-epfl/llm-adaptive-attacks) | ✅       |
+| Custom Huggingface Datasets | markush1/LLM-Jailbreak-Classifier                                                                         | ✅          |
+| Local CSV Datasets      | -                                                                             | ✅          |
+
+
+
 Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
 
-## About the Project 🧙
-
-<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/do9qa2bqr/image/upload/v1713002396/1-ezgif.com-video-to-gif-converter_s2hsro.gif">
 
 ## 📦 Installation
 
@@ -62,6 +70,11 @@ agentic_security --help
 agentic_security --port=PORT --host=HOST
 
 ```
+
+## UI 🧙
+
+
+<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/do9qa2bqr/image/upload/v1713002396/1-ezgif.com-video-to-gif-converter_s2hsro.gif">
 
 ## LLM kwargs
 
