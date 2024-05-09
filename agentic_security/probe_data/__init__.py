@@ -142,6 +142,16 @@ REGISTRY = [
         "dynamic": True,
     },
     {
+        "dataset_name": "InspectAI",
+        "num_prompts": 0,
+        "tokens": 0,
+        "approx_cost": 0.0,
+        "source": "Github: https://github.com/UKGovernmentBEIS/inspect_ai",
+        "selected": False,
+        "url": "https://github.com/UKGovernmentBEIS/inspect_ai",
+        "dynamic": True,
+    },
+    {
         "dataset_name": "Custom CSV",
         "num_prompts": len(load_local_csv().prompts),
         "tokens": load_local_csv().tokens,

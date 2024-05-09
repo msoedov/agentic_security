@@ -1,29 +1,21 @@
+import logging
 import random
-import sys
 from asyncio import Event, Queue
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Response
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from loguru import logger
 from pydantic import BaseModel
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from .http_spec import LLMSpec
 from .probe_actor import fuzzer
 from .probe_actor.refusal import REFUSAL_MARKS
 from .probe_data import REGISTRY
 from .report_chart import plot_security_report
-
-logger.remove(0)
-logger.add(
-    sys.stderr,
-    format="<green>[{level}]</green> <blue>{time:YYYY-MM-DD HH:mm:ss.SS}</blue> | <cyan>{module}:{function}:{line}</cyan> | <white>{message}</white>",
-    colorize=True,
-    level="INFO",
-)
-
 
 # Create the FastAPI app instance
 app = FastAPI()
@@ -164,13 +156,13 @@ class Message(BaseModel):
 class CompletionRequest(BaseModel):
     model: str
     messages: list[Message]
-    temperature: float
-    top_p: float
-    n: int
-    stop: list[str]
-    max_tokens: int
-    presence_penalty: float
-    frequency_penalty: float
+    temperature: float = 0.7  # Default value for temperature
+    top_p: float = 1.0  # Default value for top_p
+    n: int = 1  # Default value for n
+    stop: list[str] = None  # Optional; specify as None if not provided
+    max_tokens: int = 100  # Default value for max_tokens
+    presence_penalty: float = 0.0  # Default value for presence_penalty
+    frequency_penalty: float = 0.0  # Default value for frequency_penalty
 
 
 # OpenAI proxy endpoint
@@ -206,3 +198,41 @@ async def proxy_completions(request: CompletionRequest):
             }
         ],
     }
+
+
+logging.config.dictConfig(
+    {
+        "version": 1,
+        "disable_existing_loggers": True,
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+            },
+        },
+        "root": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+        "loggers": {
+            "uvicorn.access": {
+                "level": "ERROR",  # Set higher log level to suppress info logs globally
+                "handlers": ["console"],
+                "propagate": False,
+            }
+        },
+    }
+)
+
+
+class LogNon200ResponsesMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        if response.status_code != 200:
+            logger.error(
+                f"{request.method} {request.url} - Status code: {response.status_code}"
+            )
+        return response
+
+
+# Add middleware to the application
+app.add_middleware(LogNon200ResponsesMiddleware)

@@ -9,7 +9,6 @@ from loguru import logger
 
 
 class Module:
-
     def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue):
         self.tools_inbox = tools_inbox
         if not self.is_garak_installed():

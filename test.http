@@ -14,7 +14,7 @@ Content-Type: application/json
 
 
 ###
-POST http://0.0.0.0:3008/v1/self-probe
+POST http://0.0.0.0:8718/v1/self-probe
 Authorization: Bearer XXXXX
 Content-Type: application/json
 

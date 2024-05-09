@@ -7,7 +7,11 @@ import pandas as pd
 from loguru import logger
 
 from agentic_security.probe_data import stenography_fn
-from agentic_security.probe_data.modules import adaptive_attacks, garak_tool
+from agentic_security.probe_data.modules import (
+    adaptive_attacks,
+    garak_tool,
+    inspect_ai_tool,
+)
 
 IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
 
@@ -204,6 +208,11 @@ def prepare_prompts(dataset_names, budget, tools_inbox=None):
         "Garak": lambda: dataset_from_iterator(
             "Garak",
             garak_tool.Module(group, tools_inbox=tools_inbox).apply(),
+            lazy=True,
+        ),
+        "InspectAI": lambda: dataset_from_iterator(
+            "InspectAI",
+            inspect_ai_tool.Module(group, tools_inbox=tools_inbox).apply(),
             lazy=True,
         ),
         "GPT fuzzer": lambda: [],
