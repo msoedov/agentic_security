@@ -1,7 +1,7 @@
-import logging
 import random
 from asyncio import Event, Queue
 from datetime import datetime
+from logging import config
 from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response
@@ -200,7 +200,7 @@ async def proxy_completions(request: CompletionRequest):
     }
 
 
-logging.config.dictConfig(
+config.dictConfig(
     {
         "version": 1,
         "disable_existing_loggers": True,
