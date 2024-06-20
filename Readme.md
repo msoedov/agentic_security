@@ -29,7 +29,7 @@
 
 | Tool                    | Source                                                                        | Integrated |
 |-------------------------|-------------------------------------------------------------------------------|------------|
-| Garak                   | [leondz/garak](https://github.com/leondz/garak2)                              | ✅          |
+| Garak                   | [leondz/garak](https://github.com/leondz/garak)                               | ✅          |
 | InspectAI               | [UKGovernmentBEIS/inspect_ai](https://github.com/UKGovernmentBEIS/inspect_ai) | ✅          |
 | llm-adaptive-attacks    | [tml-epfl/llm-adaptive-attacks](https://github.com/tml-epfl/llm-adaptive-attacks) | ✅       |
 | Custom Huggingface Datasets | markush1/LLM-Jailbreak-Classifier                                                                         | ✅          |
