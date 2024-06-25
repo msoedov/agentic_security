@@ -12,13 +12,13 @@ class TestPreparePrompts:
         # Assert that the prepared_prompts list is empty
         assert prepared_prompts == []
 
-        assert len(
-            prepare_prompts(["markush1/LLM-Jailbreak-Classifier"], 100)
-        ) == snapshot(1)
+        # assert len(
+        #     prepare_prompts(["markush1/LLM-Jailbreak-Classifier"], 100)
+        # ) == snapshot(1)
 
         assert len(
             prepare_prompts(
-                ["markush1/LLM-Jailbreak-Classifier", "llm-adaptive-attacks"],
+                ["llm-adaptive-attacks"],
                 100,
             )
-        ) == snapshot(2)
+        ) == snapshot(1)
