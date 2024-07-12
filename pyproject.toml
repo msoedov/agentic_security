@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "agentic_security"
-version = "0.1.7g"
+version = "0.1.7"
 description = "Agentic LLM vulnerability scanner"
 authors = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
