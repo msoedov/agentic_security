@@ -143,89 +143,98 @@
                   v-model="modelSpec"
                   @input="adjustHeight"></textarea>
               </div>
-              <div class="grid gap-1.5">
-                <label
-                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  for="max-budget">
-                  Maximum Budget in {{budget}}M Tokens
-                </label>
-                <input
-                  class="flex h-10 w-full rounded-md border border-earth-disabled bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  id="max-budget"
-                  placeholder="Enter maximum budget..."
-                  type="number"
-                  v-model="budget" />
-              </div>
-              <div
-                class="rounded-lg text-card-foreground shadow-sm mt-10 mb-10 border border-gray-300">
-                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 mb-5">
-                  <div class="flex flex-col space-y-4">
-                    <!-- Accordion Header -->
-                    <button
-                      @click="toggleDatasets"
-                      class="flex justify-between items-center text-lg font-semibold w-full py-2 text-center">
-                      Modules [{{selectedDS}}]
-                      selected
-                      <svg
-                        :class="{'rotate-180': showDatasets}"
-                        class="h-5 w-5 transform transition-transform duration-200"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
 
-                    <!-- Accordion Content -->
+              <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                  <label for="max-budget"
+                    class="text-sm font-medium text-gray-700">
+                    Maximum Budget
+                  </label>
+                  <div class="flex items-center space-x-2">
+                    <input
+                      id="budget-display"
+                      v-model="budget"
+                      @change="updateBudgetFromInput"
+                      class="w-20 px-2 py-1 text-right text-sm font-medium text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      type="text" />
+                    <span class="text-sm font-medium text-gray-600">M
+                      Tokens</span>
+                  </div>
+                </div>
+
+                <div class="relative">
+                  <input
+                    id="max-budget"
+                    v-model="budget"
+                    @input="updateBudgetFromSlider"
+                    type="range"
+                    min="1"
+                    max="100"
+                    step="1"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                  <div
+                    class="absolute -top-6 left-0 w-full flex justify-between text-xs text-gray-600">
+                    <span>1M</span>
+                    <span>25M</span>
+                    <span>50M</span>
+                    <span>75M</span>
+                    <span>100M</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modules Selection -->
+              <div class="border border-gray-200 rounded-md">
+                <button
+                  @click="toggleDatasets"
+                  class="flex justify-between items-center w-full px-4 py-3 text-left text-gray-700 font-medium bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-inset">
+                  <span>Modules [{{selectedDS}} selected]</span>
+                  <svg :class="{'rotate-180': showDatasets}"
+                    class="h-5 w-5 text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <div v-show="showDatasets" class="p-4 bg-white">
+                  <div class="flex justify-between mb-4">
+                    <button
+                      @click="selectAllPackages"
+                      class="px-3 py-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline">
+                      Select All
+                    </button>
+                    <button
+                      @click="deselectAllPackages"
+                      class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-500 focus:outline-none focus:underline">
+                      Deselect All
+                    </button>
+                  </div>
+                  <div
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <div
-                      v-show="showDatasets"
-                      class="grid grid-cols-1 md:grid-cols-4 gap-4 transition-all duration-500 ">
-                      <div
-                        v-for="(package, index) in dataConfig"
-                        :key="index"
-                        @click="addPackage(index)"
-                        class="border-2 rounded-lg p-4 flex flex-col items-start hover:shadow-md transition-all"
-                        :class="{'border-earth-1': package.selected, 'border-gray-200': !package.selected}">
-                        <div class="flex items-center justify-between w-full">
-                          <div
-                            class="font-medium"
-                            :class="{'text-earth-1': package.selected, 'text-gray-800': !package.selected}">
-                            {{ package.dataset_name }}
-                          </div>
-                          <svg
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            :class="{'text-earth-1': package.selected, 'text-gray-600': !package.selected}">
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div class="text-sm text-gray-600">
-                          {{ package.source || 'Local dataset' }}
-                        </div>
-                        <div class="mt-2 text-gray-800 font-semibold"
-                          v-if="!package.dynamic">
-                          {{ package.num_prompts.toLocaleString() }} prompts
-                        </div>
-                        <div class="mt-2 text-gray-800 font-semibold"
-                          v-if="package.dynamic">
-                          Dynamic dataset
-                        </div>
+                      v-for="(package, index) in dataConfig"
+                      :key="index"
+                      @click="addPackage(index)"
+                      class="border rounded-md p-3 cursor-pointer transition-all hover:shadow-md"
+                      :class="{'border-indigo-500 bg-indigo-50': package.selected, 'border-gray-200': !package.selected}">
+                      <div class="font-medium"
+                        :class="{'text-indigo-700': package.selected, 'text-gray-900': !package.selected}">
+                        {{ package.dataset_name }}
+                      </div>
+                      <div class="text-sm text-gray-500 mt-1">{{ package.source
+                        || 'Local dataset' }}</div>
+                      <div class="mt-2 text-sm font-semibold"
+                        :class="{'text-indigo-600': package.selected, 'text-gray-700': !package.selected}">
+                        {{ package.dynamic ? 'Dynamic dataset' :
+                        `${package.num_prompts.toLocaleString()} prompts` }}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+
               <div
                 class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
                 role="alert" v-if="errorMsg">
@@ -275,6 +284,7 @@
                       d="M5 12h14"></path><path
                       d="m12 5 7 7-7 7"></path></svg>
                   Run Scan
+                  <span class="sr-only">(Initiates the security scan)</span>
                 </button>
               </div>
             </div>
@@ -588,6 +598,35 @@ Content-Type: application/json
             reader.onloadend = () => {
               this.reportImageUrl = reader.result;
             };
+          },
+          selectAllPackages() {
+            this.dataConfig.forEach(package => {
+              package.selected = true;
+            });
+            this.updateSelectedDS();
+          },
+
+          deselectAllPackages() {
+            this.dataConfig.forEach(package => {
+              package.selected = false;
+            });
+            this.updateSelectedDS();
+          },
+
+          updateSelectedDS() {
+            this.selectedDS = this.dataConfig.filter(package => package.selected).length;
+          },
+          updateBudgetFromSlider(event) {
+            this.budget = parseInt(event.target.value);
+          },
+          updateBudgetFromInput(event) {
+            let value = parseInt(event.target.value);
+            if (isNaN(value) || value < 1) {
+              value = 1;
+            } else if (value > 100) {
+              value = 100;
+            }
+            this.budget = value;
           },
           startScan: async function() {
             let payload = {
