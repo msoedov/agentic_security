@@ -1,8 +1,10 @@
+import io
 import os
 import random
 from dataclasses import dataclass
 from functools import lru_cache
 
+import httpx
 import pandas as pd
 from loguru import logger
 
@@ -149,6 +151,44 @@ def load_dataset_v6():
 
 
 @cache_to_disk()
+def load_dataset_v7():
+
+    splits = {
+        "mini_JailBreakV_28K": "JailBreakV_28K/mini_JailBreakV_28K.csv",
+        "JailBreakV_28K": "JailBreakV_28K/JailBreakV_28K.csv",
+    }
+    df = pd.read_csv(
+        "hf://datasets/JailbreakV-28K/JailBreakV-28k/" + splits["JailBreakV_28K"]
+    )
+    bad_prompts = df["jailbreak_query"].tolist()
+    print(df.shape)
+    return ProbeDataset(
+        dataset_name="JailbreakV-28K/JailBreakV-28k",
+        metadata={},
+        prompts=bad_prompts,
+        tokens=count_words_in_list(bad_prompts),
+        approx_cost=0.0,
+    )
+
+
+@cache_to_disk()
+def load_dataset_v8():
+
+    df = pd.read_csv(
+        "hf://datasets/ShawnMenz/jailbreak_sft_rm_ds/jailbreak_sft_rm_ds.csv",
+        names=["jailbreak", "prompt"],
+    )
+    filtered = df[df["jailbreak"] == "jailbreak"]["prompt"].tolist()
+    return ProbeDataset(
+        dataset_name="JailbreakV-28K/JailBreakV-28k",
+        metadata={},
+        prompts=filtered,
+        tokens=count_words_in_list(filtered),
+        approx_cost=0.0,
+    )
+
+
+@cache_to_disk()
 def load_dataset_v5():
     from datasets import load_dataset
 
@@ -173,6 +213,22 @@ def load_dataset_v5():
     )
 
 
+@cache_to_disk()
+def load_generic_csv(url, name, column="prompt", predicator=None):
+    r = httpx.get(url)
+    content = r.content
+    df = pd.read_csv(io.StringIO(content.decode("utf-8")))
+    logger.info(f"Loaded {len(df)} prompts from {url}")
+    filtered_prompts = df[df.apply(predicator, axis=1)][column].tolist()
+    return ProbeDataset(
+        dataset_name=name,
+        metadata={},
+        prompts=filtered_prompts,
+        tokens=count_words_in_list(filtered_prompts),
+        approx_cost=0.0,
+    )
+
+
 def prepare_prompts(dataset_names, budget, tools_inbox=None):
     # ## Datasets used and cleaned:
     # markush1/LLM-Jailbreak-Classifier
@@ -188,6 +244,20 @@ def prepare_prompts(dataset_names, budget, tools_inbox=None):
         "rubend18/ChatGPT-Jailbreak-Prompts": load_dataset_v3,
         "Lemhf14/EasyJailbreak_Datasets": load_dataset_v5,
         "markush1/LLM-Jailbreak-Classifier": load_dataset_v6,
+        "JailbreakV-28K/JailBreakV-28k": load_dataset_v7,
+        "ShawnMenz/jailbreak_sft_rm_ds": load_dataset_v8,
+        "verazuo/jailbreak_llms/2023_05_07": lambda: load_generic_csv(
+            url="https://raw.githubusercontent.com/verazuo/jailbreak_llms/main/data/prompts/jailbreak_prompts_2023_05_07.csv",
+            name="verazuo/jailbreak_llms/2023_05_07",
+            column="prompt",
+            predicator=lambda x: bool(x["jailbreak"]),
+        ),
+        "verazuo/jailbreak_llms/2023_12_25.csv": lambda: load_generic_csv(
+            url="https://raw.githubusercontent.com/verazuo/jailbreak_llms/main/data/prompts/jailbreak_prompts_2023_12_25.csv.csv",
+            name="verazuo/jailbreak_llms/2023_12_25.csv",
+            column="prompt",
+            predicator=lambda x: bool(x["jailbreak"]),
+        ),
         "Custom CSV": load_local_csv,
     }
 

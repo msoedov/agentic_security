@@ -26,7 +26,6 @@
 - LLM API integration and stress testing 🛠️
 - Wide range of fuzzing and attack techniques 🌀
 
-
 | Tool                    | Source                                                                        | Integrated |
 |-------------------------|-------------------------------------------------------------------------------|------------|
 | Garak                   | [leondz/garak](https://github.com/leondz/garak)                               | ✅          |
@@ -35,10 +34,7 @@
 | Custom Huggingface Datasets | markush1/LLM-Jailbreak-Classifier                                                                         | ✅          |
 | Local CSV Datasets      | -                                                                             | ✅          |
 
-
-
 Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
-
 
 ## 📦 Installation
 
@@ -72,7 +68,6 @@ agentic_security --port=PORT --host=HOST
 ```
 
 ## UI 🧙
-
 
 <img width="100%" alt="booking-screen" src="https://res.cloudinary.com/do9qa2bqr/image/upload/v1713002396/1-ezgif.com-video-to-gif-converter_s2hsro.gif">
 
@@ -305,11 +300,7 @@ Agentic Security is released under the Apache License v2.
 
 ## Contact us
 
-## 🤝 Schedule a 1-on-1 Session
 
-<a href="https://cal.com/alexander-myasoedov-go2tfs/30min"><img src="https://cal.com/book-with-cal-dark.svg" alt="Book us with Cal.com"></a>
-
-Book a 1-on-1 Session with the founders, to discuss any issues, provide feedback, or explore how we can improve agentic_security for you.
 
 ## Repo Activity
 
