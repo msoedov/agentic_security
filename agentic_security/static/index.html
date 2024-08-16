@@ -294,9 +294,7 @@
         <div id="progress"
           class="w-24 bg-earth-1 rounded-full h-2 overflow-hidden"
           v-bind:style="{width: progressWidth}">
-
         </div>
-        <img :src="imageUrl" alt="Generated Plot">
         <div
           class="rounded-lg border bg-card text-card-foreground shadow-sm"
           data-v0-t="card">
@@ -356,6 +354,7 @@
           class="inline-flex text-gray-100 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-earth-1 text-earth-foreground hover:bg-earth-1/90 h-10 px-4 py-2">
           Download failures
         </button>
+        <img :src="reportImageUrl" alt="Generated Plot" v-if="reportImageUrl">
 
       </main>
 
@@ -556,6 +555,7 @@ Content-Type: application/json
             console.log('New event');
             //  { "module": "Module 49", "tokens": 480, "cost": 4.800000000000001, "progress": 9.8 }
             let progress = event.progress;
+            progress = progress % 100;
             this.progressWidth = `${progress}%`;
 
             if (this.mainTable.length < 1) {
@@ -574,7 +574,7 @@ Content-Type: application/json
                 last.last = false;
                 this.mainTable.push(event);
                 event.last = true;
-                // this.newRow()
+                this.newRow()
             }
             this.okMsg = `New event: ${event.module}: ${event.progress}%`;
 
