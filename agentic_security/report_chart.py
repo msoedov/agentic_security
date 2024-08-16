@@ -1,5 +1,4 @@
 import io
-import math
 import string
 
 import matplotlib.pyplot as plt

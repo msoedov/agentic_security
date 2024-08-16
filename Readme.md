@@ -300,8 +300,6 @@ Agentic Security is released under the Apache License v2.
 
 ## Contact us
 
-
-
 ## Repo Activity
 
 <img width="100%" src="https://repobeats.axiom.co/api/embed/2b4b4e080d21ef9174ca69bcd801145a71f67aaf.svg" />
