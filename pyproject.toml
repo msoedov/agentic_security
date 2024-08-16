@@ -25,7 +25,7 @@ packages = [{ include = "agentic_security", from = "." }]
 agentic_security = "agentic_security.__main__:entrypoint"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 fastapi = "^0.112.1"
 uvicorn = "^0.30.6"
 fire = ">=0.5,<0.7"
@@ -36,7 +36,7 @@ pandas = ">=1.4,<3.0"
 datasets = "^1.14.0"
 tabulate = ">=0.8.9,<0.10.0"
 colorama = "^0.4.4"
-matplotlib = "^3.4.3"
+matplotlib = "^3.9.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"
@@ -44,8 +44,11 @@ mypy = "^1.6.1"
 httpx = ">=0.25.1,<0.28.0"
 pytest = "^8.3.2"
 pre-commit = "^3.8.0"
-inline-snapshot = ">=0.8,<0.10"
+inline-snapshot = "^0.12.1"
 langchain-groq = "^0.1.9"
+# Optional dependencies
+huggingface-hub = "^0.23.2"
+# garak = "*"
 
 [tool.ruff]
 line-length = 120
