@@ -46,7 +46,7 @@
     <div id="vue-app" class="min-h-screen p-8">
       <!-- New Banner -->
       <div
-        class="bg-dark-accent-green text-dark-bg py-4 px-6 rounded-lg mb-8 text-center">
+        class="bg-dark-accent-green text-dark-bg py-4 px-6 rounded-lg mb-28 text-center">
         <h4 class="text-lg font-semibold">
           🚀 NEW: Star Agentic Security on
           <a href="https://github.com/msoedov/agentic_security" target="_blank"
@@ -59,8 +59,8 @@
         <div class="w-full absolute left-0 flex justify-center">
           <h1
             class="text-4xl font-bold text-dark-accent-green"> <span
-              class="font-technopollas text-3xl">Agent</span>
-            Vulnerability Scanner</h1>
+              class="font-technopollas text-3xl text-gray-400">Agentic</span>
+            LLM Vulnerability Scanner</h1>
         </div>
         <div class="w-full flex justify-end relative z-10">
           <a href="https://github.com/msoedov/agentic_security" target="_blank"
@@ -82,7 +82,7 @@
         <!-- Config Selection -->
         <section class="bg-dark-card rounded-lg p-6 shadow-lg">
           <h2 class="text-2xl font-bold mb-4">Select a Config</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div v-for="(config, index) in configs" :key="index"
               @click="selectConfig(index)"
               class="border-2 rounded-lg p-4 flex flex-col items-start transition-all hover:shadow-md cursor-pointer"
