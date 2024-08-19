@@ -135,27 +135,41 @@
 
         <!-- Modules Selection -->
         <section class="bg-dark-card rounded-lg p-6 shadow-lg">
-          <h2 class="text-2xl font-bold mb-4">Modules [{{selectedDS}}
-            selected]</h2>
-          <div class="flex justify-between mb-4">
-            <button @click="selectAllPackages"
-              class="text-dark-accent-green hover:underline">Select All</button>
-            <button @click="deselectAllPackages"
-              class="text-gray-400 hover:underline">Deselect All</button>
+          <div @click="toggleModules"
+            class="flex justify-between items-center cursor-pointer">
+            <h2 class="text-2xl font-bold">Modules [{{selectedDS}}
+              selected]</h2>
+            <svg :class="{'rotate-180': showModules}"
+              class="w-6 h-6 transition-transform duration-200"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div
-              v-for="(package, index) in dataConfig"
-              :key="index"
-              @click="addPackage(index)"
-              class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
-              :class="{'border-dark-accent-green bg-dark-accent-green bg-opacity-20': package.selected, 'border-gray-600': !package.selected}">
-              <div class="font-medium mb-1">{{ package.dataset_name }}</div>
-              <div class="text-sm text-gray-400">{{ package.source ||
-                'Local dataset' }}</div>
-              <div class="mt-2 text-sm font-semibold">
-                {{ package.dynamic ? 'Dynamic dataset' :
-                `${package.num_prompts.toLocaleString()} prompts` }}
+
+          <div v-show="showModules" class="mt-4">
+            <div class="flex justify-between mb-4">
+              <button @click="selectAllPackages"
+                class="text-dark-accent-green hover:underline">Select
+                All</button>
+              <button @click="deselectAllPackages"
+                class="text-gray-400 hover:underline">Deselect All</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div
+                v-for="(package, index) in dataConfig"
+                :key="index"
+                @click="addPackage(index)"
+                class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
+                :class="{'border-dark-accent-green bg-dark-accent-green bg-opacity-20': package.selected, 'border-gray-600': !package.selected}">
+                <div class="font-medium mb-1">{{ package.dataset_name }}</div>
+                <div class="text-sm text-gray-400">{{ package.source ||
+                  'Local dataset' }}</div>
+                <div class="mt-2 text-sm font-semibold">
+                  {{ package.dynamic ? 'Dynamic dataset' :
+                  `${package.num_prompts.toLocaleString()} prompts` }}
+                </div>
               </div>
             </div>
           </div>
@@ -239,7 +253,43 @@
         <!-- Report Image -->
         <img :src="reportImageUrl" alt="Generated Plot" v-if="reportImageUrl"
           class="mx-auto rounded-lg shadow-lg">
+        <!-- Logs Section -->
+        <section class="bg-dark-card rounded-lg p-6 shadow-lg mt-8">
+          <div @click="toggleLogs"
+            class="flex justify-between items-center cursor-pointer">
+            <h2 class="text-2xl font-bold">Logs</h2>
+            <svg :class="{'rotate-180': showLogs}"
+              class="w-6 h-6 transition-transform duration-200"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <div v-show="showLogs" class="mt-4">
+            <div class="mb-4 flex justify-between items-center">
+              <span class="text-sm text-gray-400">Showing latest {{
+                Math.min(logs.length, maxDisplayedLogs) }} of {{ logs.length }}
+                logs</span>
+              <button @click="downloadLogs"
+                class="bg-dark-accent-green text-dark-bg rounded-lg px-4 py-2 text-sm font-medium hover:bg-opacity-80 transition-colors">
+                Download Logs
+              </button>
+            </div>
+            <div class="bg-dark-bg p-4 rounded-lg max-h-96 overflow-y-auto">
+              <div v-for="(log, index) in displayedLogs" :key="index"
+                class="mb-2 last:mb-0">
+                <span class="text-dark-accent-green">{{ log.timestamp }}</span>
+                <span class="ml-2"
+                  :class="{'text-dark-accent-red': log.level === 'ERROR'}">{{
+                  log.message }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
     </div>
 
     <script src="main.js"></script>

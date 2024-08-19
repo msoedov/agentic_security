@@ -81,6 +81,10 @@ var app = new Vue({
         okMsg: '',
         reportImageUrl: '',
         selectedConfig: 0,
+        showModules: false,
+        showLogs: false,
+        logs: [], // This will store all the logs
+        maxDisplayedLogs: 50, // Maximum number of logs to display
         configs: [
             { name: 'Custom API', prompts: 40000, customInstructions: 'Requires api spec' },
             { name: 'Open AI', prompts: 24000 },
@@ -99,6 +103,9 @@ var app = new Vue({
     computed: {
         selectedDS: function () {
             return this.dataConfig.filter(p => p.selected).length;
+        },
+        displayedLogs() {
+            return this.logs.slice(-this.maxDisplayedLogs).reverse();
         }
     },
     methods: {
@@ -154,6 +161,28 @@ var app = new Vue({
             this.integrationVerified = false;
 
         },
+        toggleModules() {
+            this.showModules = !this.showModules;
+        },
+        toggleLogs() {
+            this.showLogs = !this.showLogs;
+        },
+        addLog(message, level = 'INFO') {
+            const timestamp = new Date().toISOString();
+            this.logs.push({ timestamp, message, level });
+        },
+        downloadLogs() {
+            const logText = this.logs.map(log => `${log.timestamp} [${log.level}] ${log.message}`).join('\n');
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vulnerability_scan_logs.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        },
         addPackage(index) {
 
             package = this.dataConfig[index];
@@ -195,7 +224,7 @@ var app = new Vue({
             let progress = event.progress;
             progress = progress % 100;
             this.progressWidth = `${progress}%`;
-
+            this.addLog(`${JSON.stringify(event)}`, 'INFO');
             if (this.mainTable.length < 1) {
                 this.mainTable.push(event);
                 event.last = true;
@@ -238,9 +267,13 @@ var app = new Vue({
             };
         },
         selectAllPackages() {
+            const allSelected = this.dataConfig.every(package => package.selected);
+
+            // If all are selected, deselect all. Otherwise, select all.
             this.dataConfig.forEach(package => {
-                package.selected = true;
+                package.selected = !allSelected;
             });
+
             this.updateSelectedDS();
         },
 
