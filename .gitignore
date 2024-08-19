@@ -6,3 +6,5 @@ failures.csv
 runs/
 *.todo
 logs/
+modal_agent.py
+sandbox.py
