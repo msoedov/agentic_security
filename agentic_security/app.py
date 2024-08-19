@@ -139,7 +139,7 @@ def self_probe(probe: Probe):
 
 
 @app.get("/v1/data-config")
-def data_config():
+async def data_config():
     return [m for m in REGISTRY]
 
 
