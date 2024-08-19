@@ -42,6 +42,18 @@ async def root():
     return FileResponse(f"{agentic_security_path}/static/index.html")
 
 
+@app.get("/main.js")
+async def main_js():
+    agentic_security_path = Path(__file__).parent
+    return FileResponse(f"{agentic_security_path}/static/main.js")
+
+
+@app.get("/favicon.ico")
+async def favicon():
+    agentic_security_path = Path(__file__).parent
+    return FileResponse(f"{agentic_security_path}/static/favicon.ico")
+
+
 class LLMInfo(BaseModel):
     spec: str
 

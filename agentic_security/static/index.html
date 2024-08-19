@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,673 +7,244 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.cdnfonts.com/css/technopollas" rel="stylesheet">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    </style>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              technopollas: ['Technopollas', 'sans-serif'],
+            },
             colors: {
-              p0: "#a18072",
-              clifford: '#da373d',
-              soft: "#f5f5f5",
-              "earthy-zen": "#61aaf2",
-              accent: "#4d4c7d",
-               alizarin: {
-                  '50': '#fef2f2',
-                  '100': '#fde3e4',
-                  '200': '#fdcbcd',
-                  '300': '#faa7aa',
-                  '400': '#f57479',
-                  '500': '#eb484e',
-                  '600': '#da373d',
-                  '700': '#b52025',
-                  '800': '#961e22',
-                  '900': '#7d1f22',
-                  '950': '#440b0d',
+              dark: {
+                bg: '#121212',
+                card: '#1E1E1E',
+                text: '#FFFFFF',
+                accent: {
+                  green: '#4CAF50',
+                  red: '#F44336',
+                  orange: '#FF9800',
+                  yellow: '#FFEB3B',
+                },
               },
-              earth: {
-                  1: "#1b1b2f",
-                  2: "#1b1b2f",
-                  3: "#1b1b2f",
-                  4: "#1b1b2f",
-              },
-            }
+            },
+            borderRadius: {
+              'lg': '1rem',
+            },
           }
         }
       }
     </script>
   </head>
-  <body class="bg-soft p-8">
+  <body class="bg-dark-bg text-dark-text font-sans">
     <!-- Vue app root element -->
-    <div id="vue-app">
-      <h4
-        class="-mx-20 px-24 text-center bg-earthy-zen py-4 text-l text-white text-dark-primary ">🚀
-        NEW: Star Agentic Security on <a
-          href="https://github.com/msoedov/agentic_security"
-          target="_blank"
-          class="text-dark-primary underline"
-          data-faitracker-click-bind="true">Github</a> 🚀</h4>
+    <div id="vue-app" class="min-h-screen p-8">
+      <!-- New Banner -->
       <div
-        class="header flex items-center justify-between px-4 py-3 text-earth-1 bg-background ">
-        <div class="header__title flex items-center">
-          <i class="text-earth-1" data-lucide="triangle"></i>
-        </div>
-        <div class="header__actions flex items-center space-x-4">
+        class="bg-dark-accent-green text-dark-bg py-4 px-6 rounded-lg mb-8 text-center">
+        <h4 class="text-lg font-semibold">
+          🚀 NEW: Star Agentic Security on
           <a href="https://github.com/msoedov/agentic_security" target="_blank"
-            rel="noreferrer"
-            class="github-link flex items-center gap-4 hover:text-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
-            aria-label="Star on GitHub">
-            <svg aria-hidden="true" focusable="false" class="h-6 w-6"
-              fill="currentColor" viewBox="0 0 496 512"><path
-                d="..."></path></svg>
-            <span class="hidden lg:inline">Docs</span>
-          </a>
-          <!-- <a href="https://github.com/msoedov/agentic_security" target="_blank"
-            rel="noreferrer"
-            class="github-link flex items-center gap-4 hover:text-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
-            aria-label="Star on GitHub">
-            <svg aria-hidden="true" focusable="false" class="h-6 w-6"
-              fill="currentColor" viewBox="0 0 496 512"><path
-                d="..."></path></svg>
-            <span class="hidden lg:inline">Github</span>
-            <i data-lucide="github">I</i>
-          </a> -->
-        </div>
+            class="underline" data-faitracker-click-bind="true">Github</a> 🚀
+        </h4>
       </div>
 
-      <main class="flex flex-col gap-4 p-4 ">
-        <div
-          class="rounded-lg border bg-card text-card-foreground shadow-sm"
-          data-v0-t="card">
-          <div class="flex flex-col space-y-1.5 p-6">
-            <h3
-              class="text-2xl md:text-3xl font-bold tracking-tight leading-none text-center my-2">
-              Agentic LLM Vulnerability Scanner
-              <span
-                class="text-xl font-semibold ml-2 px-2 py-1 rounded-full bg-earth-1 text-gray-100"
-                aria-label="Beta Version" style="vertical-align: middle;">
-                [Beta]
-              </span>
-            </h3>
+      <!-- Header with Github link -->
+      <header class="flex justify-between items-center mb-8 relative">
+        <div class="w-full absolute left-0 flex justify-center">
+          <h1
+            class="text-4xl font-bold text-dark-accent-green"> <span
+              class="font-technopollas text-3xl">Agent</span>
+            Vulnerability Scanner</h1>
+        </div>
+        <div class="w-full flex justify-end relative z-10">
+          <a href="https://github.com/msoedov/agentic_security" target="_blank"
+            rel="noreferrer"
+            class="flex items-center gap-2 text-dark-accent-green hover:underline">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+              <path d="M9 18c-4.51 2-5-2-7-2" />
+            </svg>
+            <span class="hidden md:inline">Docs</span>
+          </a>
+        </div>
+      </header>
 
-            <p class="text-sm text-muted-foreground text-center ">Input the API
-              LLM spec
-              and specify the maximum budget in tokens.</p>
+      <main class="max-w-6xl mx-auto space-y-8">
+        <!-- Config Selection -->
+        <section class="bg-dark-card rounded-lg p-6 shadow-lg">
+          <h2 class="text-2xl font-bold mb-4">Select a Config</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div v-for="(config, index) in configs" :key="index"
+              @click="selectConfig(index)"
+              class="border-2 rounded-lg p-4 flex flex-col items-start transition-all hover:shadow-md cursor-pointer"
+              :class="{'border-dark-accent-green': selectedConfig === index, 'border-gray-600': selectedConfig !== index}">
+              <div class="font-medium mb-2">{{ config.name }}</div>
+              <div class="text-sm text-gray-400">{{config.customInstructions ||
+                'Requires API key'}}</div>
+              <div class="mt-2 text-dark-accent-green font-semibold">API</div>
+            </div>
           </div>
-          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col space-y-4">
-              <div class="text-lg font-semibold">Select a config</div>
-              <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div v-for="(config, index) in configs" :key="index"
-                  @click="selectConfig(index)"
-                  class="border-2 rounded-lg p-4 flex flex-col items-start transition-all hover:shadow-md"
-                  :class="{'border-earth-1': selectedConfig === index, 'border-gray-300': selectedConfig !== index}">
-                  <div class="flex items-center justify-between w-full">
-                    <div class="font-medium"
-                      :class="{'text-earth-1': selectedConfig === index, 'text-gray-800': selectedConfig !== index}">
-                      {{ config.name }}
-                    </div>
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      :class="{'text-earth-1': selectedConfig === index, 'text-gray-600': selectedConfig !== index}">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <div class="text-sm text-gray-600">{{config.customInstructions
-                    || 'Requires API key'}}</div>
-                  <div class="mt-2 text-gray-800 font-semibold">API</div>
-                </div>
+        </section>
+
+        <!-- LLM Spec Input -->
+        <section class="bg-dark-card rounded-lg p-6 shadow-lg">
+          <h2 class="text-2xl font-bold mb-4">LLM API Spec</h2>
+          <label for="llm-spec" class="block text-sm font-medium mb-2">
+            LLM API Spec, PROMPT variable will be replaced with the testing
+            prompt
+          </label>
+          <textarea
+            class="w-full bg-dark-bg text-dark-accent-orange border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-dark-accent-green"
+            id="llm-spec"
+            v-model="modelSpec"
+            @input="adjustHeight"
+            rows="5"
+            placeholder="Enter LLM API Spec here..."></textarea>
+        </section>
+
+        <!-- Budget Slider -->
+        <section class="bg-dark-card rounded-lg p-6 shadow-lg">
+          <h2 class="text-2xl font-bold mb-4">Maximum Budget</h2>
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-lg">1M Tokens</span>
+            <input
+              v-model="budget"
+              @change="updateBudgetFromInput"
+              class="w-20 bg-dark-bg text-dark-text border border-gray-600 rounded-lg p-2 text-center"
+              type="text" />
+            <span class="text-lg">100M Tokens</span>
+          </div>
+          <input
+            v-model="budget"
+            @input="updateBudgetFromSlider"
+            type="range"
+            min="1"
+            max="100"
+            step="1"
+            class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+        </section>
+
+        <!-- Modules Selection -->
+        <section class="bg-dark-card rounded-lg p-6 shadow-lg">
+          <h2 class="text-2xl font-bold mb-4">Modules [{{selectedDS}}
+            selected]</h2>
+          <div class="flex justify-between mb-4">
+            <button @click="selectAllPackages"
+              class="text-dark-accent-green hover:underline">Select All</button>
+            <button @click="deselectAllPackages"
+              class="text-gray-400 hover:underline">Deselect All</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div
+              v-for="(package, index) in dataConfig"
+              :key="index"
+              @click="addPackage(index)"
+              class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
+              :class="{'border-dark-accent-green bg-dark-accent-green bg-opacity-20': package.selected, 'border-gray-600': !package.selected}">
+              <div class="font-medium mb-1">{{ package.dataset_name }}</div>
+              <div class="text-sm text-gray-400">{{ package.source ||
+                'Local dataset' }}</div>
+              <div class="mt-2 text-sm font-semibold">
+                {{ package.dynamic ? 'Dynamic dataset' :
+                `${package.num_prompts.toLocaleString()} prompts` }}
               </div>
             </div>
           </div>
+        </section>
 
-          <div class="p-6">
-            <div class="grid gap-4">
-              <div class="grid gap-1.5">
-                <label
-                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  for="llm-spec">
-                  LLM API Spec, PROMPT variable will be replaced with the
-                  testing prompt
-
-                </label>
-                <textarea
-                  class="border-input shadow appearance-none border custom-textarea rounded  w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="llm-spec"
-                  v-model="modelSpec"
-                  @input="adjustHeight"></textarea>
-              </div>
-
-              <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                  <label for="max-budget"
-                    class="text-sm font-medium text-gray-700">
-                    Maximum Budget
-                  </label>
-                  <div class="flex items-center space-x-2">
-                    <input
-                      id="budget-display"
-                      v-model="budget"
-                      @change="updateBudgetFromInput"
-                      class="w-20 px-2 py-1 text-right text-sm font-medium text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      type="text" />
-                    <span class="text-sm font-medium text-gray-600">M
-                      Tokens</span>
-                  </div>
-                </div>
-
-                <div class="relative">
-                  <input
-                    id="max-budget"
-                    v-model="budget"
-                    @input="updateBudgetFromSlider"
-                    type="range"
-                    min="1"
-                    max="100"
-                    step="1"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                  <div
-                    class="absolute -top-6 left-0 w-full flex justify-between text-xs text-gray-600">
-                    <span>1M</span>
-                    <span>25M</span>
-                    <span>50M</span>
-                    <span>75M</span>
-                    <span>100M</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Modules Selection -->
-              <div class="border border-gray-200 rounded-md">
-                <button
-                  @click="toggleDatasets"
-                  class="flex justify-between items-center w-full px-4 py-3 text-left text-gray-700 font-medium bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-inset">
-                  <span>Modules [{{selectedDS}} selected]</span>
-                  <svg :class="{'rotate-180': showDatasets}"
-                    class="h-5 w-5 text-gray-500"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </button>
-                <div v-show="showDatasets" class="p-4 bg-white">
-                  <div class="flex justify-between mb-4">
-                    <button
-                      @click="selectAllPackages"
-                      class="px-3 py-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline">
-                      Select All
-                    </button>
-                    <button
-                      @click="deselectAllPackages"
-                      class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-500 focus:outline-none focus:underline">
-                      Deselect All
-                    </button>
-                  </div>
-                  <div
-                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <div
-                      v-for="(package, index) in dataConfig"
-                      :key="index"
-                      @click="addPackage(index)"
-                      class="border rounded-md p-3 cursor-pointer transition-all hover:shadow-md"
-                      :class="{'border-indigo-500 bg-indigo-50': package.selected, 'border-gray-200': !package.selected}">
-                      <div class="font-medium"
-                        :class="{'text-indigo-700': package.selected, 'text-gray-900': !package.selected}">
-                        {{ package.dataset_name }}
-                      </div>
-                      <div class="text-sm text-gray-500 mt-1">{{ package.source
-                        || 'Local dataset' }}</div>
-                      <div class="mt-2 text-sm font-semibold"
-                        :class="{'text-indigo-600': package.selected, 'text-gray-700': !package.selected}">
-                        {{ package.dynamic ? 'Dynamic dataset' :
-                        `${package.num_prompts.toLocaleString()} prompts` }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-                role="alert" v-if="errorMsg">
-                <strong class="font-bold">Oops!</strong>
-                <span class="block sm:inline">{{errorMsg}}</span>
-                <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-                  <svg class="fill-current h-6 w-6 text-red-500" role="button"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <title>Close</title>
-                    <path
-                      d="M14.348 14.849a1.02 1.02 0 0 1-1.414 0L10 11.414 7.656 13.758a1.02 1.02 0 0 1-1.414 0 1.02 1.02 0 0 1 0-1.414l2.344-2.344-2.344-2.344a1.02 1.02 0 1 1 1.414-1.414L10 8.586l2.344-2.344a1.02 1.02 0 1 1 1.414 1.414L11.414 10l2.344 2.344a1.02 1.02 0 0 1 0 1.414z" />
-                  </svg>
-                </span>
-              </div>
-              <div
-                class="border-accent text-earth-2 px-4 py-3 rounded relative"
-                role="alert" v-if="okMsg">
-                <strong class="font-bold">></strong>
-
-                <span class="block sm:inline">{{okMsg}}</span>
-                <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-                  <svg class="fill-current h-6 w-6 text-earth-2" role="button"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <title>Close</title>
-                    <path
-                      d="M14.348 14.849a1.02 1.02 0 0 1-1.414 0L10 11.414 7.656 13.758a1.02 1.02 0 0 1-1.414 0 1.02 1.02 0 0 1 0-1.414l2.344-2.344-2.344-2.344a1.02 1.02 0 1 1 1.414-1.414L10 8.586l2.344-2.344a1.02 1.02 0 1 1 1.414 1.414L11.414 10l2.344 2.344a1.02 1.02 0 0 1 0 1.414z" />
-                  </svg>
-                </span>
-              </div>
-
-              <div class="flex gap-4">
-
-                <button
-                  @click="verifyIntegration"
-                  class="inline-flex items-center text-gray-100 justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-earth-1 text-earth-foreground hover:bg-earth-1/90 h-10 px-4 py-2">
-                  Verify Integration
-
-                </button>
-                <button
-                  @click="startScan"
-                  class="inline-flex text-gray-100 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-earth-1 text-earth-foreground hover:bg-earth-1/90 h-10 px-4 py-2">
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                    width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-arrow-right mr-1"><path
-                      d="M5 12h14"></path><path
-                      d="m12 5 7 7-7 7"></path></svg>
-                  Run Scan
-                  <span class="sr-only">(Initiates the security scan)</span>
-                </button>
-              </div>
-            </div>
-          </div>
+        <!-- Error and Success Messages -->
+        <div v-if="errorMsg"
+          class="bg-dark-accent-red bg-opacity-20 border border-dark-accent-red text-dark-accent-red px-4 py-3 rounded-lg relative"
+          role="alert">
+          <strong class="font-bold">Oops!</strong>
+          <span class="block sm:inline">{{errorMsg}}</span>
+        </div>
+        <div v-if="okMsg"
+          class="bg-dark-accent-green bg-opacity-20 border border-dark-accent-green text-dark-accent-green px-4 py-3 rounded-lg relative"
+          role="alert">
+          <strong class="font-bold">&gt;</strong>
+          <span class="block sm:inline">{{okMsg}}</span>
         </div>
 
+        <!-- Action Buttons -->
+        <section class="flex justify-center space-x-4">
+          <button
+            @click="verifyIntegration"
+            class="bg-dark-accent-orange text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors">
+            Verify Integration
+          </button>
+          <button
+            @click="startScan"
+            class="bg-dark-accent-green text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="mr-2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Run Scan
+          </button>
+        </section>
+
+        <!-- Progress Bar -->
         <div id="progress"
-          class="w-24 bg-earth-1 rounded-full h-2 overflow-hidden"
+          class="bg-dark-accent-green rounded-full h-2 transition-all duration-500 ease-in-out"
           v-bind:style="{width: progressWidth}">
         </div>
-        <div
-          class="rounded-lg border bg-card text-card-foreground shadow-sm"
-          data-v0-t="card">
-          <div class="flex flex-col space-y-1.5 p-6">
-            <h3
-              class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">Scan
-              Results</h3>
-          </div>
-          <div class="p-6">
-            <div class="relative w-full overflow-auto">
-              <table class="w-full caption-bottom text-sm">
-                <thead class="[&amp;_tr]:border-b">
-                  <tr
-                    class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <th
-                      class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                      Vulnerability Module
-                    </th>
-                    <th
-                      class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                      % Strength
-                    </th>
-                    <th
-                      class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                      Number of Tokens
-                    </th>
-                    <th
-                      class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                      Cost (in gpt-3 tokens)
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="[&amp;_tr:last-child]:border-0">
-                  <tr v-for="result in mainTable"
-                    class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                    :class="{'text-accent': result.last, 'text-gray-800': !result.last}">
 
-                    <td
-                      class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{result.module}}</td>
-                    <td
-                      class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0"
-                      :class="getFailureRateColor(result.failureRate)">{{(100
-                      - result.failureRate).toFixed(2)}}</td>
-                    <td
-                      class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">{{result.tokens}}k</td>
-                    <td
-                      class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">${{result.cost.toFixed(2)}}</td>
-                  </tr>
-
-                </tbody>
-              </table>
-            </div>
+        <!-- Scan Results -->
+        <section class="bg-dark-card rounded-lg p-6 shadow-lg"
+          v-if="mainTable.length > 0">
+          <h2 class="text-2xl font-bold mb-4">Scan Results</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b border-gray-600">
+                  <th class="p-3">Vulnerability Module</th>
+                  <th class="p-3">% Strength</th>
+                  <th class="p-3">Number of Tokens</th>
+                  <th class="p-3">Cost (in gpt-3 tokens)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="result in mainTable" class="border-b border-gray-700"
+                  :class="{'text-dark-accent-green': result.last, 'text-gray-300': !result.last}">
+                  <td class="p-3">{{result.module}}</td>
+                  <td class="p-3 text-gray-900"
+                    :class="getFailureRateColor(result.failureRate)">
+                    {{(100 - result.failureRate).toFixed(2)}}
+                  </td>
+                  <td class="p-3">{{result.tokens}}k</td>
+                  <td class="p-3">${{result.cost.toFixed(2)}}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
+        </section>
+
+        <!-- Download Button -->
         <button
           @click="downloadFailures"
-          class="inline-flex text-gray-100 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-earth-1 text-earth-foreground hover:bg-earth-1/90 h-10 px-4 py-2">
+          class="bg-dark-accent-yellow text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors">
           Download failures
         </button>
-        <img :src="reportImageUrl" alt="Generated Plot" v-if="reportImageUrl">
 
+        <!-- Report Image -->
+        <img :src="reportImageUrl" alt="Generated Plot" v-if="reportImageUrl"
+          class="mx-auto rounded-lg shadow-lg">
       </main>
-
     </div>
 
+    <script src="main.js"></script>
     <script>
-      let URL = window.location.href;
-      if (URL.endsWith('/')) {
-          URL = URL.slice(0, -1);
-      }
-
-      // Vue application
-      let LLM_SPECS = [
-        `POST ${URL}/v1/self-probe
-Authorization: Bearer XXXXX
-Content-Type: application/json
-
-{
-    "prompt": "<<PROMPT>>"
-}
-
-`,
-        `POST https://api.openai.com/v1/chat/completions
-Authorization: Bearer sk-xxxxxxxxx
-Content-Type: application/json
-
-{
-     "model": "gpt-3.5-turbo",
-     "messages": [{"role": "user", "content": "<<PROMPT>>"}],
-     "temperature": 0.7
-}
-`,
-        `POST https://api.replicate.com/v1/models/mistralai/mixtral-8x7b-instruct-v0.1/predictions
-Authorization: Bearer $APIKEY
-Content-Type: application/json
-
-{
-    "input": {
-      "top_k": 50,
-      "top_p": 0.9,
-      "prompt": "Write a bedtime story about neural networks I can read to my toddler",
-      "temperature": 0.6,
-      "max_new_tokens": 1024,
-      "prompt_template": "<s>[INST] <<PROMPT>> [/INST] ",
-      "presence_penalty": 0,
-      "frequency_penalty": 0
-    }
-  }
-`,
-        `POST https://api.groq.com/v1/request_manager/text_completion
-Authorization: Bearer $APIKEY
-Content-Type: application/json
-
-{
-    "model_id": "codellama-34b",
-    "system_prompt": "You are helpful and concise coding assistant",
-    "user_prompt": "<<PROMPT>>"
-}
-`,
-        `POST https://api.together.xyz/v1/chat/completions
-Authorization: Bearer $TOGETHER_API_KEY
-Content-Type: application/json
-
-{
-    "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "messages": [
-        {"role": "system", "content": "You are an expert travel guide"},
-        {"role": "user", "content": "<<PROMPT>>"}
-    ]
-}
-`,
-      ]
-      var app = new Vue({
-        el: '#vue-app',
-        data: {
-          progressWidth: '0%',
-          modelSpec: LLM_SPECS[0],
-          budget: 50,
-          showDatasets: false,
-          scanResults: [],
-          mainTable: [],
-          integrationVerified: false,
-          scanRunning: false,
-          errorMsg: '',
-          maskMode: false,
-          okMsg: '',
-          reportImageUrl: '',
-          selectedConfig: 0,
-          configs: [
-            { name: 'Custom API', prompts: 40000, customInstructions: 'Requires api spec' },
-            { name: 'Open AI', prompts: 24000 },
-            { name: 'Replicate', prompts: 40000 },
-            { name: 'Groq', prompts: 40000 },
-            { name: 'Together.ai', prompts: 40000 },
-          ],
-          dataConfig: [],
-        },
-        mounted: function() {
-          console.log('Vue app mounted');
-          this.adjustHeight({ target: document.getElementById('llm-spec') });
-          // this.startScan();
-          this.loadConfigs();
-        },
-        computed : {
-          selectedDS: function() {
-            return this.dataConfig.filter(p => p.selected).length;
-          }
-        },
-        methods: {
-          downloadFailures() {
-            window.open('/failures', '_blank');
-          },
-          toggleDatasets() {
-              this.showDatasets = !this.showDatasets;
-          },
-          hide() {
-              this.maskMode = !this.maskMode;
-          },
-          verifyIntegration: async function() {
-              let payload = {
-                spec: this.modelSpec,
-            };
-            const response = await fetch(`${URL}/verify`, {
-                  method: 'POST',
-                  headers: {
-                  'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(payload),
-              });
-            console.log(response);
-            let txt = await response.text();
-            if (!response.ok) {
-                this.errorMsg = 'Integration verification failed:' + txt;
-            } else {
-                this.errorMsg = '';
-                this.okMsg = 'Integration verified';
-                this.integrationVerified = true;
-                // console.log('Integration verified', this.integrationVerified);
-                // this.$forceUpdate();
-
-            }
-          },
-          loadConfigs: async function() {
-            const response = await fetch(`${URL}/v1/data-config`, {
-                  method: 'GET',
-                  headers: {
-                  'Content-Type': 'application/json',
-                  },
-              });
-              console.log(response);
-              this.dataConfig = await response.json();
-            },
-            selectConfig(index) {
-                this.selectedConfig = index;
-                this.modelSpec = LLM_SPECS[index];
-                this.adjustHeight({ target: document.getElementById('llm-spec') });
-                // this.adjustHeight({ target: document.getElementById('llm-spec') });
-                this.errorMsg = '';
-                this.integrationVerified = false;
-
-            },
-            addPackage(index) {
-
-                package = this.dataConfig[index];
-                package.selected = !package.selected;
-
-            },
-              getFailureRateColor(failureRate) {
-            // Uncomment the following line if you want to invert the failure rate
-            failureRate = 100 - failureRate;
-            if (failureRate >= 95) return 'bg-gray-100';
-            else if (failureRate >= 85) return 'bg-yellow-50';
-            else if (failureRate >= 75) return 'bg-yellow-50';
-            else if (failureRate >= 65) return 'bg-red-50';
-            else if (failureRate >= 55) return 'bg-red-100';
-            else if (failureRate >= 35) return 'bg-red-100';
-            else if (failureRate >= 25) return 'bg-red-200';
-            else if (failureRate >= 15) return 'bg-red-200';
-            else if (failureRate >= 10) return 'bg-red-200';
-            else if (failureRate >= 5) return 'bg-red-200';
-            else if (failureRate > 0) return 'bg-red-300';
-            else return 'bg-gray-800'; // This can be the default for failureRate of 0 or less
-          },
-
-           adjustHeight(event) {
-                const element = event.target;
-                // Reset height to ensure accurate measurement
-                element.style.height = 'auto';
-                // Adjust height based on scrollHeight
-                element.style.height = `${element.scrollHeight+100}px`;
-            },
-          newEvent: function(event) {
-
-            if (event.status) {
-              this.okMsg = `${event.module}`;
-              return
-            }
-            console.log('New event');
-            //  { "module": "Module 49", "tokens": 480, "cost": 4.800000000000001, "progress": 9.8 }
-            let progress = event.progress;
-            progress = progress % 100;
-            this.progressWidth = `${progress}%`;
-
-            if (this.mainTable.length < 1) {
-                this.mainTable.push(event);
-                event.last = true;
-
-                return
-            }
-            let last = this.mainTable[this.mainTable.length - 1];
-            if (last.module === event.module) {
-                last.tokens = event.tokens;
-                last.cost = event.cost;
-                last.progress = event.progress;
-                last.failureRate = event.failureRate;
-            } else {
-                last.last = false;
-                this.mainTable.push(event);
-                event.last = true;
-                this.newRow()
-            }
-            this.okMsg = `New event: ${event.module}: ${event.progress}%`;
-
-          },
-          newRow: async function() {
-            console.log('New row');
-            let payload = {
-                table: this.mainTable,
-            };
-            const response = await fetch(`${URL}/plot.jpeg`, {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-                  // Convert image response to a data URL for the <img> src
-            const blob = await response.blob();
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = () => {
-              this.reportImageUrl = reader.result;
-            };
-          },
-          selectAllPackages() {
-            this.dataConfig.forEach(package => {
-              package.selected = true;
-            });
-            this.updateSelectedDS();
-          },
-
-          deselectAllPackages() {
-            this.dataConfig.forEach(package => {
-              package.selected = false;
-            });
-            this.updateSelectedDS();
-          },
-
-          updateSelectedDS() {
-            this.selectedDS = this.dataConfig.filter(package => package.selected).length;
-          },
-          updateBudgetFromSlider(event) {
-            this.budget = parseInt(event.target.value);
-          },
-          updateBudgetFromInput(event) {
-            let value = parseInt(event.target.value);
-            if (isNaN(value) || value < 1) {
-              value = 1;
-            } else if (value > 100) {
-              value = 100;
-            }
-            this.budget = value;
-          },
-          startScan: async function() {
-            let payload = {
-                maxBudget: this.budget,
-                llmSpec: this.modelSpec,
-                datasets: this.dataConfig,
-            };
-            const response = await fetch(`${URL}/scan`, {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-            this.okMsg = 'Scan started';
-            this.mainTable = [];
-            const reader = response.body.getReader();
-            let receivedLength = 0; // received that many bytes at the moment
-            let chunks = []; // array of received binary chunks (comprises the body)
-            while(true) {
-                const {done, value} = await reader.read();
-
-                if (done) {
-                break;
-                }
-
-                chunks.push(value);
-                receivedLength += value.length;
-
-                const chunkAsString = new TextDecoder("utf-8").decode(value);
-                const chunkAsLines = chunkAsString.split('\n').filter(line => line.trim());
-
-                self = this;
-                chunkAsLines.forEach(line => {
-                try {
-                    const result = JSON.parse(line);
-                    self.scanResults.push(result);
-                    self.newEvent(result);
-                } catch (e) {
-                    console.error('Error parsing chunk:', e);
-                }
-                });
-        }}}
-      });
+      lucide.createIcons();
     </script>
-    <script>
-    lucide.createIcons();
-  </script>
   </body>
 </html>
