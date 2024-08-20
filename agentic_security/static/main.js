@@ -83,6 +83,10 @@ var app = new Vue({
         selectedConfig: 0,
         showModules: false,
         showLogs: false,
+        statusDotClass: 'bg-gray-500', // Default status dot class
+        statusText: 'Verified', // Default status text
+        statusClass: 'bg-green-500 text-dark-bg', // Default status class
+        showLLMSpec: true, // Default to showing the LLM Spec Input
         logs: [], // This will store all the logs
         maxDisplayedLogs: 50, // Maximum number of logs to display
         configs: [
@@ -109,6 +113,22 @@ var app = new Vue({
         }
     },
     methods: {
+        updateStatusDot(ok) {
+            if (ok) {
+                this.statusDotClass = 'bg-green-500'; // Green when expanded
+            } else if (!ok) {
+                this.statusDotClass = 'bg-orange-500'; // Orange if collapsed with content
+            } else {
+                this.statusDotClass = 'bg-gray-500'; // Gray if collapsed without content
+            }
+        },
+        toggleLLMSpec() {
+            this.showLLMSpec = !this.showLLMSpec;
+        },
+        adjustHeight(event) {
+            event.target.style.height = 'auto';
+            event.target.style.height = event.target.scrollHeight + 'px';
+        },
         downloadFailures() {
             window.open('/failures', '_blank');
         },
@@ -132,9 +152,11 @@ var app = new Vue({
             console.log(response);
             let txt = await response.text();
             if (!response.ok) {
+                this.updateStatusDot(false);
                 this.errorMsg = 'Integration verification failed:' + txt;
             } else {
                 this.errorMsg = '';
+                this.updateStatusDot(true);
                 this.okMsg = 'Integration verified';
                 this.integrationVerified = true;
                 // console.log('Integration verified', this.integrationVerified);
@@ -158,8 +180,8 @@ var app = new Vue({
             this.adjustHeight({ target: document.getElementById('llm-spec') });
             // this.adjustHeight({ target: document.getElementById('llm-spec') });
             this.errorMsg = '';
+            this.okMsg = '';
             this.integrationVerified = false;
-
         },
         toggleModules() {
             this.showModules = !this.showModules;
@@ -300,6 +322,7 @@ var app = new Vue({
             this.budget = value;
         },
         startScan: async function () {
+            this.showLLMSpec = false;
             let payload = {
                 maxBudget: this.budget,
                 llmSpec: this.modelSpec,
