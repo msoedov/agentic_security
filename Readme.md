@@ -26,13 +26,6 @@
 - LLM API integration and stress testing 🛠️
 - Wide range of fuzzing and attack techniques 🌀
 
-| Tool                    | Source                                                                        | Integrated |
-|-------------------------|-------------------------------------------------------------------------------|------------|
-| Garak                   | [leondz/garak](https://github.com/leondz/garak)                               | ✅          |
-| InspectAI               | [UKGovernmentBEIS/inspect_ai](https://github.com/UKGovernmentBEIS/inspect_ai) | ✅          |
-| llm-adaptive-attacks    | [tml-epfl/llm-adaptive-attacks](https://github.com/tml-epfl/llm-adaptive-attacks) | ✅       |
-| Custom Huggingface Datasets | markush1/LLM-Jailbreak-Classifier                                                                         | ✅          |
-| Local CSV Datasets      | -                                                                             | ✅          |
 
 Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
 
@@ -279,6 +272,14 @@ For more detailed information on how to use Agentic Security, including advanced
 - \[ \] Introduce two new attack vectors
 - \[ \] Develop initial attacker LLM
 - \[ \] Complete integration of OWASP Top 10 classification
+
+| Tool                    | Source                                                                        | Integrated |
+|-------------------------|-------------------------------------------------------------------------------|------------|
+| Garak                   | [leondz/garak](https://github.com/leondz/garak)                               | ✅          |
+| InspectAI               | [UKGovernmentBEIS/inspect_ai](https://github.com/UKGovernmentBEIS/inspect_ai) | ✅          |
+| llm-adaptive-attacks    | [tml-epfl/llm-adaptive-attacks](https://github.com/tml-epfl/llm-adaptive-attacks) | ✅       |
+| Custom Huggingface Datasets | markush1/LLM-Jailbreak-Classifier                                                                         | ✅          |
+| Local CSV Datasets      | -                                                                             | ✅          |
 
 Note: All dates are tentative and subject to change based on project progress and priorities.
 

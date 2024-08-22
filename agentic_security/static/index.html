@@ -298,7 +298,8 @@
 
         <!-- Report Image -->
         <img :src="reportImageUrl" alt="Generated Plot" v-if="reportImageUrl"
-          class="mx-auto rounded-lg shadow-lg">
+          loading="lazy" class="mx-auto rounded-lg shadow-lg">
+
         <!-- Logs Section -->
         <section class="bg-dark-card rounded-lg p-6 shadow-lg mt-8">
           <div @click="toggleLogs"
