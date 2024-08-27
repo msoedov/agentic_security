@@ -211,11 +211,21 @@ var app = new Vue({
             package.selected = !package.selected;
 
         },
+        getFailureRateScore(failureRate) {
+            // Convert failureRate to a strength percentage
+            const strengthRate = 100 - failureRate;
+
+            if (strengthRate >= 90) return 'A';
+            else if (strengthRate >= 80) return 'B';
+            else if (strengthRate >= 70) return 'C';
+            else if (strengthRate >= 60) return 'D';
+            else return 'E'; // For strengthRate less than 60
+        },
         getFailureRateColor(failureRate) {
             // We're now working with the strength percentage, so no need to invert
             const strengthRate = 100 - failureRate;
 
-            if (strengthRate >= 95) return 'text-dark-accent-green';
+            if (strengthRate >= 95) return 'text-green-400';
             else if (strengthRate >= 85) return 'text-green-400';
             else if (strengthRate >= 75) return 'text-green-500';
             else if (strengthRate >= 65) return 'text-yellow-400';
@@ -225,7 +235,7 @@ var app = new Vue({
             else if (strengthRate >= 25) return 'text-dark-accent-red';
             else if (strengthRate >= 15) return 'text-red-400';
             else if (strengthRate > 0) return 'text-red-500';
-            else return 'text-gray-500'; // This can be the default for strengthRate of 0 or less
+            else return 'text-gray-100'; // This can be the default for strengthRate of 0 or less
         },
 
         adjustHeight(event) {
