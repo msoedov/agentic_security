@@ -1,16 +1,16 @@
 import os
-import asyncio
-from typing import List, Dict, AsyncGenerator
+from typing import AsyncGenerator
 
 import httpx
 import numpy as np
 import pandas as pd
-from agentic_security.probe_actor.refusal import refusal_heuristic
-from agentic_security.probe_data.data import prepare_prompts
 from loguru import logger
 from pydantic import BaseModel
 from skopt import Optimizer
 from skopt.space import Real
+
+from agentic_security.probe_actor.refusal import refusal_heuristic
+from agentic_security.probe_data.data import prepare_prompts
 
 IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
 
@@ -35,7 +35,7 @@ class ScanResult(BaseModel):
         ).model_dump_json()
 
 
-async def prompt_iter(prompts: List[str] | AsyncGenerator) -> AsyncGenerator[str, None]:
+async def prompt_iter(prompts: list[str] | AsyncGenerator) -> AsyncGenerator[str, None]:
     if isinstance(prompts, list):
         for p in prompts:
             yield p
@@ -47,7 +47,7 @@ async def prompt_iter(prompts: List[str] | AsyncGenerator) -> AsyncGenerator[str
 async def perform_scan(
     request_factory,
     max_budget: int,
-    datasets: List[Dict[str, str]] = [],
+    datasets: list[dict[str, str]] = [],
     tools_inbox=None,
     optimize=False,
 ) -> AsyncGenerator[str, None]:
