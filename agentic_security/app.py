@@ -77,6 +77,7 @@ class Scan(BaseModel):
     llmSpec: str
     maxBudget: int
     datasets: list[dict] = []
+    optimize: bool = False
 
 
 class ScanResult(BaseModel):
@@ -97,6 +98,7 @@ def streaming_response_generator(scan_parameters: Scan):
             max_budget=scan_parameters.maxBudget,
             datasets=scan_parameters.datasets,
             tools_inbox=tools_inbox,
+            optimize=scan_parameters.optimize,
         ):
             yield scan_result + "\n"  # Adding a newline for separation
 

@@ -71,6 +71,8 @@ var app = new Vue({
         progressWidth: '0%',
         modelSpec: LLM_SPECS[0],
         budget: 50,
+        showParams: false,
+        optimize: false,
         showDatasets: false,
         scanResults: [],
         mainTable: [],
@@ -237,7 +239,9 @@ var app = new Vue({
             else if (strengthRate > 0) return 'text-red-500';
             else return 'text-gray-100'; // This can be the default for strengthRate of 0 or less
         },
-
+        toggleParams() {
+            this.showParams = !this.showParams;
+        },
         adjustHeight(event) {
             const element = event.target;
             // Reset height to ensure accurate measurement
@@ -337,6 +341,7 @@ var app = new Vue({
                 maxBudget: this.budget,
                 llmSpec: this.modelSpec,
                 datasets: this.dataConfig,
+                optimize: this.optimize,
             };
             const response = await fetch(`${URL}/scan`, {
                 method: 'POST',
