@@ -72,6 +72,9 @@ var app = new Vue({
         modelSpec: LLM_SPECS[0],
         budget: 50,
         showParams: false,
+        enableChartDiagram: true,
+        enableLogging: false,
+        enableConcurrency: false,
         optimize: false,
         showDatasets: false,
         scanResults: [],
@@ -283,6 +286,9 @@ var app = new Vue({
 
         },
         newRow: async function () {
+            if (!this.enableChartDiagram) {
+                return
+            }
             console.log('New row');
             let payload = {
                 table: this.mainTable,

@@ -200,10 +200,11 @@
                 step="1"
                 class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
             </section>
+
             <!-- Optimize Toggle -->
             <div class="flex flex-col mt-6 mr-10 ml-10">
               <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-semibold">Optimize Test?</h3>
+                <h3 class="text-lg font-semibold">Optimize Test</h3>
                 <label class="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" v-model="optimize"
                     class="sr-only peer">
@@ -211,11 +212,58 @@
                     class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-dark-accent-green rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-dark-accent-green"></div>
                 </label>
               </div>
-              <p class="text-sm text-gray-400 mt-2">
+              <p class="text-sm text-gray-400 mt-2 mb-6">
                 When enabled, this option runs a Bayesian optimization loop to
                 find the most effective test parameters. This can potentially
                 reduce the cost and the total running time of your vulnerability
                 scan, but may reduce accuracy.
+              </p>
+
+              <!-- Chart Diagram Toggle -->
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold">Enable Chart Diagram</h3>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" v-model="enableChartDiagram"
+                    class="sr-only peer">
+                  <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-dark-accent-green rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-dark-accent-green"></div>
+                </label>
+              </div>
+              <p class="text-sm text-gray-400 mt-2 mb-6">
+                When enabled, a chart diagram will be generated to visualize the
+                results of your vulnerability scan.
+              </p>
+
+              <!-- Logging Toggle -->
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold">Enable Detailed Logging</h3>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" v-model="enableLogging"
+                    class="sr-only peer">
+                  <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-dark-accent-green rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-dark-accent-green"></div>
+                </label>
+              </div>
+              <p class="text-sm text-gray-400 mt-2 mb-6">
+                When enabled, detailed logs will be generated during the
+                vulnerability scan process. This can be useful for debugging and
+                in-depth analysis.
+              </p>
+
+              <!-- Concurrency Toggle -->
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold">Enable Concurrency</h3>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" v-model="enableConcurrency"
+                    class="sr-only peer">
+                  <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-dark-accent-green rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-dark-accent-green"></div>
+                </label>
+              </div>
+              <p class="text-sm text-gray-400 mt-2">
+                When enabled, the vulnerability scan will run multiple tests
+                concurrently. This can significantly reduce the total scan time
+                but may increase resource usage.
               </p>
             </div>
           </div>
