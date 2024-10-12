@@ -55,12 +55,6 @@ repos:
         language_version: python3
 
 
-  - repo: https://github.com/myint/docformatter
-    rev: v1.4
-    hooks:
-      - id: docformatter
-        args: [--in-place]
-
   - repo: https://github.com/hadialqattan/pycln
     rev: v2.1.1 # Possible releases: https://github.com/hadialqattan/pycln/releases
     hooks:
