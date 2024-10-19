@@ -1,3 +1,4 @@
+import importlib.resources as pkg_resources
 import os
 
 import joblib
@@ -69,9 +70,27 @@ class RefusalClassifier:
         """
         Load the trained model, vectorizer, and scaler from disk.
         """
-        self.model = joblib.load(self.model_path)
-        self.vectorizer = joblib.load(self.vectorizer_path)
-        self.scaler = joblib.load(self.scaler_path)
+        try:
+            self.model = joblib.load(self.model_path)
+            self.vectorizer = joblib.load(self.vectorizer_path)
+            self.scaler = joblib.load(self.scaler_path)
+        except FileNotFoundError:
+            # Load from package resources
+            package = (
+                __package__  # This should be 'agentic_security.refusal_classifier'
+            )
+
+            # Load model
+            with pkg_resources.open_binary(package, "oneclass_svm_model.joblib") as f:
+                self.model = joblib.load(f)
+
+            # Load vectorizer
+            with pkg_resources.open_binary(package, "tfidf_vectorizer.joblib") as f:
+                self.vectorizer = joblib.load(f)
+
+            # Load scaler
+            with pkg_resources.open_binary(package, "scaler.joblib") as f:
+                self.scaler = joblib.load(f)
 
     def is_refusal(self, text):
         """
