@@ -1,9 +1,10 @@
+import os
+
+import joblib
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import OneClassSVM
 from sklearn.preprocessing import StandardScaler
-import joblib
-import os
+from sklearn.svm import OneClassSVM
 
 
 class RefusalClassifier:
