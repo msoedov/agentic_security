@@ -33,6 +33,9 @@ app.add_middleware(
 )
 
 tools_inbox = Queue()
+# Global stop event for cancelling scans
+stop_event = Event()  # Added stop_event to cancel the scan
+
 FEATURE_PROXY = False
 
 
@@ -99,6 +102,7 @@ def streaming_response_generator(scan_parameters: Scan):
             datasets=scan_parameters.datasets,
             tools_inbox=tools_inbox,
             optimize=scan_parameters.optimize,
+            stop_event=stop_event,  # Pass the stop_event to the generator
         ):
             yield scan_result + "\n"  # Adding a newline for separation
 
@@ -236,6 +240,12 @@ config.dictConfig(
         },
     }
 )
+
+
+@app.post("/stop")
+async def stop_scan():
+    stop_event.set()  # Set the stop event to cancel the scan
+    return {"status": "Scan stopped"}
 
 
 class LogNon200ResponsesMiddleware(BaseHTTPMiddleware):

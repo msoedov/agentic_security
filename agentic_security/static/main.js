@@ -341,6 +341,15 @@ var app = new Vue({
             }
             this.budget = value;
         },
+        stopScan: async function () {
+            this.scanRunning = false;
+            const response = await fetch(`${URL}/stop`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        },
         startScan: async function () {
             this.showLLMSpec = false;
             let payload = {
@@ -358,6 +367,7 @@ var app = new Vue({
             });
             this.okMsg = 'Scan started';
             this.mainTable = [];
+            this.scanRunning = true;
             const reader = response.body.getReader();
             let receivedLength = 0; // received that many bytes at the moment
             let chunks = []; // array of received binary chunks (comprises the body)

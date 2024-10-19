@@ -1,3 +1,4 @@
+import asyncio
 import os
 from typing import AsyncGenerator
 
@@ -49,6 +50,7 @@ async def perform_scan(
     datasets: list[dict[str, str]] = [],
     tools_inbox=None,
     optimize=False,
+    stop_event: asyncio.Event = None,
 ) -> AsyncGenerator[str, None]:
     if IS_VERCEL:
         yield ScanResult.status_msg(
@@ -81,6 +83,12 @@ async def perform_scan(
         )
         should_stop_early = False
         async for prompt in prompt_iter(module.prompts):
+            if stop_event and stop_event.is_set():  # Check if stop_event is set
+                stop_event.clear()  # Clear the event for the next scan
+                logger.info("Scan stopped by user.")
+                yield ScanResult.status_msg("Scan stopped by user.")
+                return  # Exit the scan gracefully
+
             processed_prompts += 1
             progress = 100 * processed_prompts / total_prompts if total_prompts else 0
 
