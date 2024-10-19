@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "agentic_security"
-version = "0.2.5"
+version = "0.2.6"
 description = "Agentic LLM vulnerability scanner"
 authors = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
@@ -40,6 +40,7 @@ matplotlib = "^3.9.2"
 pydantic = "2.9.2"
 scikit-optimize = "^0.10.2"
 scikit-learn = "1.5.1"
+numpy = "^1.24.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
