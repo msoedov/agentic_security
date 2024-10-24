@@ -39,7 +39,7 @@ colorama = "^0.4.4"
 matplotlib = "^3.9.2"
 pydantic = "2.9.2"
 scikit-optimize = "^0.10.2"
-scikit-learn = "1.5.1"
+scikit-learn = "1.5.2"
 numpy = "^1.24.3"
 
 [tool.poetry.group.dev.dependencies]
