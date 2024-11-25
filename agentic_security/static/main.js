@@ -88,6 +88,7 @@ var app = new Vue({
         selectedConfig: 0,
         showModules: false,
         showLogs: false,
+        showConsentModal: true,
         statusDotClass: 'bg-gray-500', // Default status dot class
         statusText: 'Verified', // Default status text
         statusClass: 'bg-green-500 text-dark-bg', // Default status class
@@ -102,6 +103,13 @@ var app = new Vue({
             { name: 'Together.ai', prompts: 40000 },
         ],
         dataConfig: [],
+    },
+    created() {
+        // Check if consent is already given in local storage
+        const consentGiven = localStorage.getItem('consentGiven');
+        if (consentGiven === 'true') {
+            this.showConsentModal = false; // Don't show the modal if consent was given
+        }
     },
     mounted: function () {
         console.log('Vue app mounted');
@@ -118,6 +126,15 @@ var app = new Vue({
         }
     },
     methods: {
+        acceptConsent() {
+            this.showConsentModal = false; // Close the modal
+            localStorage.setItem('consentGiven', 'true'); // Save consent to local storage
+        },
+        declineConsent() {
+            this.showConsentModal = false; // Close the modal
+            localStorage.setItem('consentGiven', 'false'); // Save decline to local storage
+            window.location.href = 'https://www.google.com'; // Redirect to Google
+        },
         updateStatusDot(ok) {
             if (ok) {
                 this.statusDotClass = 'bg-green-500'; // Green when expanded
