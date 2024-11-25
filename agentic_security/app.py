@@ -1,3 +1,4 @@
+import os
 import random
 from asyncio import Event, Queue
 from datetime import datetime
@@ -38,6 +39,8 @@ stop_event = Event()  # Added stop_event to cancel the scan
 
 FEATURE_PROXY = False
 
+DISABLE_TELEMETRY = os.getenv("DISABLE_TELEMETRY", False)
+
 
 @app.get("/")
 async def root():
@@ -49,6 +52,14 @@ async def root():
 async def main_js():
     agentic_security_path = Path(__file__).parent
     return FileResponse(f"{agentic_security_path}/static/main.js")
+
+
+@app.get("/telemetry.js")
+async def telemetry_js():
+    agentic_security_path = Path(__file__).parent
+    if DISABLE_TELEMETRY:
+        return FileResponse(f"{agentic_security_path}/static/telemetry_disabled.js")
+    return FileResponse(f"{agentic_security_path}/static/telemetry.js")
 
 
 @app.get("/favicon.ico")
