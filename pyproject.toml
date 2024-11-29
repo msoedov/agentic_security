@@ -25,7 +25,7 @@ packages = [{ include = "agentic_security", from = "." }]
 agentic_security = "agentic_security.__main__:entrypoint"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 fastapi = "^0.115.2"
 uvicorn = "^0.32.0"
 fire = "0.7.0"
