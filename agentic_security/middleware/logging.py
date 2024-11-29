@@ -1,6 +1,6 @@
 from fastapi import Request
-from starlette.middleware.base import BaseHTTPMiddleware
 from loguru import logger
+from starlette.middleware.base import BaseHTTPMiddleware
 
 
 class LogNon200ResponsesMiddleware(BaseHTTPMiddleware):

@@ -1,16 +1,17 @@
 import asyncio
 import os
 import random
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
+
 import httpx
 import pandas as pd
 from loguru import logger
 from skopt import Optimizer
 from skopt.space import Real
 
+from agentic_security.models.schemas import ScanResult
 from agentic_security.probe_actor.refusal import refusal_heuristic
 from agentic_security.probe_data.data import prepare_prompts
-from agentic_security.models.schemas import ScanResult
 
 IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
 

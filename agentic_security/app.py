@@ -3,11 +3,11 @@ from .core.logging import setup_logging
 from .middleware.cors import setup_cors
 from .middleware.logging import LogNon200ResponsesMiddleware
 from .routes import (
-    static_router,
-    scan_router,
     probe_router,
     proxy_router,
     report_router,
+    scan_router,
+    static_router,
 )
 
 # Create the FastAPI app

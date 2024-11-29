@@ -4,7 +4,6 @@ from .adaptive_attacks import Module
 
 
 class TestModule:
-
     # Module can be initialized with a list of prompt groups.
     def test_initialize_with_prompt_groups(self):
         prompt_groups = []

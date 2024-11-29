@@ -1,9 +1,11 @@
 import random
 from asyncio import Event
+
 from fastapi import APIRouter
+
+from ..core.app import get_tools_inbox
 from ..models.schemas import CompletionRequest, Settings
 from ..probe_actor.refusal import REFUSAL_MARKS
-from ..core.app import get_tools_inbox
 
 router = APIRouter()
 

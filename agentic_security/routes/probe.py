@@ -1,5 +1,7 @@
 import random
+
 from fastapi import APIRouter
+
 from ..models.schemas import Probe
 from ..probe_actor.refusal import REFUSAL_MARKS
 from ..probe_data import REGISTRY

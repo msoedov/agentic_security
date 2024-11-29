@@ -2,7 +2,6 @@ from agentic_security.http_spec import LLMSpec, parse_http_spec
 
 
 class TestParseHttpSpec:
-
     # Should correctly parse a simple HTTP spec with headers and body
     def test_parse_simple_http_spec(self):
         http_spec = (

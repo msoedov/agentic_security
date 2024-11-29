@@ -1,6 +1,8 @@
 from pathlib import Path
+
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
+
 from ..models.schemas import Settings
 
 router = APIRouter()

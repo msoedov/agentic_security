@@ -14,7 +14,6 @@ Content-Type: application/json
 
 
 class TestAS:
-
     # Handles an empty dataset list.
     def test_class(self):
         llmSpec = SAMPLE_SPEC

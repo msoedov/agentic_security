@@ -152,7 +152,6 @@ def load_dataset_v6():
 
 @cache_to_disk()
 def load_dataset_v7():
-
     splits = {
         "mini_JailBreakV_28K": "JailBreakV_28K/mini_JailBreakV_28K.csv",
         "JailBreakV_28K": "JailBreakV_28K/JailBreakV_28K.csv",
@@ -173,7 +172,6 @@ def load_dataset_v7():
 
 @cache_to_disk()
 def load_dataset_v8():
-
     df = pd.read_csv(
         "hf://datasets/ShawnMenz/jailbreak_sft_rm_ds/jailbreak_sft_rm_ds.csv",
         names=["jailbreak", "prompt"],
@@ -321,7 +319,6 @@ class Stenography:
 
     def apply(self):
         for prompt_group in self.prompt_groups:
-
             size = len(prompt_group.prompts)
             for name, fn in self.fn_library.items():
                 logger.info(f"Applying {name} to {prompt_group.dataset_name}")

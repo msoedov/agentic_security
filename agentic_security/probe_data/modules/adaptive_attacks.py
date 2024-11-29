@@ -9,7 +9,6 @@ url = "https://raw.githubusercontent.com/tml-epfl/llm-adaptive-attacks/main/harm
 
 class Module:
     def __init__(self, prompt_groups: []):
-
         r = httpx.get(url)
 
         content = r.content
