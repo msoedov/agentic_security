@@ -5,7 +5,8 @@ import colorama
 import tqdm.asyncio
 from tabulate import tabulate
 
-from agentic_security.app import Scan, streaming_response_generator
+from agentic_security.models.schemas import Scan
+from agentic_security.routes.scan import streaming_response_generator
 from agentic_security.probe_data import REGISTRY
 
 RESET = colorama.Style.RESET_ALL
