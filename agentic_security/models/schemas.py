@@ -23,10 +23,22 @@ class Scan(BaseModel):
 
 class ScanResult(BaseModel):
     module: str
-    tokens: int
+    tokens: float | int
     cost: float
     progress: float
+    status: bool = False
     failureRate: float = 0.0
+
+    @classmethod
+    def status_msg(cls, msg: str) -> str:
+        return cls(
+            module=msg,
+            tokens=0,
+            cost=0,
+            progress=0,
+            failureRate=0,
+            status=True,
+        ).model_dump_json()
 
 
 class Probe(BaseModel):
