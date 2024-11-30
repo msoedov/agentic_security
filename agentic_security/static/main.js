@@ -3,6 +3,7 @@ let URL = window.location.href;
 if (URL.endsWith('/')) {
     URL = URL.slice(0, -1);
 }
+URL = URL.replace('/#', '');
 
 // Vue application
 let LLM_SPECS = [

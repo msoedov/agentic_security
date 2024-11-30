@@ -1,0 +1,41 @@
+  <head></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Vulnerability Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.cdnfonts.com/css/technopollas" rel="stylesheet">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              technopollas: ['Technopollas', 'sans-serif'],
+            },
+            colors: {
+              dark: {
+                bg: '#121212',
+                card: '#1E1E1E',
+                text: '#FFFFFF',
+                accent: {
+                  green: '#4CAF50',
+                  red: '#F44336',
+                  orange: '#FF9800',
+                  yellow: '#FFEB3B',
+                },
+              },
+            },
+            borderRadius: {
+              'lg': '1rem',
+            },
+          }
+        }
+      }
+    </script>
+  </head>

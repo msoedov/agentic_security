@@ -1,46 +1,9 @@
 <!doctype html>
 <html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Vulnerability Scanner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <link href="https://fonts.cdnfonts.com/css/technopollas" rel="stylesheet">
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-    </style>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              technopollas: ['Technopollas', 'sans-serif'],
-            },
-            colors: {
-              dark: {
-                bg: '#121212',
-                card: '#1E1E1E',
-                text: '#FFFFFF',
-                accent: {
-                  green: '#4CAF50',
-                  red: '#F44336',
-                  orange: '#FF9800',
-                  yellow: '#FFEB3B',
-                },
-              },
-            },
-            borderRadius: {
-              'lg': '1rem',
-            },
-          }
-        }
-      }
-    </script>
-  </head>
+  [[% block head %]]
+  [[% include "partials/head.html" %]]
+  [[% endblock head %]]
+
   <body class="bg-dark-bg text-dark-text font-sans">
     <!-- Vue app root element -->
     <div id="vue-app" class="min-h-screen p-8">
@@ -68,68 +31,7 @@
         </div>
 
       </header>
-      <div id="consent-modal" v-if="showConsentModal"
-        class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
-        <div
-          class="bg-dark-card text-dark-text p-8 rounded-xl shadow-2xl max-w-xl w-full">
-          <h2 class="text-2xl font-bold mb-6 text-center">AI Red Team Ethical
-            Use Agreement</h2>
-          <div class="space-y-6">
-            <p class="text-sm leading-relaxed">
-              This AI red team tool is designed for security research,
-              vulnerability assessment,
-              and responsible testing purposes. By accessing this tool, you
-              explicitly agree to
-              the following ethical guidelines:
-            </p>
-            <ul class="list-disc list-inside text-sm space-y-3">
-              <li>
-                <strong>Consent and Authorization:</strong> You will only use
-                this tool on systems
-                for which you have explicit, documented permission from the
-                system owners.
-              </li>
-              <li>
-                <strong>Responsible Disclosure:</strong> Any vulnerabilities
-                discovered must be
-                reported responsibly to the appropriate parties, prioritizing
-                system and user safety.
-              </li>
-              <li>
-                <strong>No Malicious Intent:</strong> You will not use this tool
-                to cause harm,
-                disrupt services, or compromise the integrity of any system or
-                data.
-              </li>
-              <li>
-                <strong>Legal Compliance:</strong> All testing and research must
-                comply with
-                applicable local, national, and international laws and
-                regulations.
-              </li>
-
-            </ul>
-
-            <p class="text-xs text-gray-400 italic">
-              Violation of these terms may result in immediate termination of
-              access and
-              potential legal consequences.
-            </p>
-          </div>
-          <div class="flex justify-center space-x-4 mt-8">
-            <button
-              @click="declineConsent"
-              class="bg-dark-accent-red text-white rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors">
-              Decline
-            </button>
-            <button
-              @click="acceptConsent"
-              class="bg-dark-accent-green text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors">
-              I Agree and Understand
-            </button>
-          </div>
-        </div>
-      </div>
+      [[% include "partials/concent.html" %]]
 
       <main class="max-w-6xl mx-auto space-y-8">
         <!-- Config Selection -->
@@ -503,46 +405,10 @@
           </div>
         </section>
       </main>
-      <!-- Footer Section -->
-      <footer class="mt-16 pt-8 border-t border-gray-800">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Column 1 -->
-            <div>
-              <h3
-                class="text-lg font-semibold text-dark-accent-green mb-4">Home</h3>
-              <p class="text-gray-400">Dedicated to LLM Security, 2024</p>
-            </div>
 
-            <!-- Column 2 -->
-            <div>
-              <h3
-                class="text-lg font-semibold text-dark-accent-green mb-4">Connect</h3>
-              <ul class="space-y-2">
-                <li><a href="https://x.com" target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-gray-400 hover:text-dark-accent-green">X.com</a></li>
-                <li><a href="https://github.com/msoedov" target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-gray-400 hover:text-dark-accent-green">Github</a></li>
-              </ul>
-            </div>
-
-            <!-- Column 3 -->
-            <div>
-              <h3
-                class="text-lg font-semibold text-dark-accent-green mb-4">About</h3>
-              <p class="text-gray-400">This is the LLM Vulnerability Scanner.
-                Easy to use—no coding needed, just pure security testing.</p>
-            </div>
-          </div>
-
-          <div class="mt-8 pt-8 border-t border-gray-800 text-center">
-            <p class="text-gray-400">Made with ❤️ by the Agentic Security
-              Team</p>
-          </div>
-        </div>
-      </footer>
+      [[% block footer %]]
+      [[% include "partials/footer.html" %]]
+      [[% endblock footer %]]
 
     </div>
 
