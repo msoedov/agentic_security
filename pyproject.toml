@@ -41,6 +41,7 @@ pydantic = "2.9.2"
 scikit-optimize = "^0.10.2"
 scikit-learn = "1.5.2"
 numpy = ">=1.24.3,<3.0.0"
+jinja2 = "^3.1.4"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
