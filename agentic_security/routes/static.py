@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse
@@ -32,7 +31,7 @@ CONTENT_TYPES = {
 }
 
 
-def get_static_file(filepath: Path, content_type: Optional[str] = None) -> FileResponse:
+def get_static_file(filepath: Path, content_type: str | None = None) -> FileResponse:
     """
     Helper function to serve static files with proper error handling and caching.
 

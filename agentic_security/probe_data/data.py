@@ -6,6 +6,7 @@ from functools import lru_cache
 
 import httpx
 import pandas as pd
+from cache_to_disk import cache_to_disk
 from loguru import logger
 
 from agentic_security.probe_data import stenography_fn
@@ -14,21 +15,6 @@ from agentic_security.probe_data.modules import (
     garak_tool,
     inspect_ai_tool,
 )
-
-IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
-
-if not IS_VERCEL:
-    from cache_to_disk import cache_to_disk
-else:
-    # Read only fs in vercel, just mock no-op decorator
-    def cache_to_disk(*_):
-        def decorator(fn):
-            def wrapper(*args, **kwargs):
-                return fn(*args, **kwargs)
-
-            return wrapper
-
-        return decorator
 
 
 @dataclass

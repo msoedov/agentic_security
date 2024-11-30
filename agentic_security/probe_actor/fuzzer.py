@@ -1,5 +1,4 @@
 import asyncio
-import os
 import random
 from collections.abc import AsyncGenerator
 
@@ -12,8 +11,6 @@ from skopt.space import Real
 from agentic_security.models.schemas import ScanResult
 from agentic_security.probe_actor.refusal import refusal_heuristic
 from agentic_security.probe_data.data import prepare_prompts
-
-IS_VERCEL = os.getenv("IS_VERCEL", "f") == "t"
 
 
 async def prompt_iter(prompts: list[str] | AsyncGenerator) -> AsyncGenerator[str, None]:
@@ -34,11 +31,6 @@ async def perform_scan(
     stop_event: asyncio.Event = None,
 ) -> AsyncGenerator[str, None]:
     """Perform a standard security scan."""
-    if IS_VERCEL:
-        yield ScanResult.status_msg(
-            "Vercel deployment detected. Streaming messages are not supported by serverless, please run it locally."
-        )
-        return
 
     try:
         yield ScanResult.status_msg("Loading datasets...")
@@ -152,12 +144,6 @@ async def perform_multi_step_scan(
     probe_frequency: float = 0.2,
 ) -> AsyncGenerator[str, None]:
     """Perform a multi-step security scan with probe injection."""
-    if IS_VERCEL:
-        yield ScanResult.status_msg(
-            "Vercel deployment detected. Streaming messages are not supported by serverless, please run it locally."
-        )
-        return
-
     try:
         # Load main and probe datasets
         yield ScanResult.status_msg("Loading datasets...")
