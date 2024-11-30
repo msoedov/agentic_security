@@ -142,6 +142,45 @@
             </svg>
           </div>
           <div v-show="showParams" class="mt-4">
+            <div class="flex items-center justify-end mt-4">
+              <button
+                @click="confirmResetState"
+                class="flex items-center bg-dark-accent-red text-dark-bg rounded-lg px-4 py-2 text-sm font-medium hover:bg-opacity-80 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset State
+              </button>
+            </div>
+            <!-- Confirmation Modal -->
+            <div
+              v-if="showResetConfirmation"
+              class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div class="bg-dark-card rounded-lg p-6 max-w-sm w-full">
+                <h3 class="text-xl font-bold mb-4 text-dark-text">Confirm
+                  Reset</h3>
+                <p class="text-gray-400 mb-6">Are you sure you want to reset all
+                  settings to their default state? This action cannot be
+                  undone.</p>
+                <div class="flex justify-end space-x-4">
+                  <button
+                    @click="showResetConfirmation = false"
+                    class="bg-gray-600 text-dark-text rounded-lg px-4 py-2 hover:bg-opacity-80 transition-colors">
+                    Cancel
+                  </button>
+                  <button
+                    @click="resetState"
+                    class="bg-dark-accent-red text-dark-bg rounded-lg px-4 py-2 hover:bg-opacity-80 transition-colors">
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Confirmation Modal -->
+
             <!-- Maximum Budget Slider -->
             <!-- Budget Slider -->
             <section class="bg-dark-card rounded-lg p-6 shadow-lg">
@@ -228,6 +267,21 @@
                 When enabled, the vulnerability scan will run multiple tests
                 concurrently. This can significantly reduce the total scan time
                 but may increase resource usage.
+              </p>
+              <!-- Multi-Step Attack Toggle -->
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold">Enable Multi-Step Attack</h3>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" v-model="enableMultiStepAttack"
+                    class="sr-only peer">
+                  <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-dark-accent-green rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-dark-accent-green"></div>
+                </label>
+              </div>
+              <p class="text-sm text-gray-400 mt-2">
+                When enabled, the scan will attempt multi-step attack
+                simulations,
+                increasing accuracy and depth of analysis.
               </p>
             </div>
           </div>

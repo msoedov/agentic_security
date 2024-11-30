@@ -73,10 +73,12 @@ var app = new Vue({
         modelSpec: LLM_SPECS[0],
         budget: 50,
         showParams: false,
+        showResetConfirmation: false,
         enableChartDiagram: true,
         enableLogging: false,
         enableConcurrency: false,
         optimize: false,
+        enableMultiStepAttack: false,
         showDatasets: false,
         scanResults: [],
         mainTable: [],
@@ -117,6 +119,7 @@ var app = new Vue({
         this.adjustHeight({ target: document.getElementById('llm-spec') });
         // this.startScan();
         this.loadConfigs();
+
     },
     computed: {
         selectedDS: function () {
@@ -131,6 +134,45 @@ var app = new Vue({
             this.showConsentModal = false; // Close the modal
             localStorage.setItem('consentGiven', 'true'); // Save consent to local storage
         },
+
+        saveStateToLocalStorage() {
+            const state = {
+                modelSpec: this.modelSpec,
+                budget: this.budget,
+                dataConfig: this.dataConfig,
+                optimize: this.optimize,
+                enableChartDiagram: this.enableChartDiagram,
+            };
+            localStorage.setItem('appState', JSON.stringify(state));
+        },
+        loadStateFromLocalStorage() {
+            const savedState = localStorage.getItem('appState');
+            console.log('Loading state from local storage:', savedState);
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                this.modelSpec = state.modelSpec;
+                this.budget = state.budget;
+                this.dataConfig = state.dataConfig;
+                this.optimize = state.optimize;
+                this.enableChartDiagram = state.enableChartDiagram;
+            }
+        },
+        resetState() {
+            localStorage.removeItem('appState');
+            this.modelSpec = LLM_SPECS[0];
+            this.budget = 50;
+            this.dataConfig.forEach(config => config.selected = false);
+            this.optimize = false;
+            this.enableChartDiagram = true;
+            this.okMsg = '';
+            this.errorMsg = '';
+            this.integrationVerified = false;
+            this.showResetConfirmation = false;
+        },
+        confirmResetState() {
+            this.showResetConfirmation = true;
+        },
+
         declineConsent() {
             this.showConsentModal = false; // Close the modal
             localStorage.setItem('consentGiven', 'false'); // Save decline to local storage
@@ -186,6 +228,7 @@ var app = new Vue({
                 // this.$forceUpdate();
 
             }
+            this.saveStateToLocalStorage();
         },
         loadConfigs: async function () {
             const response = await fetch(`${URL}/v1/data-config`, {
@@ -196,6 +239,7 @@ var app = new Vue({
             });
             console.log(response);
             this.dataConfig = await response.json();
+            this.loadStateFromLocalStorage();
         },
         selectConfig(index) {
             this.selectedConfig = index;
@@ -413,6 +457,8 @@ var app = new Vue({
                     }
                 });
             }
+            this.saveStateToLocalStorage();
+
         }
     }
 });
