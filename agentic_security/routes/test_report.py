@@ -1,7 +1,9 @@
+from pathlib import Path
+from unittest.mock import patch
+
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import patch, Mock
-from pathlib import Path
+
 from .report import router
 
 client = TestClient(router)

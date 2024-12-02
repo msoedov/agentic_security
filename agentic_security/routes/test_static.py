@@ -1,9 +1,11 @@
-import pytest
-from fastapi.testclient import TestClient
 from pathlib import Path
-from ..models.schemas import Settings
-from .static import router, get_static_file
+
+import pytest
 from fastapi import HTTPException
+from fastapi.testclient import TestClient
+
+from ..models.schemas import Settings
+from .static import get_static_file, router
 
 client = TestClient(router)
 
