@@ -419,6 +419,7 @@ var app = new Vue({
                 llmSpec: this.modelSpec,
                 datasets: this.dataConfig,
                 optimize: this.optimize,
+                enableMultiStepAttack: this.enableMultiStepAttack,
             };
             const response = await fetch(`${URL}/scan`, {
                 method: 'POST',

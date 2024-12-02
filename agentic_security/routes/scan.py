@@ -29,12 +29,10 @@ def streaming_response_generator(scan_parameters: Scan):
     request_factory = LLMSpec.from_string(scan_parameters.llmSpec)
 
     async def _gen():
-        async for scan_result in fuzzer.perform_scan(
+        async for scan_result in fuzzer.scan_router(
             request_factory=request_factory,
-            max_budget=scan_parameters.maxBudget,
-            datasets=scan_parameters.datasets,
+            scan_parameters=scan_parameters,
             tools_inbox=get_tools_inbox(),
-            optimize=scan_parameters.optimize,
             stop_event=get_stop_event(),
         ):
             yield scan_result + "\n"

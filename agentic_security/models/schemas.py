@@ -20,6 +20,7 @@ class Scan(BaseModel):
     maxBudget: int
     datasets: list[dict] = []
     optimize: bool = False
+    enableMultiStepAttack: bool = False
 
 
 class ScanResult(BaseModel):

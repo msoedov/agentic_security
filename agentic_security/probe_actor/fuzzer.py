@@ -4,13 +4,12 @@ from collections.abc import AsyncGenerator
 
 import httpx
 import pandas as pd
+from agentic_security.models.schemas import Scan, ScanResult
+from agentic_security.probe_actor.refusal import refusal_heuristic
+from agentic_security.probe_data.data import prepare_prompts
 from loguru import logger
 from skopt import Optimizer
 from skopt.space import Real
-
-from agentic_security.models.schemas import ScanResult
-from agentic_security.probe_actor.refusal import refusal_heuristic
-from agentic_security.probe_data.data import prepare_prompts
 
 
 async def prompt_iter(prompts: list[str] | AsyncGenerator) -> AsyncGenerator[str, None]:
@@ -293,3 +292,31 @@ async def perform_multi_step_scan(
         logger.exception("Scan failed")
         yield ScanResult.status_msg(f"Scan failed: {str(e)}")
         raise e
+
+
+def scan_router(
+    request_factory,
+    scan_parameters: Scan,
+    tools_inbox=None,
+    stop_event: asyncio.Event = None,
+):
+
+    if scan_parameters.enableMultiStepAttack:
+        return perform_multi_step_scan(
+            request_factory=request_factory,
+            max_budget=scan_parameters.maxBudget,
+            datasets=scan_parameters.datasets,
+            probe_datasets=scan_parameters.probeDatasets,
+            tools_inbox=tools_inbox,
+            optimize=scan_parameters.optimize,
+            stop_event=stop_event,
+        )
+    else:
+        return perform_scan(
+            request_factory=request_factory,
+            max_budget=scan_parameters.maxBudget,
+            datasets=scan_parameters.datasets,
+            tools_inbox=tools_inbox,
+            optimize=scan_parameters.optimize,
+            stop_event=stop_event,
+        )
