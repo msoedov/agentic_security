@@ -1,4 +1,4 @@
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
 from agentic_security.probe_data.msj_data import (
     ProbeDataset,

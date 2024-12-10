@@ -1,13 +1,6 @@
-import io
-import os
-import random
 from dataclasses import dataclass
-from functools import lru_cache
 
-import httpx
-import pandas as pd
 from cache_to_disk import cache_to_disk
-from loguru import logger
 
 
 # TODO: refactor this class to use from .data
@@ -47,7 +40,6 @@ def load_dataset_generic(name, getter=lambda x: x["train"]["prompt"]):
 def prepare_prompts(
     dataset_names=[], budget=-1, tools_inbox=None
 ) -> list[ProbeDataset]:
-
     # fka/awesome-chatgpt-prompts
     # data-is-better-together/10k_prompts_ranked
     # alespalla/chatbot_instruction_prompts
