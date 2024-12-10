@@ -1,11 +1,13 @@
 import asyncio
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
-from agentic_security.models.schemas import ScanResult, Scan
+
+from agentic_security.models.schemas import Scan
 from agentic_security.probe_actor.fuzzer import (
-    prompt_iter,
-    perform_single_shot_scan,
     perform_many_shot_scan,
+    perform_single_shot_scan,
+    prompt_iter,
     scan_router,
 )
 
