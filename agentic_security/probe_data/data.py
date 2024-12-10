@@ -371,3 +371,6 @@ def dataset_from_iterator(name: str, iterator, lazy=False) -> list:
         lazy=lazy,
     )
     return [dataset]
+
+
+# TODO: refactor this abstraction
