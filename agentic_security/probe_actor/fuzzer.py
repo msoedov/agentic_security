@@ -306,7 +306,7 @@ def scan_router(
             request_factory=request_factory,
             max_budget=scan_parameters.maxBudget,
             datasets=scan_parameters.datasets,
-            probe_datasets=scan_parameters.probeDatasets,
+            probe_datasets=scan_parameters.probe_datasets,
             tools_inbox=tools_inbox,
             optimize=scan_parameters.optimize,
             stop_event=stop_event,

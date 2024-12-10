@@ -21,6 +21,8 @@ class Scan(BaseModel):
     datasets: list[dict] = []
     optimize: bool = False
     enableMultiStepAttack: bool = False
+    # MSJ only mode
+    probe_datasets: list[dict] = []
 
 
 class ScanResult(BaseModel):
