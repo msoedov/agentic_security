@@ -14,13 +14,15 @@ from agentic_security.probe_data import msj_data
 from agentic_security.probe_data.data import prepare_prompts
 
 
-async def prompt_iter(prompts: list[str] | AsyncGenerator) -> AsyncGenerator[str, None]:
+async def generate_prompts(
+    prompts: list[str] | AsyncGenerator,
+) -> AsyncGenerator[str, None]:
     if isinstance(prompts, list):
-        for p in prompts:
-            yield p
+        for prompt in prompts:
+            yield prompt
     else:
-        async for p in prompts:
-            yield p
+        async for prompt in prompts:
+            yield prompt
 
 
 async def perform_single_shot_scan(
@@ -60,7 +62,7 @@ async def perform_single_shot_scan(
             module_size = 0 if module.lazy else len(module.prompts)
             logger.info(f"Scanning {module.dataset_name} {module_size}")
 
-            async for prompt in prompt_iter(module.prompts):
+            async for prompt in generate_prompts(module.prompts):
                 if stop_event and stop_event.is_set():
                     stop_event.clear()
                     logger.info("Scan stopped by user.")
@@ -175,7 +177,7 @@ async def perform_many_shot_scan(
             module_size = 0 if module.lazy else len(module.prompts)
             logger.info(f"Scanning {module.dataset_name} {module_size}")
 
-            async for prompt in prompt_iter(module.prompts):
+            async for prompt in generate_prompts(module.prompts):
                 if stop_event and stop_event.is_set():
                     stop_event.clear()
                     logger.info("Scan stopped by user.")

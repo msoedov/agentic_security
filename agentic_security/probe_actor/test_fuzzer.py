@@ -7,25 +7,25 @@ from agentic_security.models.schemas import Scan
 from agentic_security.probe_actor.fuzzer import (
     perform_many_shot_scan,
     perform_single_shot_scan,
-    prompt_iter,
+    generate_prompts,
     scan_router,
 )
 
 
 @pytest.mark.asyncio
-async def test_prompt_iter_with_list():
+async def test_generate_prompts_with_list():
     prompts = ["prompt1", "prompt2", "prompt3"]
-    results = [p async for p in prompt_iter(prompts)]
+    results = [p async for p in generate_prompts(prompts)]
     assert results == prompts
 
 
 @pytest.mark.asyncio
-async def test_prompt_iter_with_async_generator():
+async def test_generate_prompts_with_async_generator():
     async def async_gen():
         for i in range(3):
             yield f"prompt{i}"
 
-    results = [p async for p in prompt_iter(async_gen())]
+    results = [p async for p in generate_prompts(async_gen())]
     assert results == ["prompt0", "prompt1", "prompt2"]
 
 
