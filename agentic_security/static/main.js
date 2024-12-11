@@ -142,6 +142,7 @@ var app = new Vue({
                 dataConfig: this.dataConfig,
                 optimize: this.optimize,
                 enableChartDiagram: this.enableChartDiagram,
+                enableMultiStepAttack: this.enableMultiStepAttack,
             };
             localStorage.setItem('appState', JSON.stringify(state));
         },
@@ -155,6 +156,7 @@ var app = new Vue({
                 this.dataConfig = state.dataConfig;
                 this.optimize = state.optimize;
                 this.enableChartDiagram = state.enableChartDiagram;
+                this.enableMultiStepAttack = state.enableMultiStepAttack;
             }
         },
         resetState() {
@@ -168,6 +170,7 @@ var app = new Vue({
             this.errorMsg = '';
             this.integrationVerified = false;
             this.showResetConfirmation = false;
+            this.enableMultiStepAttack = false;
         },
         confirmResetState() {
             this.showResetConfirmation = true;

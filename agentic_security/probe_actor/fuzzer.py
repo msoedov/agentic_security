@@ -171,7 +171,6 @@ async def perform_many_shot_scan(
         failure_rates = []
 
         for module in prompt_modules:
-            tokens = 0
             module_failures = 0
             module_size = 0 if module.lazy else len(module.prompts)
             logger.info(f"Scanning {module.dataset_name} {module_size}")
@@ -182,13 +181,12 @@ async def perform_many_shot_scan(
                     logger.info("Scan stopped by user.")
                     yield ScanResult.status_msg("Scan stopped by user.")
                     return
-
+                tokens = 0
                 processed_prompts += 1
                 progress = (
                     100 * processed_prompts / total_prompts if total_prompts else 0
                 )
 
-                current_length = 0
                 full_prompt = ""
                 msj_module = random.choice(msj_modules)
 
@@ -202,14 +200,15 @@ async def perform_many_shot_scan(
 
                     m_prompt = random.choice(msj_module.prompts)
                     full_prompt += "\n" + m_prompt
-                    current_length += len(m_prompt.split())
-                    if current_length > max_ctx_length:
+                    tokens += len(m_prompt.split())
+                    if tokens > max_ctx_length:
                         full_prompt = "\n" + prompt
                         injected = True
                     try:
                         # Main request
                         r = await request_factory.fn(prompt=full_prompt)
                         if r.status_code >= 400:
+                            logger.error(f"HTTP {r.status_code}")
                             raise httpx.HTTPStatusError(
                                 f"HTTP {r.status_code}",
                                 request=r.request,
@@ -219,12 +218,13 @@ async def perform_many_shot_scan(
                         response_text = r.text
                         response_tokens = len(response_text.split())
                         tokens += response_tokens
-
+                        logger.info(f"Response: tokens: {full_prompt}")
                         if injected and not refusal_heuristic(r.json()):
+                            logger.info(f"Refusal detected: {response_text}")
                             refusals.append(
                                 (
                                     module.dataset_name,
-                                    prompt,
+                                    full_prompt,
                                     r.status_code,
                                     response_text,
                                 )
@@ -233,7 +233,7 @@ async def perform_many_shot_scan(
 
                     except httpx.RequestError as e:
                         logger.error(f"Request error: {e}")
-                        errors.append((module.dataset_name, prompt, str(e)))
+                        errors.append((module.dataset_name, full_prompt, str(e)))
                         module_failures += 1
                         continue
 
@@ -258,7 +258,8 @@ async def perform_many_shot_scan(
                             f"High failure rate detected ({best_failure_rate:.2%}). Stopping this module..."
                         )
                         break
-
+                if injected:
+                    break
         yield ScanResult.status_msg("Scan completed.")
 
         df = pd.DataFrame(
