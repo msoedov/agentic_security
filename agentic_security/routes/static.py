@@ -69,6 +69,12 @@ async def main_js() -> FileResponse:
     return get_static_file(STATIC_DIR / "main.js")
 
 
+@router.get("/base.js")
+async def base_js() -> FileResponse:
+    """Serve the base JavaScript file."""
+    return get_static_file(STATIC_DIR / "base.js")
+
+
 @router.get("/telemetry.js")
 async def telemetry_js() -> FileResponse:
     """
