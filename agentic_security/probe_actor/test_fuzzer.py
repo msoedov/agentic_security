@@ -1,13 +1,16 @@
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+import unittest
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
+import httpx
 import pytest
 
 from agentic_security.models.schemas import Scan
 from agentic_security.probe_actor.fuzzer import (
+    generate_prompts,
     perform_many_shot_scan,
     perform_single_shot_scan,
-    generate_prompts,
+    process_prompt,
     scan_router,
 )
 
@@ -181,3 +184,99 @@ async def test_perform_many_shot_scan_stop_event():
     )
 
     await assert_scan(async_gen, ["Loading", "Scan completed."])
+
+
+def mock_refusal_heuristic(response_json):
+    return response_json.get("is_refusal", False)
+
+
+class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
+    async def test_successful_response_no_refusal(self):
+        mock_request_factory = Mock()
+        mock_request_factory.fn = AsyncMock(
+            return_value=Mock(
+                status_code=200,
+                text="Valid response text",
+                json=Mock(return_value={"is_refusal": False}),
+                request="mock_request",
+            )
+        )
+
+        tokens, refusal = await process_prompt(
+            request_factory=mock_request_factory,
+            prompt="test prompt",
+            tokens=0,
+            module_name="module_a",
+            refusals=[],
+            errors=[],
+        )
+
+        self.assertEqual(tokens, 3)  # Tokens from "Valid response text"
+        self.assertFalse(refusal)
+
+    async def test_successful_response_with_refusal(self):
+        mock_request_factory = Mock()
+        mock_request_factory.fn = AsyncMock(
+            return_value=Mock(
+                status_code=200,
+                text="Response indicating refusal",
+                json=Mock(return_value={"is_refusal": True}),
+                request="mock_request",
+            )
+        )
+
+        refusals = []
+        tokens, refusal = await process_prompt(
+            request_factory=mock_request_factory,
+            prompt="test prompt",
+            tokens=0,
+            module_name="module_a",
+            refusals=refusals,
+            errors=[],
+        )
+
+        self.assertEqual(tokens, 3)  # Tokens from "Response indicating refusal"
+        self.assertFalse(refusal)
+
+    async def test_http_error_response(self):
+        mock_request_factory = Mock()
+        mock_request_factory.fn = AsyncMock(
+            return_value=Mock(
+                status_code=500,
+                text="Internal Server Error",
+                request="mock_request",
+                response=Mock(),
+            )
+        )
+
+        refusals = []
+        with self.assertRaises(httpx.HTTPStatusError):
+            await process_prompt(
+                request_factory=mock_request_factory,
+                prompt="test prompt",
+                tokens=0,
+                module_name="module_a",
+                refusals=refusals,
+                errors=[],
+            )
+
+    async def test_request_error(self):
+        mock_request_factory = Mock()
+        mock_request_factory.fn = AsyncMock(
+            side_effect=httpx.RequestError("Connection error")
+        )
+
+        errors = []
+        tokens, refusal = await process_prompt(
+            request_factory=mock_request_factory,
+            prompt="test prompt",
+            tokens=0,
+            module_name="module_a",
+            refusals=[],
+            errors=errors,
+        )
+
+        self.assertEqual(tokens, 0)
+        self.assertTrue(refusal)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Connection error", errors[0][2])
