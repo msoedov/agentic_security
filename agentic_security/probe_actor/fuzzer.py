@@ -39,8 +39,9 @@ async def process_prompt(
         response_text = response.text
         tokens += len(response_text.split())
 
-        if not refusal_heuristic(response.json()):
+        if refusal_heuristic(response.json()):
             refusals.append((module_name, prompt, response.status_code, response_text))
+            return tokens, True
         return tokens, False
 
     except httpx.RequestError as exc:
@@ -80,7 +81,12 @@ async def perform_single_shot_scan(
         )
         failure_rates = []
 
+        total_tokens = 0
+        tokens = 0
+        should_stop = False
         for module in prompt_modules:
+            if should_stop:
+                break
             tokens = 0
             module_failures = 0
             module_size = 0 if module.lazy else len(module.prompts)
@@ -97,7 +103,7 @@ async def perform_single_shot_scan(
                 progress = (
                     100 * processed_prompts / total_prompts if total_prompts else 0
                 )
-
+                total_tokens -= tokens
                 tokens, failed = await process_prompt(
                     request_factory,
                     prompt,
@@ -106,6 +112,8 @@ async def perform_single_shot_scan(
                     refusals,
                     errors,
                 )
+                total_tokens += tokens
+                # logger.debug(f"Trying prompt: {prompt}, {failed=}")
                 if failed:
                     module_failures += 1
                 failure_rate = module_failures / max(processed_prompts, 1)
@@ -128,7 +136,13 @@ async def perform_single_shot_scan(
                         yield ScanResult.status_msg(
                             f"High failure rate detected ({best_failure_rate:.2%}). Stopping this module..."
                         )
+                        should_stop = True
                         break
+                if total_tokens > max_budget:
+                    logger.info("Scan ran out of budget and stopped.")
+                    yield ScanResult.status_msg("Scan ran out of budget and stopped.")
+                    should_stop = True
+                    break
 
         yield ScanResult.status_msg("Scan completed.")
 

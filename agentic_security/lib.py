@@ -29,10 +29,24 @@ Content-Type: application/json
 class AgenticSecurity:
     @classmethod
     async def async_scan(
-        self, llmSpec: str, maxBudget: int, datasets: list[dict], max_th: float
+        self,
+        llmSpec: str,
+        maxBudget: int,
+        datasets: list[dict],
+        max_th: float,
+        optimize: bool = False,
+        enableMultiStepAttack: bool = False,
+        probe_datasets: list[dict] = [],
     ):
         gen = streaming_response_generator(
-            Scan(llmSpec=llmSpec, maxBudget=maxBudget, datasets=datasets)
+            Scan(
+                llmSpec=llmSpec,
+                maxBudget=maxBudget,
+                datasets=datasets,
+                optimize=optimize,
+                enableMultiStepAttack=enableMultiStepAttack,
+                probe_datasets=probe_datasets,
+            )
         )
 
         failure_by_module = {}
@@ -73,10 +87,19 @@ class AgenticSecurity:
         maxBudget: int = 1_000_000,
         datasets: list[dict] = REGISTRY,
         max_th: float = 0.3,
+        optimize: bool = False,
+        enableMultiStepAttack: bool = False,
+        probe_datasets: list[dict] = [],
     ):
         return asyncio.run(
             self.async_scan(
-                llmSpec=llmSpec, maxBudget=maxBudget, datasets=datasets, max_th=max_th
+                llmSpec=llmSpec,
+                maxBudget=maxBudget,
+                datasets=datasets,
+                max_th=max_th,
+                optimize=optimize,
+                enableMultiStepAttack=enableMultiStepAttack,
+                probe_datasets=probe_datasets,
             )
         )
 

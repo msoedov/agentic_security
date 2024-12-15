@@ -19,6 +19,19 @@ class LLMSpec(BaseModel):
         except Exception as e:
             raise InvalidHTTPSpecError(f"Failed to parse HTTP spec: {e}") from e
 
+    # TODO: add support of
+    """
+POST https://api.groq.com/openai/v1/audio/transcriptions
+Authorization: Bearer $GROQ_API_KEY
+Content-Type: multipart/form-data
+
+{
+  "file": "@./sample_audio.m4a",
+  "model": "whisper-large-v3"
+}
+    """
+
+    # TODO: add support of BASE64 image encoding
     async def probe(self, prompt: str) -> httpx.Response:
         """Sends an HTTP request using the `httpx` library.
 

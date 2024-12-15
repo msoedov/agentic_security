@@ -50,4 +50,5 @@ def check_refusal(response: str, refusal_phrases: list = REFUSAL_MARKS) -> bool:
 
 def refusal_heuristic(request_json):
     # TODO: improve this heuristic
-    return check_refusal(str(request_json)) or classifier.is_refusal(str(request_json))
+    request = str(request_json)
+    return check_refusal(request) or classifier.is_refusal(request)
