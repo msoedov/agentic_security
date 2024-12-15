@@ -3,6 +3,7 @@ import subprocess
 import time
 
 import pytest
+
 from agentic_security.lib import AgenticSecurity
 
 SAMPLE_SPEC = """
