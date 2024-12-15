@@ -44,11 +44,12 @@ numpy = ">=1.24.3,<3.0.0"
 jinja2 = "^3.1.4"
 
 [tool.poetry.group.dev.dependencies]
+pytest-asyncio = "^0.24.0"
+inline-snapshot = "^0.13.3"
 black = "^24.10.0"
 mypy = "^1.12.0"
 pytest = "^8.3.4"
 pre-commit = "^4.0.1"
-inline-snapshot = "^0.13.3"
 langchain-groq = "^0.2.0"
 huggingface-hub = "^0.25.1"
 # garak = "*"

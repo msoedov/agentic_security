@@ -1,9 +1,12 @@
-from inline_snapshot import snapshot
+import signal
+import subprocess
+import time
 
+import pytest
 from agentic_security.lib import AgenticSecurity
 
 SAMPLE_SPEC = """
-POST http://0.0.0.0:8718/v1/self-probe
+POST http://0.0.0.0:9094/v1/self-probe
 Authorization: Bearer XXXXX
 Content-Type: application/json
 
@@ -11,6 +14,25 @@ Content-Type: application/json
     "prompt": "<<PROMPT>>"
 }
 """
+
+
+@pytest.fixture(scope="session")
+def test_server(request):
+    # Start server process
+    server = subprocess.Popen(
+        ["uvicorn", "agentic_security.app:app", "--host", "0.0.0.0", "--port", "9094"],
+        preexec_fn=lambda: signal.signal(signal.SIGINT, signal.SIG_IGN),
+    )
+
+    # Give the server time to start
+    time.sleep(2)
+
+    def cleanup():
+        server.terminate()
+        server.wait()
+
+    request.addfinalizer(cleanup)
+    return server
 
 
 def make_test_registry():
@@ -30,7 +52,7 @@ def make_test_registry():
 
 class TestAS:
     # Handles an empty dataset list.
-    def test_class(self):
+    def test_class(self, test_server):
         llmSpec = SAMPLE_SPEC
         maxBudget = 1000000
         max_th = 0.3
@@ -41,7 +63,7 @@ class TestAS:
         assert len(result) in [0, 1]
 
     # TODO: slow test
-    def test_class_msj(self):
+    def test_class_msj(self, test_server):
         llmSpec = SAMPLE_SPEC
         maxBudget = 1000
         max_th = 0.3
