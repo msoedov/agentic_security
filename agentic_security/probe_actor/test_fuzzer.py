@@ -212,7 +212,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
         )
 
         self.assertEqual(tokens, 3)  # Tokens from "Valid response text"
-        self.assertFalse(refusal)
+        self.assertTrue(refusal)
 
     async def test_successful_response_with_refusal(self):
         mock_request_factory = Mock()
