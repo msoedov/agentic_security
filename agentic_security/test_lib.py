@@ -4,11 +4,11 @@ import time
 
 import pytest
 
-from agentic_security.lib import AgenticSecurity
 import agentic_security.test_spec_assets as test_spec_assets
+from agentic_security.lib import AgenticSecurity
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def test_server(request):
     # Start server process
     server = subprocess.Popen(

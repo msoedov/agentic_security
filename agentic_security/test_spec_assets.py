@@ -66,4 +66,15 @@ Content-Type: application/json
 """
 
 
-ALL = [SAMPLE_SPEC, IMAGE_SPEC, MULTI_IMAGE_SPEC]
+FILE_SPEC = """
+POST http://0.0.0.0:9094/v1/self-probe
+Authorization: Bearer $GROQ_API_KEY
+Content-Type: multipart/form-data
+
+{
+  "file": "@./sample_audio.m4a",
+  "model": "whisper-large-v3"
+}
+"""
+
+ALL = [SAMPLE_SPEC, IMAGE_SPEC, MULTI_IMAGE_SPEC, FILE_SPEC]
