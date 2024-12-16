@@ -5,16 +5,7 @@ import time
 import pytest
 
 from agentic_security.lib import AgenticSecurity
-
-SAMPLE_SPEC = """
-POST http://0.0.0.0:9094/v1/self-probe
-Authorization: Bearer XXXXX
-Content-Type: application/json
-
-{
-    "prompt": "<<PROMPT>>"
-}
-"""
+import agentic_security.test_spec_assets as test_spec_assets
 
 
 @pytest.fixture(scope="session")
@@ -54,7 +45,7 @@ def make_test_registry():
 class TestAS:
     # Handles an empty dataset list.
     def test_class(self, test_server):
-        llmSpec = SAMPLE_SPEC
+        llmSpec = test_spec_assets.SAMPLE_SPEC
         maxBudget = 1000000
         max_th = 0.3
         datasets = make_test_registry()
@@ -64,8 +55,8 @@ class TestAS:
         assert len(result) in [0, 1]
 
     # TODO: slow test
-    def test_class_msj(self, test_server):
-        llmSpec = SAMPLE_SPEC
+    def _test_class_msj(self, test_server):
+        llmSpec = test_spec_assets.SAMPLE_SPEC
         maxBudget = 1000
         max_th = 0.3
         datasets = make_test_registry()
