@@ -1,5 +1,7 @@
+import base64
 import io
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
@@ -184,7 +186,7 @@ def test_self_probe_image_endpoint():
                     {"type": "text", "text": "What is in this image?"},
                     {
                         "type": "image_url",
-                        "image_url": {"url": "data:image/jpeg;base64,mockbase64data"},
+                        "image_url": {"url": encode_image_base64_by_url()},
                     },
                 ],
             }
@@ -207,3 +209,10 @@ def test_self_probe_image_endpoint():
         assert "choices" in data
         assert len(data["choices"]) == 1
         assert "message" in data["choices"][0]
+
+
+def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") -> str:
+    """Encode image data to base64 from a URL"""
+    response = httpx.get(url)
+    encoded_content = base64.b64encode(response.content).decode("utf-8")
+    return "data:image/jpeg;base64," + encoded_content
