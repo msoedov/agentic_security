@@ -67,7 +67,7 @@ Content-Type: application/json
 
 
 FILE_SPEC = """
-POST http://0.0.0.0:9094/v1/self-probe
+POST http://0.0.0.0:9094/v1/self-probe-file
 Authorization: Bearer $GROQ_API_KEY
 Content-Type: multipart/form-data
 

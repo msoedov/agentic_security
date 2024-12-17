@@ -68,5 +68,12 @@ class CompletionRequest(BaseModel):
     frequency_penalty: float = Field(default=0.0, ge=-2.0, le=2.0)
 
 
+class FileProbeResponse(BaseModel):
+    """Response model for file probe endpoint."""
+
+    text: str
+    model: str
+
+
 class Table(BaseModel):
     table: list[dict]

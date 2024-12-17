@@ -1,8 +1,8 @@
 import random
 
-from fastapi import APIRouter
+from fastapi import APIRouter, File, Header, HTTPException, UploadFile
 
-from ..models.schemas import Probe
+from ..models.schemas import FileProbeResponse, Probe
 from ..probe_actor.refusal import REFUSAL_MARKS
 from ..probe_data import REGISTRY
 
@@ -29,6 +29,33 @@ def self_probe(probe: Probe):
             }
         ],
     }
+
+
+@router.post("/v1/self-probe-file", response_model=FileProbeResponse)
+async def self_probe_file(
+    file: UploadFile = File(...),
+    model: str = "whisper-large-v3",
+    authorization: str = Header(...),
+):
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    api_key = authorization.replace("Bearer ", "")
+    if not api_key:
+        raise HTTPException(status_code=401, detail="Missing API key")
+
+    if not file.filename or not file.filename.lower().endswith(
+        (".m4a", ".mp3", ".wav")
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file format. Supported formats: m4a, mp3, wav",
+        )
+
+    # For testing purposes, return mock transcription
+    mock_text = "This is a mock transcription of the audio file."
+
+    return FileProbeResponse(text=mock_text, model=model)
 
 
 @router.get("/v1/data-config")

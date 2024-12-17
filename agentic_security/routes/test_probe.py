@@ -1,3 +1,4 @@
+import io
 import pytest
 from fastapi.testclient import TestClient
 
@@ -95,3 +96,74 @@ def test_refusal_rate():
     assert (
         0.15 <= refusal_rate <= 0.25
     ), f"Refusal rate {refusal_rate} is outside expected range"
+
+
+def test_self_probe_file_endpoint():
+    """Test /v1/self-probe-file endpoint with valid input"""
+    # Create a mock audio file
+    file_content = b"mock audio content"
+    file = io.BytesIO(file_content)
+    files = {"file": ("test.m4a", file, "audio/m4a")}
+    headers = {"Authorization": "Bearer test_api_key"}
+
+    response = client.post(
+        "/v1/self-probe-file",
+        files=files,
+        headers=headers,
+        data={"model": "whisper-large-v3"},
+    )
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "text" in data
+    assert "model" in data
+    assert data["model"] == "whisper-large-v3"
+
+
+def test_self_probe_file_invalid_auth():
+    """Test /v1/self-probe-file endpoint with invalid authorization"""
+    file_content = b"mock audio content"
+    file = io.BytesIO(file_content)
+    files = {"file": ("test.m4a", file, "audio/m4a")}
+
+    # Test missing auth header
+    response = client.post("/v1/self-probe-file", files=files)
+    assert response.status_code == 422
+
+    # Test invalid auth format
+    headers = {"Authorization": "InvalidFormat test_api_key"}
+    response = client.post("/v1/self-probe-file", files=files, headers=headers)
+    assert response.status_code == 401
+
+    # Test empty token
+    headers = {"Authorization": "Bearer "}
+    response = client.post("/v1/self-probe-file", files=files, headers=headers)
+    assert response.status_code == 401
+
+
+def test_self_probe_file_invalid_format():
+    """Test /v1/self-probe-file endpoint with invalid file format"""
+    file_content = b"mock content"
+    file = io.BytesIO(file_content)
+    files = {"file": ("test.txt", file, "text/plain")}
+    headers = {"Authorization": "Bearer test_api_key"}
+
+    response = client.post(
+        "/v1/self-probe-file",
+        files=files,
+        headers=headers,
+        data={"model": "whisper-large-v3"},
+    )
+    assert response.status_code == 400
+    assert "Invalid file format" in response.json()["detail"]
+
+
+def test_self_probe_file_missing_file():
+    """Test /v1/self-probe-file endpoint with missing file"""
+    headers = {"Authorization": "Bearer test_api_key"}
+    response = client.post(
+        "/v1/self-probe-file",
+        headers=headers,
+        data={"model": "whisper-large-v3"},
+    )
+    assert response.status_code == 422
