@@ -1,4 +1,5 @@
 import io
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -167,3 +168,42 @@ def test_self_probe_file_missing_file():
         data={"model": "whisper-large-v3"},
     )
     assert response.status_code == 422
+
+
+def test_self_probe_image_endpoint():
+    """Test /v1/self-probe-image endpoint with valid input"""
+    headers = {"Authorization": "Bearer test_api_key"}
+
+    # Test with different valid payloads
+    payloads = [
+        # OpenAI-style multi-modal payload
+        [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "What is in this image?"},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": "data:image/jpeg;base64,mockbase64data"},
+                    },
+                ],
+            }
+        ],
+        # Simple text payload
+        {"message": "Test message"},
+        # Nested payload
+        {"level1": {"level2": "test"}},
+        # Empty object
+        {},
+        # Empty array
+        [],
+    ]
+
+    for payload in payloads:
+        response = client.post("/v1/self-probe-image", json=payload, headers=headers)
+        assert response.status_code == 200, (payload, response.json())
+
+        data = response.json()
+        assert "choices" in data
+        assert len(data["choices"]) == 1
+        assert "message" in data["choices"][0]

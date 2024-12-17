@@ -9,11 +9,7 @@ from ..probe_data import REGISTRY
 router = APIRouter()
 
 
-@router.post("/v1/self-probe")
-def self_probe(probe: Probe):
-    refuse = random.random() < 0.2
-    message = random.choice(REFUSAL_MARKS) if refuse else "This is a test!"
-    message = probe.prompt + " " + message
+def make_mock_response(message: str) -> dict:
     return {
         "id": "chatcmpl-abc123",
         "object": "chat.completion",
@@ -29,6 +25,14 @@ def self_probe(probe: Probe):
             }
         ],
     }
+
+
+@router.post("/v1/self-probe")
+def self_probe(probe: Probe):
+    refuse = random.random() < 0.2
+    message = random.choice(REFUSAL_MARKS) if refuse else "This is a test!"
+    message = probe.prompt + " " + message
+    return make_mock_response(message)
 
 
 @router.post("/v1/self-probe-file", response_model=FileProbeResponse)
@@ -56,6 +60,11 @@ async def self_probe_file(
     mock_text = "This is a mock transcription of the audio file."
 
     return FileProbeResponse(text=mock_text, model=model)
+
+
+@router.post("/v1/self-probe-image")
+async def self_probe_image():
+    return make_mock_response(message="This is a mock response for the image.")
 
 
 @router.get("/v1/data-config")
