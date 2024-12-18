@@ -257,6 +257,51 @@ def self_probe(probe: Probe):
 
 ```
 
+## Image Modality
+
+To probe the image modality, you can use the following HTTP request:
+
+```http
+POST http://0.0.0.0:9094/v1/self-probe-image
+Authorization: Bearer XXXXX
+Content-Type: application/json
+
+[
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "What is in this image?"
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "data:image/jpeg;base64,<<BASE64_IMAGE>>"
+                }
+            }
+        ]
+    }
+]
+```
+
+Replace `XXXXX` with your actual API key and `<<BASE64_IMAGE>>` is the image variable.
+## Audio Modality
+
+To probe the audio modality, you can use the following HTTP request:
+
+```http
+POST http://0.0.0.0:9094/v1/self-probe-file
+Authorization: Bearer $GROQ_API_KEY
+Content-Type: multipart/form-data
+
+{
+    "file": "@./sample_audio.m4a",
+    "model": "whisper-large-v3"
+}
+```
+
+Replace `$GROQ_API_KEY` with your actual API key and ensure that the `file` parameter points to the correct audio file path.
 ## CI/CD integration
 
 TBD
