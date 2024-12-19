@@ -29,16 +29,7 @@ var app = new Vue({
         showLLMSpec: true, // Default to showing the LLM Spec Input
         logs: [], // This will store all the logs
         maxDisplayedLogs: 50, // Maximum number of logs to display
-        configs: [
-            { name: 'Custom API', prompts: 40000, customInstructions: 'Requires api spec' },
-            { name: 'Open AI', prompts: 24000 },
-            { name: 'Replicate', prompts: 40000 },
-            { name: 'Groq', prompts: 40000 },
-            { name: 'Together.ai', prompts: 40000 },
-            { name: 'Custom API Image', prompts: 40000, customInstructions: 'Requires api spec' },
-            { name: 'Custom API Files', prompts: 40000, customInstructions: 'Requires api spec' },
-
-        ],
+        configs: LLM_CONFIGS,
         dataConfig: [],
     },
     created() {

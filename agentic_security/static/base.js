@@ -1,13 +1,13 @@
 
 let URL = window.location.href;
 if (URL.endsWith('/')) {
-    URL = URL.slice(0, -1);
+  URL = URL.slice(0, -1);
 }
 URL = URL.replace('/#', '');
 
 // Vue application
 let LLM_SPECS = [
-    `POST ${URL}/v1/self-probe
+  `POST ${URL}/v1/self-probe
 Authorization: Bearer XXXXX
 Content-Type: application/json
 
@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 `,
-    `POST https://api.openai.com/v1/chat/completions
+  `POST https://api.openai.com/v1/chat/completions
 Authorization: Bearer sk-xxxxxxxxx
 Content-Type: application/json
 
@@ -26,7 +26,7 @@ Content-Type: application/json
 "temperature": 0.7
 }
 `,
-    `POST https://api.replicate.com/v1/models/mistralai/mixtral-8x7b-instruct-v0.1/predictions
+  `POST https://api.replicate.com/v1/models/mistralai/mixtral-8x7b-instruct-v0.1/predictions
 Authorization: Bearer $APIKEY
 Content-Type: application/json
 
@@ -43,7 +43,7 @@ Content-Type: application/json
 }
 }
 `,
-    `POST https://api.groq.com/v1/request_manager/text_completion
+  `POST https://api.groq.com/v1/request_manager/text_completion
 Authorization: Bearer $APIKEY
 Content-Type: application/json
 
@@ -53,7 +53,7 @@ Content-Type: application/json
 "user_prompt": "<<PROMPT>>"
 }
 `,
-    `POST https://api.together.xyz/v1/chat/completions
+  `POST https://api.together.xyz/v1/chat/completions
 Authorization: Bearer $TOGETHER_API_KEY
 Content-Type: application/json
 
@@ -65,7 +65,7 @@ Content-Type: application/json
 ]
 }
 `,
-    `POST ${URL}/v1/self-probe-image
+  `POST ${URL}/v1/self-probe-image
 Authorization: Bearer XXXXX
 Content-Type: application/json
 
@@ -87,7 +87,7 @@ Content-Type: application/json
     }
 ]
 `,
-    `POST ${URL}/v1/self-probe-file
+  `POST ${URL}/v1/self-probe-file
 Authorization: Bearer $GROQ_API_KEY
 Content-Type: multipart/form-data
 
@@ -97,3 +97,26 @@ Content-Type: multipart/form-data
 }
 `,
 ]
+
+
+let LLM_CONFIGS = [
+  { name: 'Custom API', prompts: 40000, customInstructions: 'Requires api spec' },
+  { name: 'Open AI', prompts: 24000 },
+  { name: 'Replicate', prompts: 40000 },
+  { name: 'Groq', prompts: 40000 },
+  { name: 'Together.ai', prompts: 40000 },
+  { name: 'Custom API Image', prompts: 40000, customInstructions: 'Requires api spec' },
+  { name: 'Custom API Files', prompts: 40000, customInstructions: 'Requires api spec' },
+
+]
+
+
+// todo: add filters based on the type of API spec for pre built datasets
+
+function has_image(spec) {
+  return spec.includes('<<BASE64_IMAGE>>');
+}
+
+function has_files(spec) {
+  return spec.includes('multipart/form-data');
+}
