@@ -34,17 +34,23 @@
       [[% include "partials/concent.html" %]]
 
       <main class="max-w-6xl mx-auto space-y-8">
-        <!-- Config Selection -->
         <section class="bg-dark-card rounded-lg p-6 shadow-lg">
           <h2 class="text-2xl font-bold mb-4">Select a Config</h2>
-          <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div v-for="(config, index) in configs" :key="index"
+
+          <div class="flex space-x-4 overflow-x-auto scrollbar-hide">
+            <div
+              v-for="(config, index) in configs"
+              :key="index"
               @click="selectConfig(index)"
-              class="border-2 rounded-lg p-4 flex flex-col items-start transition-all hover:shadow-md cursor-pointer"
-              :class="{'border-dark-accent-green': selectedConfig === index, 'border-gray-600': selectedConfig !== index}">
+              class="flex-none w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 border-2 rounded-lg p-4 flex flex-col items-start transition-all hover:shadow-md cursor-pointer"
+              :class="{
+        'border-dark-accent-green': selectedConfig === index,
+        'border-gray-600': selectedConfig !== index
+      }">
               <div class="font-medium mb-2">{{ config.name }}</div>
-              <div class="text-sm text-gray-400">{{config.customInstructions ||
-                'Requires API key'}}</div>
+              <div class="text-sm text-gray-400">
+                {{ config.customInstructions || 'Requires API key' }}
+              </div>
               <div class="mt-2 text-dark-accent-green font-semibold">API</div>
             </div>
           </div>

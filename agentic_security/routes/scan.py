@@ -14,7 +14,7 @@ router = APIRouter()
 @router.post("/verify")
 async def verify(info: LLMInfo):
     spec = LLMSpec.from_string(info.spec)
-    r = await spec.probe("test")
+    r = await spec.verify()
     if r.status_code >= 400:
         raise HTTPException(status_code=r.status_code, detail=r.text)
     return dict(

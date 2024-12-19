@@ -35,6 +35,9 @@ var app = new Vue({
             { name: 'Replicate', prompts: 40000 },
             { name: 'Groq', prompts: 40000 },
             { name: 'Together.ai', prompts: 40000 },
+            { name: 'Custom API Image', prompts: 40000, customInstructions: 'Requires api spec' },
+            { name: 'Custom API Files', prompts: 40000, customInstructions: 'Requires api spec' },
+
         ],
         dataConfig: [],
     },

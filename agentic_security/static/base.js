@@ -65,4 +65,35 @@ Content-Type: application/json
 ]
 }
 `,
+    `POST ${URL}/v1/self-probe-image
+Authorization: Bearer XXXXX
+Content-Type: application/json
+
+[
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What is in this image?",
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url":  f"data:image/jpeg;base64,{<<BASE64_IMAGE>>}"
+          },
+        },
+      ],
+    }
+]
+`,
+    `POST ${URL}/v1/self-probe-file
+Authorization: Bearer $GROQ_API_KEY
+Content-Type: multipart/form-data
+
+{
+  "file": "@./sample_audio.m4a",
+  "model": "whisper-large-v3"
+}
+`,
 ]

@@ -1,9 +1,17 @@
+import base64
+
 import httpx
 from pydantic import BaseModel
 
 
-class InvalidHTTPSpecError(Exception):
-    ...
+def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") -> str:
+    """Encode image data to base64 from a URL"""
+    response = httpx.get(url)
+    encoded_content = base64.b64encode(response.content).decode("utf-8")
+    return "data:image/jpeg;base64," + encoded_content
+
+
+class InvalidHTTPSpecError(Exception): ...
 
 
 class LLMSpec(BaseModel):
@@ -71,6 +79,15 @@ class LLMSpec(BaseModel):
             )
 
         return response
+
+    async def verify(self) -> httpx.Response:
+        match self:
+            case LLMSpec(has_image=True):
+                return await self.probe("test", encode_image_base64_by_url())
+            case LLMSpec(has_files=True):
+                return await self._probe_with_files({})
+            case _:
+                return await self.probe("test prompt")
 
     fn = probe
 
