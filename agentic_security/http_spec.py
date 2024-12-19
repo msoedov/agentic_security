@@ -2,8 +2,7 @@ import httpx
 from pydantic import BaseModel
 
 
-class InvalidHTTPSpecError(Exception):
-    ...
+class InvalidHTTPSpecError(Exception): ...
 
 
 class LLMSpec(BaseModel):
@@ -11,6 +10,8 @@ class LLMSpec(BaseModel):
     url: str
     headers: dict
     body: str
+    has_files: bool = False
+    has_image: bool = False
 
     @classmethod
     def from_string(cls, http_spec: str):
@@ -19,20 +20,29 @@ class LLMSpec(BaseModel):
         except Exception as e:
             raise InvalidHTTPSpecError(f"Failed to parse HTTP spec: {e}") from e
 
-    # TODO: add support of
-    """
-POST https://api.groq.com/openai/v1/audio/transcriptions
-Authorization: Bearer $GROQ_API_KEY
-Content-Type: multipart/form-data
+    async def _probe_with_files(self, files):
+        async with httpx.AsyncClient() as client:
+            response = await client.request(
+                method=self.method,
+                url=self.url,
+                headers=self.headers,
+                files=files,
+                timeout=(30, 90),
+            )
 
-{
-  "file": "@./sample_audio.m4a",
-  "model": "whisper-large-v3"
-}
-    """
+        return response
 
-    # TODO: add support of BASE64 image encoding
-    async def probe(self, prompt: str) -> httpx.Response:
+    def validate(self, prompt, encoded_image, files) -> None:
+        if self.has_files and not files:
+            raise ValueError("Files are required for this request.")
+
+        if self.has_image:
+            if not encoded_image:
+                raise ValueError("An image is required for this request.")
+
+    async def probe(
+        self, prompt: str, encoded_image: str = "", files={}
+    ) -> httpx.Response:
         """Sends an HTTP request using the `httpx` library.
 
         Replaces a placeholder in the request body with a provided prompt and returns the response.
@@ -43,14 +53,19 @@ Content-Type: multipart/form-data
         Returns:
             httpx.Response: The response object containing the result of the HTTP request.
         """
+
+        self.validate(prompt, encoded_image, files)
+
+        if files:
+            return await self._probe_with_files(files)
+        content = self.body.replace("<<PROMPT>>", escape_special_chars_for_json(prompt))
+        content = content.replace("<<BASE64_IMAGE>>", encoded_image)
         async with httpx.AsyncClient() as client:
             response = await client.request(
                 method=self.method,
                 url=self.url,
                 headers=self.headers,
-                content=self.body.replace(
-                    "<<PROMPT>>", escape_special_chars_for_json(prompt)
-                ),
+                content=content,
                 timeout=(30, 90),
             )
 
@@ -91,8 +106,16 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
             headers[key] = value
         else:
             body += line
-
-    return LLMSpec(method=method, url=url, headers=headers, body=body)
+    has_files = "multipart/form-data" in headers.get("Content-Type", "")
+    has_image = "<<BASE64_IMAGE>>" in body
+    return LLMSpec(
+        method=method,
+        url=url,
+        headers=headers,
+        body=body,
+        has_files=has_files,
+        has_image=has_image,
+    )
 
 
 def escape_special_chars_for_json(prompt: str) -> str:
