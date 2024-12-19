@@ -2,7 +2,8 @@ import httpx
 from pydantic import BaseModel
 
 
-class InvalidHTTPSpecError(Exception): ...
+class InvalidHTTPSpecError(Exception):
+    ...
 
 
 class LLMSpec(BaseModel):

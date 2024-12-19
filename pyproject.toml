@@ -53,6 +53,7 @@ pytest = "^8.3.4"
 pre-commit = "^4.0.1"
 langchain-groq = "^0.2.0"
 huggingface-hub = "^0.25.1"
+pytest-httpx = "^0.35.0"
 # garak = "*"
 
 [tool.ruff]

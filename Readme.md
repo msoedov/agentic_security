@@ -286,6 +286,7 @@ Content-Type: application/json
 ```
 
 Replace `XXXXX` with your actual API key and `<<BASE64_IMAGE>>` is the image variable.
+
 ## Audio Modality
 
 To probe the audio modality, you can use the following HTTP request:
@@ -302,6 +303,7 @@ Content-Type: multipart/form-data
 ```
 
 Replace `$GROQ_API_KEY` with your actual API key and ensure that the `file` parameter points to the correct audio file path.
+
 ## CI/CD integration
 
 TBD
