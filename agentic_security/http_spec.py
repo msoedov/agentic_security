@@ -11,7 +11,8 @@ def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") ->
     return "data:image/jpeg;base64," + encoded_content
 
 
-class InvalidHTTPSpecError(Exception): ...
+class InvalidHTTPSpecError(Exception):
+    ...
 
 
 class LLMSpec(BaseModel):
