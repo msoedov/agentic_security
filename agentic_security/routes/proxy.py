@@ -17,6 +17,7 @@ async def proxy_completions(request: CompletionRequest):
     prompt_content = " ".join(
         [msg.content for msg in request.messages if msg.role == "user"]
     )
+    # Todo: get current llm spec for proper proxing
     message = prompt_content + " " + message
     ready = Event()
     ref = dict(message=message, reply="", ready=ready)

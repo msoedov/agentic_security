@@ -13,6 +13,8 @@ from agentic_security.probe_actor.refusal import refusal_heuristic
 from agentic_security.probe_data import msj_data
 from agentic_security.probe_data.data import prepare_prompts
 
+# TODO: full log file
+
 
 async def generate_prompts(
     prompts: list[str] | AsyncGenerator,
