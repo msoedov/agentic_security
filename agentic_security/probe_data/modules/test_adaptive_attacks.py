@@ -7,7 +7,7 @@ class TestModule:
     # Module can be initialized with a list of prompt groups.
     def test_initialize_with_prompt_groups(self):
         prompt_groups = []
-        module = Module(prompt_groups)
+        module = Module(prompt_groups, None, {})
         assert module is not None
         assert isinstance(module, Module)
         assert len(module.goals) == snapshot(50)

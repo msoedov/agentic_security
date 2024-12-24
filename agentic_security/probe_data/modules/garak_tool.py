@@ -11,21 +11,22 @@ from loguru import logger
 GARAK_CONFIG = "garak_rest.json"
 
 
-def write_garak_config_json():
+def write_garak_config_json(port):
     with open(GARAK_CONFIG, "w") as f:
-        f.write(json.dumps(SPEC))
+        f.write(json.dumps(SPEC, indent=4).replace("$PORT", str(port)))
 
 
 # TODO: add config params to data registry
 
 
 class Module:
-    def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue):
+    def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue, opts: dict = {}):
         self.tools_inbox = tools_inbox
         if not self.is_garak_installed():
             logger.error(
                 "Garak module is not installed. Please install it using 'pip install garak'"
             )
+        self.opts = opts
 
     def is_garak_installed(self) -> bool:
         garak_spec = importlib.util.find_spec("garak")
@@ -46,7 +47,7 @@ class Module:
             "encoding",
         ]
         logger.info("Starting Garak tool. Writing config file.")
-        write_garak_config_json()
+        write_garak_config_json(port=self.opts.get("port", 8718))
         logger.info(f"Executing command: {command}")
         # Execute the command with the specific environment
         process = subprocess.Popen(
@@ -63,7 +64,6 @@ class Module:
             ready.set()
         logger.info("Garak tool finished.")
         logger.info(f"stdout: {out}")
-        logger.error(f"exit code: {process.returncode}")
         if process.returncode != 0:
             logger.error(f"Error executing command: {command}")
             logger.error(f"err: {err}")
@@ -73,8 +73,8 @@ class Module:
 SPEC = {
     "rest": {
         "RestGenerator": {
-            "name": "OpenAI GPT-4 Service",
-            "uri": "http://0.0.0.0:8718/proxy/chat/completions",
+            "name": "Agentic Security Proxy Service",
+            "uri": "http://0.0.0.0:$PORT/proxy/chat/completions",
             "method": "POST",
             "headers": {
                 "Authorization": "Bearer $OPENAI_API_KEY",

@@ -180,6 +180,10 @@ REGISTRY = [
         "selected": False,
         "url": "https://github.com/leondz/garak2",
         "dynamic": True,
+        "opts": {
+            "port": 8718,
+            "modules": ["encoding"],
+        },
     },
     {
         "dataset_name": "InspectAI",

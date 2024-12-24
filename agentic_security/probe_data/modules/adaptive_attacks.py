@@ -3,12 +3,13 @@ import io
 import httpx
 import pandas as pd
 from loguru import logger
+import asyncio
 
 url = "https://raw.githubusercontent.com/tml-epfl/llm-adaptive-attacks/main/harmful_behaviors/harmful_behaviors_pair.csv"
 
 
 class Module:
-    def __init__(self, prompt_groups: []):
+    def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue, opts: dict = {}):
         r = httpx.get(url)
 
         content = r.content

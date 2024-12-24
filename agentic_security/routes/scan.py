@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from fastapi.responses import StreamingResponse
 
-from ..core.app import get_stop_event, get_tools_inbox
+from ..core.app import get_stop_event, get_tools_inbox, set_current_run
 from ..http_spec import LLMSpec
 from ..models.schemas import LLMInfo, Scan
 from ..probe_actor import fuzzer
@@ -27,6 +27,7 @@ async def verify(info: LLMInfo):
 
 def streaming_response_generator(scan_parameters: Scan):
     request_factory = LLMSpec.from_string(scan_parameters.llmSpec)
+    set_current_run(request_factory)
 
     async def _gen():
         async for scan_result in fuzzer.scan_router(

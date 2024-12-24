@@ -14,7 +14,7 @@ inspect_ai_task = (
 class Module:
     name = "Inspect AI"
 
-    def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue):
+    def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue, opts: dict = {}):
         self.tools_inbox = tools_inbox
         if not self.is_tool_installed():
             logger.error(

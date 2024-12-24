@@ -213,7 +213,7 @@ def load_generic_csv(url, name, column="prompt", predicator=None):
     )
 
 
-def prepare_prompts(dataset_names, budget, tools_inbox=None):
+def prepare_prompts(dataset_names, budget, tools_inbox=None, options=[]):
     # ## Datasets used and cleaned:
     # markush1/LLM-Jailbreak-Classifier
     # 1. Open-Orca/OpenOrca
@@ -255,28 +255,31 @@ def prepare_prompts(dataset_names, budget, tools_inbox=None):
                 logger.error(f"Error loading {dataset_name}: {e}")
 
     dynamic_datasets = {
-        "Steganography": lambda: Stenography(group),
-        "llm-adaptive-attacks": lambda: dataset_from_iterator(
-            "llm-adaptive-attacks", adaptive_attacks.Module(group).apply()
+        "Steganography": lambda opts: Stenography(group),
+        "llm-adaptive-attacks": lambda opts: dataset_from_iterator(
+            "llm-adaptive-attacks",
+            adaptive_attacks.Module(group, tools_inbox=tools_inbox, opts=opts).apply(),
         ),
-        "Garak": lambda: dataset_from_iterator(
+        "Garak": lambda opts: dataset_from_iterator(
             "Garak",
-            garak_tool.Module(group, tools_inbox=tools_inbox).apply(),
+            garak_tool.Module(group, tools_inbox=tools_inbox, opts=opts).apply(),
             lazy=True,
         ),
-        "InspectAI": lambda: dataset_from_iterator(
+        "InspectAI": lambda opts: dataset_from_iterator(
             "InspectAI",
             inspect_ai_tool.Module(group, tools_inbox=tools_inbox).apply(),
             lazy=True,
         ),
-        "GPT fuzzer": lambda: [],
+        "GPT fuzzer": lambda opts: [],
     }
 
     dynamic_groups = []
-    for dataset_name in dataset_names:
+    options = options or [{} for _ in dataset_names]
+    for dataset_name, opts in zip(dataset_names, options):
         if dataset_name in dynamic_datasets:
             logger.info(f"Loading {dataset_name}")
-            ds = dynamic_datasets[dataset_name]()
+
+            ds = dynamic_datasets[dataset_name](opts)
 
             for g in ds:
                 dynamic_groups.append(g)

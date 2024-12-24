@@ -62,12 +62,14 @@ async def perform_single_shot_scan(
 ) -> AsyncGenerator[str, None]:
     """Perform a standard security scan."""
 
+    selected_datasets = [m for m in datasets if m["selected"]]
     try:
         yield ScanResult.status_msg("Loading datasets...")
         prompt_modules = prepare_prompts(
-            dataset_names=[m["dataset_name"] for m in datasets if m["selected"]],
+            dataset_names=[m["dataset_name"] for m in selected_datasets],
             budget=max_budget,
             tools_inbox=tools_inbox,
+            options=[m.get("opts", {}) for m in selected_datasets],
         )
         yield ScanResult.status_msg("Datasets loaded. Starting scan...")
 

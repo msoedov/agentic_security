@@ -88,6 +88,7 @@ class TestAS:
                 "selected": True,
                 "url": "https://github.com/leondz/garak2",
                 "dynamic": True,
+                "opts": {"port": 9094},
             },
         ]
         result = AgenticSecurity.scan(llmSpec, maxBudget, datasets, max_th)
