@@ -20,6 +20,7 @@ class Module:
             logger.error(
                 "inspect_ai module is not installed. Please install it using 'pip install inspect_ai'"
             )
+        self.opts = opts
 
     def is_tool_installed(self) -> bool:
         inspect_ai = importlib.util.find_spec("inspect_ai")
@@ -27,7 +28,6 @@ class Module:
 
     async def _proc(self, command):
         env = os.environ.copy()
-        env["OPENAI_API_BASE"] = "http://0.0.0.0:8718/proxy"
         process = await asyncio.create_subprocess_shell(
             command,
             stdout=asyncio.subprocess.PIPE,
@@ -51,11 +51,9 @@ class Module:
         logger.info(f"Command {command} {process}finished.")
 
     async def apply(self) -> []:
-        env = os.environ.copy()
-        env["OPENAI_API_BASE"] = "http://0.0.0.0:8718/proxy"
-
+        port = self.opts.get("port", 8718)
         # Command to be executed
-        command = f"inspect eval {inspect_ai_task} --model openai/gpt-4  --model-base-url=http://0.0.0.0:8718/proxy"
+        command = f"inspect eval {inspect_ai_task} --model openai/gpt-4  --model-base-url=http://0.0.0.0:{port}/proxy"
         logger.info(f"Executing command: {command}")
 
         proc = asyncio.create_task(self._proc(command))

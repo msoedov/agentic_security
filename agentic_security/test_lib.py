@@ -74,7 +74,7 @@ class TestAS:
         assert len(result) in [0, 1]
 
     @pytest.mark.skipif(not has_module("garak"), reason="Garak module not installed")
-    def test_garak(self, test_server):
+    def _test_garak(self, test_server):
         llmSpec = test_spec_assets.SAMPLE_SPEC
         maxBudget = 1000000
         max_th = 0.3

@@ -1,7 +1,6 @@
 import io
 import os
 import random
-from dataclasses import dataclass
 from functools import lru_cache
 
 import httpx
@@ -10,29 +9,12 @@ from cache_to_disk import cache_to_disk
 from loguru import logger
 
 from agentic_security.probe_data import stenography_fn
+from agentic_security.probe_data.models import ProbeDataset
 from agentic_security.probe_data.modules import (
     adaptive_attacks,
     garak_tool,
     inspect_ai_tool,
 )
-
-
-@dataclass
-class ProbeDataset:
-    dataset_name: str
-    metadata: dict
-    prompts: list[str]
-    tokens: int
-    approx_cost: float
-    lazy: bool = False
-
-    def metadata_summary(self):
-        return {
-            "dataset_name": self.dataset_name,
-            "num_prompts": len(self.prompts),
-            "tokens": self.tokens,
-            "approx_cost": self.approx_cost,
-        }
 
 
 def count_words_in_list(str_list):

@@ -10,6 +10,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": False,
         "url": "https://huggingface.co/ShawnMenz/DAN_jailbreak",
+        "modality": "text",
     },
     {
         "dataset_name": "deepset/prompt-injections",
@@ -20,6 +21,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": False,
         "url": "https://huggingface.co/deepset/prompt-injections",
+        "modality": "text",
     },
     {
         "dataset_name": "rubend18/ChatGPT-Jailbreak-Prompts",
@@ -30,6 +32,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": False,
         "url": "https://huggingface.co/rubend18/ChatGPT-Jailbreak-Prompts",
+        "modality": "text",
     },
     {
         "dataset_name": "notrichardren/refuse-to-answer-prompts",
@@ -40,6 +43,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": False,
         "url": "https://huggingface.co/notrichardren/refuse-to-answer-prompts",
+        "modality": "text",
     },
     {
         "dataset_name": "Lemhf14/EasyJailbreak_Datasets",
@@ -50,6 +54,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": False,
         "url": "https://huggingface.co/Lemhf14/EasyJailbreak_Datasets",
+        "modality": "text",
     },
     {
         "dataset_name": "markush1/LLM-Jailbreak-Classifier",
@@ -60,6 +65,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": False,
         "url": "https://huggingface.co/markush1/LLM-Jailbreak-Classifier",
+        "modality": "text",
     },
     {
         "dataset_name": "JailbreakV-28K/JailBreakV-28k",
@@ -70,6 +76,7 @@ REGISTRY = [
         "selected": True,
         "dynamic": False,
         "url": "https://huggingface.co/JailbreakV-28K/JailBreakV-28k",
+        "modality": "text",
     },
     {
         "dataset_name": "ShawnMenz/jailbreak_sft_rm_ds",
@@ -80,6 +87,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": False,
         "url": "https://huggingface.co/ShawnMenz/jailbreak_sft_rm_ds",
+        "modality": "text",
     },
     {
         "dataset_name": "Steganography",
@@ -90,6 +98,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "",
+        "modality": "text",
     },
     {
         "dataset_name": "GPT fuzzer",
@@ -100,6 +109,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "",
+        "modality": "text",
     },
     {
         "dataset_name": "Agentic Security",
@@ -110,6 +120,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "",
+        "modality": "text",
     },
     {
         "dataset_name": "jailbreak_llms/2023_05_07",
@@ -120,6 +131,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "https://github.com/verazuo/jailbreak_llms",
+        "modality": "text",
     },
     {
         "dataset_name": "jailbreak_llms/2023_12_25.csv",
@@ -130,6 +142,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "https://github.com/verazuo/jailbreak_llms",
+        "modality": "text",
     },
     {
         "dataset_name": "Malwaregen",
@@ -140,6 +153,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "",
+        "modality": "text",
     },
     {
         "dataset_name": "Hallucination",
@@ -150,6 +164,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "",
+        "modality": "text",
     },
     {
         "dataset_name": "DataLeak",
@@ -160,6 +175,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "",
+        "modality": "text",
     },
     {
         "dataset_name": "llm-adaptive-attacks",
@@ -170,6 +186,7 @@ REGISTRY = [
         "selected": False,
         "dynamic": True,
         "url": "https://github.com/tml-epfl/llm-adaptive-attacks",
+        "modality": "text",
     },
     {
         "dataset_name": "Garak",
@@ -184,6 +201,7 @@ REGISTRY = [
             "port": 8718,
             "modules": ["encoding"],
         },
+        "modality": "text",
     },
     {
         "dataset_name": "InspectAI",
@@ -194,6 +212,7 @@ REGISTRY = [
         "selected": False,
         "url": "https://github.com/UKGovernmentBEIS/inspect_ai",
         "dynamic": True,
+        "modality": "text",
     },
     {
         "dataset_name": "Custom CSV",
@@ -203,5 +222,6 @@ REGISTRY = [
         "source": f"Local file dataset: {load_local_csv().metadata['src']}",
         "selected": len(load_local_csv().prompts),
         "url": "",
+        "modality": "text",
     },
 ]
