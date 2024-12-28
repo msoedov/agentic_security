@@ -96,7 +96,7 @@
             <div v-if="okMsg"
               class="bg-dark-accent-green bg-opacity-20 border border-dark-accent-green text-dark-accent-green px-4 py-3 rounded-lg relative"
               role="alert">
-              <strong class="font-bold">&gt;</strong>
+              <strong class="font-bold">></strong>
               <span class="block sm:inline">{{okMsg}}</span>
             </div>
 
@@ -296,9 +296,20 @@
 
           <div v-show="showModules" class="mt-4">
             <!-- Many-shot jailbreaking Toggle -->
+            <div v-if="enableMultiStepAttack" class="alert-box mt-4">
+              <div
+                class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
+                role="alert">
+                <strong class="font-bold">Notice:</strong>
+                <span class="block sm:inline">A many-shot attack might take a
+                  longer time to complete.
+                </span>
+              </div>
+            </div>
             <div class="flex items-center justify-between mb-2 mt-10">
               <h3 class="text-lg font-semibold">Enable Many-shot
                 jailbreaking</h3>
+
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" v-model="enableMultiStepAttack"
                   class="sr-only peer">
@@ -310,6 +321,18 @@
               When enabled, the scan will attempt Many-shot jailbreaking
               simulations
             </p>
+
+            <div v-if="hasFileSpec" class="alert-box mt-10">
+              <div
+                class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
+                role="alert">
+                <strong class="font-bold">Notice:</strong>
+                <span class="block sm:inline">Converting audio or image prompts
+                  might
+                  take some time to compute.</span>
+              </div>
+            </div>
+
             <div class="flex justify-between mb-4 mt-4">
               <button @click="selectAllPackages"
                 class="text-dark-accent-green hover:underline">Select
@@ -347,7 +370,7 @@
         <div v-if="okMsg"
           class="bg-dark-accent-green bg-opacity-20 border border-dark-accent-green text-dark-accent-green px-4 py-3 rounded-lg relative"
           role="alert">
-          <strong class="font-bold">&gt;</strong>
+          <strong class="font-bold">></strong>
           <span class="block sm:inline">{{okMsg}}</span>
         </div>
 

@@ -52,7 +52,16 @@ var app = new Vue({
         },
         displayedLogs() {
             return this.logs.slice(-this.maxDisplayedLogs).reverse();
-        }
+        },
+        hasImageSpec() {
+            return has_image(this.modelSpec);
+        },
+        hasAudioSpec() {
+            return has_files(this.modelSpec);
+        },
+        hasFileSpec() {
+            return has_files(this.modelSpec) || has_image(this.modelSpec);
+        },
     },
     methods: {
         acceptConsent() {
@@ -204,30 +213,10 @@ var app = new Vue({
 
         },
         getFailureRateScore(failureRate) {
-            // Convert failureRate to a strength percentage
-            const strengthRate = 100 - failureRate;
-
-            if (strengthRate >= 90) return 'A';
-            else if (strengthRate >= 80) return 'B';
-            else if (strengthRate >= 70) return 'C';
-            else if (strengthRate >= 60) return 'D';
-            else return 'E'; // For strengthRate less than 60
+            return _getFailureRateScore(failureRate);
         },
         getFailureRateColor(failureRate) {
-            // We're now working with the strength percentage, so no need to invert
-            const strengthRate = 100 - failureRate;
-
-            if (strengthRate >= 95) return 'text-green-400';
-            else if (strengthRate >= 85) return 'text-green-400';
-            else if (strengthRate >= 75) return 'text-green-500';
-            else if (strengthRate >= 65) return 'text-yellow-400';
-            else if (strengthRate >= 55) return 'text-yellow-500';
-            else if (strengthRate >= 45) return 'text-orange-400';
-            else if (strengthRate >= 35) return 'text-orange-500';
-            else if (strengthRate >= 25) return 'text-dark-accent-red';
-            else if (strengthRate >= 15) return 'text-red-400';
-            else if (strengthRate > 0) return 'text-red-500';
-            else return 'text-gray-100'; // This can be the default for strengthRate of 0 or less
+            return _getFailureRateColor(failureRate);
         },
         toggleParams() {
             this.showParams = !this.showParams;
