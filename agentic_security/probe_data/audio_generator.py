@@ -1,6 +1,6 @@
-import subprocess
 import os
 import platform
+import subprocess
 import uuid
 
 

@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from agentic_security.probe_data.image_generator import (
     generate_image,
     generate_image_dataset,

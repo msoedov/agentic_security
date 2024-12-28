@@ -1,9 +1,11 @@
-import pytest
-from agentic_security.probe_data.audio_generator import (
-    generate_audioform,
-    generate_audio_mac_wav,
-)
 import platform
+
+import pytest
+
+from agentic_security.probe_data.audio_generator import (
+    generate_audio_mac_wav,
+    generate_audioform,
+)
 
 
 def test_generate_audio_mac_wav():

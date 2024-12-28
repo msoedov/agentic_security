@@ -1,8 +1,9 @@
 import io
 
 import matplotlib.pyplot as plt
-from agentic_security.probe_data.models import ImageProbeDataset, ProbeDataset
 from tqdm import tqdm
+
+from agentic_security.probe_data.models import ImageProbeDataset, ProbeDataset
 
 
 def generate_image_dataset(
