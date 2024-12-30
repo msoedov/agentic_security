@@ -18,7 +18,8 @@ def encode_audio_base64_by_url(url: str) -> str:
     return "data:audio/mpeg;base64," + encoded_content
 
 
-class InvalidHTTPSpecError(Exception): ...
+class InvalidHTTPSpecError(Exception):
+    ...
 
 
 class LLMSpec(BaseModel):

@@ -96,6 +96,69 @@ Content-Type: multipart/form-data
   "model": "whisper-large-v3"
 }
 `,
+  `POST https://api.gemini.com/v1/generate
+Authorization: Bearer $GEMINI_API_KEY
+Content-Type: application/json
+
+{
+  "model": "gemini-latest",
+  "prompt": "<<PROMPT>>",
+  "temperature": 0.8,
+  "max_tokens": 150,
+  "top_p": 1.0,
+  "frequency_penalty": 0,
+  "presence_penalty": 0
+}
+`,
+  `POST https://api.anthropic.com/v1/complete
+Authorization: Bearer $ANTHROPIC_API_KEY
+Content-Type: application/json
+
+{
+  "model": "claude-v1.3",
+  "prompt": "<<PROMPT>>",
+  "temperature": 0.7,
+  "max_tokens_to_sample": 256,
+  "stop_sequences": ["\n\nHuman:"]
+}
+`,
+  `POST https://api.cohere.ai/generate
+Authorization: Bearer $COHERE_API_KEY
+Content-Type: application/json
+
+{
+  "model": "command-xlarge-nightly",
+  "prompt": "<<PROMPT>>",
+  "max_tokens": 300,
+  "temperature": 0.75,
+  "k": 0,
+  "p": 0.75
+}
+`,
+
+  `POST https://<<RESOURCE_NAME>>.openai.azure.com/openai/deployments/<<DEPLOYMENT_NAME>>/completions?api-version=2023-06-01-preview
+Authorization: Bearer $AZURE_API_KEY
+Content-Type: application/json
+
+{
+  "prompt": "<<PROMPT>>",
+  "max_tokens": 150,
+  "temperature": 0.7,
+  "top_p": 0.9,
+  "frequency_penalty": 0,
+  "presence_penalty": 0
+}
+`,
+
+  `POST https://api.assemblyai.com/v2/transcript
+Authorization: Bearer $ASSEMBLY_API_KEY
+Content-Type: application/json
+
+{
+  "audio_url": "<<AUDIO_FILE_URL>>"
+}
+`,
+
 ]
 
 
@@ -107,6 +170,12 @@ let LLM_CONFIGS = [
   { name: 'Together.ai', prompts: 40000 },
   { name: 'Custom API Image', prompts: 40000, customInstructions: 'Requires api spec' },
   { name: 'Custom API Files', prompts: 40000, customInstructions: 'Requires api spec' },
+  { name: 'Gemini', prompts: 40000 },
+  { name: 'Claude', prompts: 40000 },
+  { name: 'Cohere', prompts: 40000 },
+  { name: 'Azure OpenAI', prompts: 40000 },
+  { name: 'assemblyai', prompts: 40000 },
+
 
 ]
 
