@@ -62,14 +62,14 @@ class TestLLMSpec:
             method="POST", url="http://example.com", headers={}, body="", has_files=True
         )
         with pytest.raises(ValueError, match="Files are required for this request."):
-            spec.validate(prompt="", encoded_image="", files={})
+            spec.validate(prompt="", encoded_image="", encoded_audio="", files={})
 
     def test_validate_raises_error_for_missing_image(self):
         spec = LLMSpec(
             method="POST", url="http://example.com", headers={}, body="", has_image=True
         )
         with pytest.raises(ValueError, match="An image is required for this request."):
-            spec.validate(prompt="", encoded_image="", files={})
+            spec.validate(prompt="", encoded_image="", encoded_audio="", files={})
 
     @pytest.mark.asyncio
     async def test_probe_sends_request(self, httpx_mock):

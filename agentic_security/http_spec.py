@@ -11,8 +11,14 @@ def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") ->
     return "data:image/jpeg;base64," + encoded_content
 
 
-class InvalidHTTPSpecError(Exception):
-    ...
+def encode_audio_base64_by_url(url: str) -> str:
+    """Encode audio data to base64 from a URL"""
+    response = httpx.get(url)
+    encoded_content = base64.b64encode(response.content).decode("utf-8")
+    return "data:audio/mpeg;base64," + encoded_content
+
+
+class InvalidHTTPSpecError(Exception): ...
 
 
 class LLMSpec(BaseModel):
@@ -22,6 +28,7 @@ class LLMSpec(BaseModel):
     body: str
     has_files: bool = False
     has_image: bool = False
+    has_audio: bool = False
 
     @classmethod
     def from_string(cls, http_spec: str):
@@ -42,16 +49,18 @@ class LLMSpec(BaseModel):
 
         return response
 
-    def validate(self, prompt, encoded_image, files) -> None:
+    def validate(self, prompt, encoded_image, encoded_audio, files) -> None:
         if self.has_files and not files:
             raise ValueError("Files are required for this request.")
 
-        if self.has_image:
-            if not encoded_image:
-                raise ValueError("An image is required for this request.")
+        if self.has_image and not encoded_image:
+            raise ValueError("An image is required for this request.")
+
+        if self.has_audio and not encoded_audio:
+            raise ValueError("Audio is required for this request.")
 
     async def probe(
-        self, prompt: str, encoded_image: str = "", files={}
+        self, prompt: str, encoded_image: str = "", encoded_audio: str = "", files={}
     ) -> httpx.Response:
         """Sends an HTTP request using the `httpx` library.
 
@@ -64,12 +73,13 @@ class LLMSpec(BaseModel):
             httpx.Response: The response object containing the result of the HTTP request.
         """
 
-        self.validate(prompt, encoded_image, files)
+        self.validate(prompt, encoded_image, encoded_audio, files)
 
         if files:
             return await self._probe_with_files(files)
         content = self.body.replace("<<PROMPT>>", escape_special_chars_for_json(prompt))
         content = content.replace("<<BASE64_IMAGE>>", encoded_image)
+        content = content.replace("<<BASE64_AUDIO>>", encoded_audio)
         async with httpx.AsyncClient() as client:
             response = await client.request(
                 method=self.method,
@@ -85,6 +95,13 @@ class LLMSpec(BaseModel):
         match self:
             case LLMSpec(has_image=True):
                 return await self.probe("test", encode_image_base64_by_url())
+            case LLMSpec(has_audio=True):
+                return await self.probe(
+                    "test",
+                    encoded_audio=encode_audio_base64_by_url(
+                        "https://www.example.com/audio.mp3"
+                    ),
+                )
             case LLMSpec(has_files=True):
                 return await self._probe_with_files({})
             case _:
@@ -127,6 +144,7 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
             body += line
     has_files = "multipart/form-data" in headers.get("Content-Type", "")
     has_image = "<<BASE64_IMAGE>>" in body
+    has_audio = "<<BASE64_AUDIO>>" in body
     return LLMSpec(
         method=method,
         url=url,
@@ -134,6 +152,7 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
         body=body,
         has_files=has_files,
         has_image=has_image,
+        has_audio=has_audio,
     )
 
 
