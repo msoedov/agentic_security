@@ -279,4 +279,4 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(tokens, 0)
         self.assertTrue(refusal)
         self.assertEqual(len(errors), 1)
-        self.assertIn("Connection error", errors[0][2])
+        self.assertIn("Connection error", errors[0][3])
