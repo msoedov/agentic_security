@@ -171,7 +171,12 @@ class AgenticSecurity:
         optimize: bool = False,
         enableMultiStepAttack: bool = False,
         probe_datasets: list[dict] = [],
+        only: list[str] = [],
     ):
+        if only:
+            datasets = [d for d in datasets if d["dataset_name"] in only]
+            for d in datasets:
+                d["selected"] = True
         return asyncio.run(
             cls.async_scan(
                 llmSpec=llmSpec,
