@@ -48,7 +48,7 @@ async def process_prompt(
 
     except httpx.RequestError as exc:
         logger.error(f"Request error: {exc}")
-        errors.append((module_name, prompt, str(exc)))
+        errors.append((module_name, prompt, "?", str(exc)))
         return tokens, True
 
 
@@ -150,8 +150,9 @@ async def perform_single_shot_scan(
 
         yield ScanResult.status_msg("Scan completed.")
 
+        failure_data = errors + refusals
         df = pd.DataFrame(
-            errors + refusals, columns=["module", "prompt", "status_code", "content"]
+            failure_data, columns=["module", "prompt", "status_code", "content"]
         )
         df.to_csv("failures.csv", index=False)
 
