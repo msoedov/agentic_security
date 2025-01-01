@@ -306,7 +306,11 @@ Replace `$GROQ_API_KEY` with your actual API key and ensure that the `file` para
 
 ## CI/CD integration
 
-TBD
+This sample GitHub Action is designed to perform automated security scans
+
+[Sample GitHub Action Workflow](https://github.com/msoedov/agentic_security/blob/main/.github/workflows/security-scan.yml)
+
+This setup ensures a continuous integration approach towards maintaining security in your projects.
 
 ## Documentation
 
