@@ -1,13 +1,14 @@
 import asyncio
 import json
-import colorama
 from datetime import datetime
-from tabulate import tabulate
+
+import colorama
 import tqdm.asyncio
+from tabulate import tabulate
+
 from agentic_security.models.schemas import Scan
 from agentic_security.probe_data import REGISTRY
 from agentic_security.routes.scan import streaming_response_generator
-
 
 # Enhanced color and style definitions
 RESET = colorama.Style.RESET_ALL
@@ -137,7 +138,7 @@ class AgenticSecurity:
             if total_modules > 0
             else 0
         )
-        print(f"\nSummary:")
+        print("\nSummary:")
         print(
             f"Total Passing: {total_modules - total_failures}/{total_modules} ({pass_rate:.1f}%)"
         )
