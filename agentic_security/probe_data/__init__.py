@@ -2,6 +2,21 @@ from .data import load_local_csv
 
 REGISTRY = [
     {
+        "dataset_name": "AgenticBackend",
+        "num_prompts": 2000,
+        "tokens": 0,
+        "approx_cost": 0.0,
+        "source": "Fine-tuned cloud hosted model",
+        "selected": True,
+        "url": "Cloud",
+        "dynamic": False,
+        "opts": {
+            "port": 8718,
+            "modules": ["encoding"],
+        },
+        "modality": "text",
+    },
+    {
         "dataset_name": "ShawnMenz/DAN_jailbreak",
         "num_prompts": 666,
         "tokens": 224196,
@@ -73,7 +88,7 @@ REGISTRY = [
         "tokens": 1975800,
         "approx_cost": 0.0,
         "source": "Hugging Face Datasets",
-        "selected": True,
+        "selected": False,
         "dynamic": False,
         "url": "https://huggingface.co/JailbreakV-28K/JailBreakV-28k",
         "modality": "text",
@@ -106,17 +121,6 @@ REGISTRY = [
         "tokens": 0,
         "approx_cost": 0.0,
         "source": "Local mutation dataset",
-        "selected": False,
-        "dynamic": True,
-        "url": "",
-        "modality": "text",
-    },
-    {
-        "dataset_name": "Agentic Security",
-        "num_prompts": 0,
-        "tokens": 0,
-        "approx_cost": 0.0,
-        "source": "Local dataset",
         "selected": False,
         "dynamic": True,
         "url": "",

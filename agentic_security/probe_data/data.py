@@ -12,6 +12,7 @@ from agentic_security.probe_data import stenography_fn
 from agentic_security.probe_data.models import ProbeDataset
 from agentic_security.probe_data.modules import (
     adaptive_attacks,
+    fine_tuned,
     garak_tool,
     inspect_ai_tool,
 )
@@ -23,7 +24,7 @@ def count_words_in_list(str_list):
     :param str_list: List of strings
     :return: Total number of words across all strings in the list
     """
-    total_words = sum(len(s.split()) for s in str_list)
+    total_words = sum(len(str(s).split()) for s in str_list)
     return total_words
 
 
@@ -237,6 +238,11 @@ def prepare_prompts(dataset_names, budget, tools_inbox=None, options=[]):
                 logger.error(f"Error loading {dataset_name}: {e}")
 
     dynamic_datasets = {
+        "AgenticBackend": lambda opts: dataset_from_iterator(
+            "AgenticBackend",
+            fine_tuned.Module(group, tools_inbox=tools_inbox, opts=opts).apply(),
+            lazy=True,
+        ),
         "Steganography": lambda opts: Stenography(group),
         "llm-adaptive-attacks": lambda opts: dataset_from_iterator(
             "llm-adaptive-attacks",

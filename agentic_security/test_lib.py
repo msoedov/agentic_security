@@ -95,3 +95,29 @@ class TestAS:
         assert isinstance(result, dict)
         print(result)
         assert len(result) in [0, 1]
+
+    def test_backend(self, test_server):
+        llmSpec = test_spec_assets.SAMPLE_SPEC
+        maxBudget = 1000000
+        max_th = 0.3
+        datasets = [
+            {
+                "dataset_name": "AgenticBackend",
+                "num_prompts": 0,
+                "tokens": 0,
+                "approx_cost": 0.0,
+                "source": "Fine-tuned cloud hosted model",
+                "selected": True,
+                "url": "",
+                "dynamic": True,
+                "opts": {
+                    "port": 9094,
+                    "modules": ["encoding"],
+                },
+                "modality": "text",
+            },
+        ]
+        result = AgenticSecurity.scan(llmSpec, maxBudget, datasets, max_th)
+        assert isinstance(result, dict)
+        print(result)
+        assert len(result) in [0, 1]

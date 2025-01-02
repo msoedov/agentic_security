@@ -78,10 +78,10 @@ var app = new Vue({
                 enableChartDiagram: this.enableChartDiagram,
                 enableMultiStepAttack: this.enableMultiStepAttack,
             };
-            localStorage.setItem('appState', JSON.stringify(state));
+            localStorage.setItem('appState:v1', JSON.stringify(state));
         },
         loadStateFromLocalStorage() {
-            const savedState = localStorage.getItem('appState');
+            const savedState = localStorage.getItem('appState:v1');
             console.log('Loading state from local storage:', savedState);
             if (savedState) {
                 const state = JSON.parse(savedState);
@@ -94,7 +94,7 @@ var app = new Vue({
             }
         },
         resetState() {
-            localStorage.removeItem('appState');
+            localStorage.removeItem('appState:v1');
             this.modelSpec = LLM_SPECS[0];
             this.budget = 50;
             this.dataConfig.forEach(config => config.selected = false);

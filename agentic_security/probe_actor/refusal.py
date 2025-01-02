@@ -48,6 +48,9 @@ def check_refusal(response: str, refusal_phrases: list = REFUSAL_MARKS) -> bool:
     return any(phrase in response for phrase in refusal_phrases)
 
 
+# TODO: add plugin system for multiple classifiers of the output
+
+
 def refusal_heuristic(request_json):
     # TODO: improve this heuristic
     request = str(request_json)

@@ -32,9 +32,14 @@ async def process_prompt(
 ):
     try:
         response = await request_factory.fn(prompt=prompt)
+        if response.status_code == 422:
+            logger.error(f"Invalid prompt: {prompt}, error=422")
+            errors.append((module_name, prompt, 422, "Invalid prompt"))
+            return tokens, True
+
         if response.status_code >= 400:
             raise httpx.HTTPStatusError(
-                f"HTTP {response.status_code}",
+                f"HTTP {response.status_code} {response.content=}",
                 request=response.request,
                 response=response,
             )
