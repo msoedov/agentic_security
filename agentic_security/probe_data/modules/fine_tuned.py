@@ -1,13 +1,16 @@
 import asyncio
-import httpx
-from typing import List
+import os
 import uuid as U
+
+import httpx
 from loguru import logger
+
+AUTH_TOKEN: str = os.getenv("AS_TOKEN", "gh0-5f4a8ed2-37c6-4bd7-a0cf-7070eae8115b")
 
 
 class Module:
     def __init__(
-        self, prompt_groups: List[str], tools_inbox: asyncio.Queue, opts: dict = {}
+        self, prompt_groups: list[str], tools_inbox: asyncio.Queue, opts: dict = {}
     ):
         self.tools_inbox = tools_inbox
         self.opts = opts
@@ -17,7 +20,6 @@ class Module:
         self.batch_size = self.opts.get("batch_size", 500)
 
     async def apply(self):
-
         for _ in range(self.max_prompts // self.batch_size):
             # Fetch prompts from the API
             prompts = await self.fetch_prompts()
@@ -62,10 +64,10 @@ class Module:
                 logger.error(f"Failed to post prompt: {e}")
                 return {}
 
-    async def fetch_prompts(self) -> List[str]:
+    async def fetch_prompts(self) -> list[str]:
         api_url = "https://msoedov--agesec-backend-fastapi-app.modal.run/infer"
         headers = {
-            "Authorization": "Bearer gh0-5f4a8ed2-37c6-4bd7-a0cf-7070eae8115b",
+            "Authorization": f"Bearer {AUTH_TOKEN}",
             "Content-Type": "application/json",
         }
 
