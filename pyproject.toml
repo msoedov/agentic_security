@@ -43,6 +43,7 @@ scikit-learn = "1.5.2"
 numpy = ">=1.24.3,<3.0.0"
 jinja2 = "^3.1.4"
 python-multipart = "^0.0.20"
+tomli = "^2.2.1"
 # garak = { version = "*", optional = true }
 
 
