@@ -5,6 +5,7 @@ import fire
 import uvicorn
 
 from agentic_security.app import app
+from agentic_security.lib import AgenticSecurity
 
 
 class T:
@@ -19,6 +20,7 @@ class T:
 
     def headless(self):
         sys.path.append(os.path.dirname("."))
+        AgenticSecurity().entrypoint()
 
 
 def entrypoint():
@@ -30,4 +32,4 @@ def ci_entrypoint():
 
 
 if __name__ == "__main__":
-    entrypoint()
+    ci_entrypoint()

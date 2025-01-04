@@ -1,11 +1,12 @@
 import importlib
+import os
 import signal
 import subprocess
+import tempfile
 import time
 
-import pytest
-
 import agentic_security.test_spec_assets as test_spec_assets
+import pytest
 from agentic_security.lib import AgenticSecurity
 
 
@@ -121,3 +122,59 @@ class TestAS:
         assert isinstance(result, dict)
         print(result)
         assert len(result) in [0, 1]
+
+
+class TestEntrypointCI:
+
+    def test_generate_default_cfg_to_tmp_path(self):
+        """
+        Test that the `generate_default_cfg` method generates a valid default config file in a temporary path.
+        """
+        # Create a temporary directory
+        with tempfile.TemporaryDirectory() as tmpdir:
+            temp_path = os.path.join(tmpdir, "custom_agesec.toml")
+
+            # Override default_path to the temporary path
+            AgenticSecurity.default_path = temp_path
+
+            # Generate the default configuration
+            security = AgenticSecurity()
+            security.generate_default_cfg()
+
+            # Check that the config file was created at the temporary path
+            assert os.path.exists(temp_path), f"{temp_path} file should be generated."
+
+            # Validate the contents of the generated config file
+            with open(temp_path, "r") as f:
+                generated_content = f.read()
+                assert (
+                    "maxBudget = 1000000" in generated_content
+                ), "maxBudget should be 1000000"
+
+    def test_load_generated_tmp_config(self):
+        """
+        Test that the configuration generated in a temporary path can be loaded successfully.
+        """
+        # Create a temporary directory
+        with tempfile.TemporaryDirectory() as tmpdir:
+            temp_path = os.path.join(tmpdir, "custom_agesec.toml")
+
+            # Override default_path to the temporary path
+            AgenticSecurity.default_path = temp_path
+
+            # Generate the default configuration
+            security = AgenticSecurity()
+            security.generate_default_cfg()
+
+            # Load the generated configuration
+            AgenticSecurity.load_config(temp_path)
+
+            # Validate loaded configuration
+            config = AgenticSecurity.config
+            assert (
+                config["general"]["maxBudget"] == 1000000
+            ), "maxBudget should be 1000000"
+            assert config["general"]["max_th"] == 0.3, "max_th should be 0.3"
+            assert (
+                config["modules"]["AgenticBackend"]["dataset_name"] == "AgenticBackend"
+            ), "Dataset name should be 'AgenticBackend'"
