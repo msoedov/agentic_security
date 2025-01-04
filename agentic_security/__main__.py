@@ -33,12 +33,14 @@ class CLI:
         sys.path.append(os.path.dirname("."))
         AgenticSecurity().entrypoint()
 
-    def init(self):
+    def init(self, host: str = "0.0.0.0", port: int = 8718):
         """
         Generate the default CI configuration file.
         """
         sys.path.append(os.path.dirname("."))
-        AgenticSecurity().generate_default_cfg()
+        AgenticSecurity().generate_default_cfg(host, port)
+
+    i = init
 
 
 def main():
