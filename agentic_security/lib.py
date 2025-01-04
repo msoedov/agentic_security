@@ -291,3 +291,7 @@ high = 0.5
 
 """
             )
+
+        logger.info(
+            f"Default configuration generated successfully to {self.default_path}."
+        )

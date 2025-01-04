@@ -5,8 +5,9 @@ import subprocess
 import tempfile
 import time
 
-import agentic_security.test_spec_assets as test_spec_assets
 import pytest
+
+import agentic_security.test_spec_assets as test_spec_assets
 from agentic_security.lib import AgenticSecurity
 
 
@@ -125,7 +126,6 @@ class TestAS:
 
 
 class TestEntrypointCI:
-
     def test_generate_default_cfg_to_tmp_path(self):
         """
         Test that the `generate_default_cfg` method generates a valid default config file in a temporary path.
@@ -145,7 +145,7 @@ class TestEntrypointCI:
             assert os.path.exists(temp_path), f"{temp_path} file should be generated."
 
             # Validate the contents of the generated config file
-            with open(temp_path, "r") as f:
+            with open(temp_path) as f:
                 generated_content = f.read()
                 assert (
                     "maxBudget = 1000000" in generated_content

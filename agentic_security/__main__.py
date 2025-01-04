@@ -8,28 +8,48 @@ from agentic_security.app import app
 from agentic_security.lib import AgenticSecurity
 
 
-class T:
-    def server(self, port=8718, host="0.0.0.0"):
+class CLI:
+    def server(self, port: int = 8718, host: str = "0.0.0.0"):
+        """
+        Launch the Agentic Security server.
+
+        Args:
+            port (int): Port number for the server to listen on. Default is 8718.
+            host (str): Host address for the server. Default is "0.0.0.0".
+        """
         sys.path.append(os.path.dirname("."))
         config = uvicorn.Config(
             app, port=port, host=host, log_level="info", reload=True
         )
         server = uvicorn.Server(config)
         server.run()
-        return
 
-    def headless(self):
+    s = server
+
+    def ci(self):
+        """
+        Run Agentic Security in CI mode.
+        """
         sys.path.append(os.path.dirname("."))
         AgenticSecurity().entrypoint()
 
+    def init(self):
+        """
+        Generate the default CI configuration file.
+        """
+        sys.path.append(os.path.dirname("."))
+        AgenticSecurity().generate_default_cfg()
 
-def entrypoint():
-    fire.Fire(T().server)
 
-
-def ci_entrypoint():
-    fire.Fire(T().headless)
+def main():
+    """
+    Entry point for the CLI. Default behavior launches the server,
+    while subcommands allow CI or configuration generation.
+    """
+    fire.Fire(
+        CLI,
+    )
 
 
 if __name__ == "__main__":
-    ci_entrypoint()
+    main()
