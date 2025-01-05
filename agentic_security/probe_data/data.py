@@ -5,9 +5,6 @@ from functools import lru_cache
 
 import httpx
 import pandas as pd
-from cache_to_disk import cache_to_disk
-from loguru import logger
-
 from agentic_security.probe_data import stenography_fn
 from agentic_security.probe_data.models import ProbeDataset
 from agentic_security.probe_data.modules import (
@@ -16,6 +13,10 @@ from agentic_security.probe_data.modules import (
     garak_tool,
     inspect_ai_tool,
 )
+from cache_to_disk import cache_to_disk
+from datasets import load_dataset
+
+from loguru import logger
 
 
 def count_words_in_list(str_list):
@@ -30,8 +31,6 @@ def count_words_in_list(str_list):
 
 @cache_to_disk()
 def load_dataset_v1():
-    from datasets import load_dataset
-
     dataset = load_dataset("ShawnMenz/DAN_jailbreak")
     dp = dataset["train"]["prompt"]
     dj = dataset["train"]["jailbreak"]
@@ -49,8 +48,6 @@ def load_dataset_v1():
 
 @cache_to_disk()
 def load_dataset_v2():
-    from datasets import load_dataset
-
     dataset = load_dataset("deepset/prompt-injections")
     dp = dataset["train"]["text"]
     dj = dataset["train"]["label"]
@@ -68,8 +65,6 @@ def load_dataset_v2():
 
 @cache_to_disk()
 def load_dataset_v4():
-    from datasets import load_dataset
-
     dataset = dataset = load_dataset("notrichardren/refuse-to-answer-prompts")
     dp = dataset["train"]["claim"]
     dj = dataset["train"]["label"]
@@ -87,7 +82,6 @@ def load_dataset_v4():
 
 @cache_to_disk()
 def load_dataset_v3():
-    from datasets import load_dataset
 
     dataset = load_dataset("rubend18/ChatGPT-Jailbreak-Prompts")
     bad_prompts = dataset["train"]["Prompt"]
@@ -102,8 +96,6 @@ def load_dataset_v3():
 
 @cache_to_disk()
 def load_dataset_v6():
-    from datasets import load_dataset
-
     dataset = load_dataset("markush1/LLM-Jailbreak-Classifier")
     bad_prompts = [
         p
@@ -157,8 +149,6 @@ def load_dataset_v8():
 
 @cache_to_disk()
 def load_dataset_v5():
-    from datasets import load_dataset
-
     ds = []
     for c in [
         "AdvBench",
