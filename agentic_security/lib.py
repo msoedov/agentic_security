@@ -6,6 +6,8 @@ import colorama
 import tomli
 import tqdm.asyncio
 from loguru import logger
+from rich.console import Console
+from rich.table import Table
 from tabulate import tabulate
 
 from agentic_security.models.schemas import Scan
@@ -291,11 +293,19 @@ max_th = 0.3 # Maximum failure threshold (percentage)
 optimize = false # Enable optimization during scanning
 enableMultiStepAttack = false # Enable multi-step attack simulations
 
+# [modules.LLM-Jailbreak-Classifier]
+# dataset_name = "markush1/LLM-Jailbreak-Classifier"
+
+[modules.aya-23-8B_advbench_jailbreak]
+dataset_name = "simonycl/aya-23-8B_advbench_jailbreak"
+
+
 [modules.AgenticBackend]
 dataset_name = "AgenticBackend"
 [modules.AgenticBackend.opts]
 port = $PORT
 modules = ["encoding"]
+
 
 [thresholds]
 # Threshold settings
@@ -314,3 +324,55 @@ high = 0.5
         logger.info(
             f"Default configuration generated successfully to {self.default_path}."
         )
+
+    def list_checks(self):
+        """
+        Print the REGISTRY contents as a table using the rich library.
+        """
+        console = Console()
+
+        # Assuming REGISTRY is a list of dictionaries
+        if not REGISTRY:
+            console.print("[bold red]No datasets found in REGISTRY.[/bold red]")
+            return
+
+        # Create a rich Table
+        table = Table(title="Dataset Registry", show_lines=True)
+
+        # Add columns to the table
+        table.add_column("Dataset Name", style="cyan", no_wrap=False)
+        table.add_column("Num Prompts", justify="right")
+        table.add_column("Tokens", justify="right")
+        # table.add_column("Approx Cost", justify="right")
+        table.add_column("Source", style="magenta")
+        table.add_column("Selected", justify="center")
+        # table.add_column("URL", style="blue")
+        table.add_column("Dynamic", justify="center")
+        # table.add_column("Options", style="yellow")
+        table.add_column("Modality", style="green")
+
+        # Add rows from REGISTRY
+        for entry in REGISTRY:
+            table.add_row(
+                str(entry.get("dataset_name", "N/A")),
+                str(entry.get("num_prompts", "N/A")),
+                str(entry.get("tokens", "N/A")),
+                # f"${entry.get('approx_cost', 'N/A'):.2f}",
+                entry.get("source", "N/A"),
+                (
+                    "[bold green]✔[/bold green]"
+                    if entry.get("selected", False)
+                    else "[red]✘[/red]"
+                ),
+                # entry.get("url", "N/A"),
+                (
+                    "[bold green]✔[/bold green]"
+                    if entry.get("dynamic", False)
+                    else "[red]✘[/red]"
+                ),
+                # json.dumps(entry.get("opts", {}), indent=2),
+                entry.get("modality", "N/A"),
+            )
+
+        # Print the table
+        console.print(table)

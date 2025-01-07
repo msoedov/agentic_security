@@ -42,6 +42,13 @@ class CLI:
 
     i = init
 
+    def ls(self):
+        """
+        List all available security checks.
+        """
+        sys.path.append(os.path.dirname("."))
+        AgenticSecurity().list_checks()
+
 
 def main():
     """
