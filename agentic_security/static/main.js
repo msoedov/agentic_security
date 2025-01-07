@@ -4,6 +4,7 @@ var app = new Vue({
         progressWidth: '0%',
         modelSpec: LLM_SPECS[0],
         budget: 50,
+        isFocused: false, // Tracks if the textarea is focused
         showParams: false,
         showResetConfirmation: false,
         enableChartDiagram: true,
@@ -62,8 +63,55 @@ var app = new Vue({
         hasFileSpec() {
             return has_files(this.modelSpec) || has_image(this.modelSpec);
         },
+        highlightedText() {
+            // First highlight <<VAR>> pattern
+            let text = this.modelSpec.replace(
+                /<<([^>]+)>>/g,
+                `<span class="px-2 py-0.5 rounded-full bg-dark-accent-yellow text-dark-bg font-medium">&lt;&lt;$1&gt;&gt;</span>`
+            );
+
+            // Then highlight $VARIABLE pattern
+            text = text.replace(
+                /(\$[A-Z_]+)/g,
+                `<span class="px-2 py-0.5 rounded-full bg-yellow-100 text-dark-bg font-medium">$1</span>`
+            );
+
+            // Finally wrap everything in gray text
+            return `<span class="text-gray-500">${text}</span>`;
+        },
+        highlightedText2() {
+            // First apply the highlighting for variables
+            const highlightedText = this.modelSpec.replace(
+                /<<([^>]+)>>/g,
+                `<span class="px-2 py-0.5 rounded-full bg-dark-accent-yellow text-dark-bg font-medium">&lt;&lt;$1&gt;&gt;</span>`
+            );
+
+            // Wrap the entire text in a span to make non-highlighted parts dim gray
+            return `<span class="text-gray-500">${highlightedText}</span>`;
+        }
+
     },
     methods: {
+        focusTextarea() {
+            this.isFocused = true;
+            self = this.$refs;
+            this.$nextTick(() => {
+                // Focus the textarea after rendering
+                self.textarea.focus();
+                this.adjustHeight({ target: self.textarea });
+            });
+            document.addEventListener("mousedown", this.handleClickOutside);
+
+        },
+        handleOutsideClick(event) {
+            if (!this.$refs.container.contains(event.target)) {
+                this.isFocused = false;
+                document.removeEventListener("mousedown", this.handleClickOutside);
+            }
+        },
+        unfocusTextarea() {
+            this.isFocused = false;
+        },
         acceptConsent() {
             this.showConsentModal = false; // Close the modal
             localStorage.setItem('consentGiven', 'true'); // Save consent to local storage
@@ -128,6 +176,7 @@ var app = new Vue({
             this.showLLMSpec = !this.showLLMSpec;
         },
         adjustHeight(event) {
+            const textarea = event.target;
             event.target.style.height = 'auto';
             event.target.style.height = event.target.scrollHeight + 'px';
         },

@@ -75,13 +75,22 @@
           </div>
 
           <div v-show="showLLMSpec" class="mt-4">
-            <label for="llm-spec" class="block text-sm font-medium mb-2">
+            <label v-if="isFocused" for="llm-spec"
+              class="block text-sm font-medium mb-2">
               LLM API Spec, PROMPT variable will be replaced with the testing
               prompt
             </label>
+            <div
+              v-if="!isFocused"
+              class="w-full bg-dark-bg text-dark-accent-orange border border-gray-600 rounded-lg p-3 cursor-text"
+              @click="focusTextarea"
+              v-html="highlightedText"></div>
+
             <textarea
+              v-else
               class="w-full bg-dark-bg text-dark-accent-orange border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-dark-accent-green"
               id="llm-spec"
+              @blur="unfocusTextarea"
               v-model="modelSpec"
               @input="adjustHeight"
               rows="5"

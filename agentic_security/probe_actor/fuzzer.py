@@ -66,7 +66,7 @@ async def perform_single_shot_scan(
     stop_event: asyncio.Event = None,
 ) -> AsyncGenerator[str, None]:
     """Perform a standard security scan."""
-
+    max_budget = max_budget * 100_000_000
     selected_datasets = [m for m in datasets if m["selected"]]
     try:
         yield ScanResult.status_msg("Loading datasets...")
@@ -148,8 +148,12 @@ async def perform_single_shot_scan(
                         should_stop = True
                         break
                 if total_tokens > max_budget:
-                    logger.info("Scan ran out of budget and stopped.")
-                    yield ScanResult.status_msg("Scan ran out of budget and stopped.")
+                    logger.info(
+                        f"Scan ran out of budget and stopped. {total_tokens=} {max_budget=}"
+                    )
+                    yield ScanResult.status_msg(
+                        f"Scan ran out of budget and stopped. {total_tokens=} {max_budget=}"
+                    )
                     should_stop = True
                     break
 

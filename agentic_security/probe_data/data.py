@@ -5,6 +5,10 @@ from functools import lru_cache
 
 import httpx
 import pandas as pd
+from cache_to_disk import cache_to_disk
+from datasets import load_dataset
+from loguru import logger
+
 from agentic_security.probe_data import stenography_fn
 from agentic_security.probe_data.models import ProbeDataset
 from agentic_security.probe_data.modules import (
@@ -13,10 +17,56 @@ from agentic_security.probe_data.modules import (
     garak_tool,
     inspect_ai_tool,
 )
-from cache_to_disk import cache_to_disk
-from datasets import load_dataset
 
-from loguru import logger
+
+@cache_to_disk()
+def load_dataset_general(
+    dataset_name,
+    dataset_split="train",
+    column_mappings=None,
+    filter_fn=None,
+    custom_url=None,
+    additional_metadata=None,
+):
+    """
+    Generalized function to load datasets with flexible configurations.
+
+    :param dataset_name: Name of the dataset or URL for custom CSVs
+    :param dataset_split: Split to load from the dataset (e.g., "train")
+    :param column_mappings: Dictionary mapping dataset columns to expected keys, e.g., {'prompt': 'query'}
+    :param filter_fn: A filtering function that takes a row and returns True/False
+    :param custom_url: URL for custom CSV datasets
+    :param additional_metadata: Additional metadata to include in the ProbeDataset
+    :return: A ProbeDataset object with the processed data
+    """
+    if custom_url:
+        logger.info(f"Loading custom CSV dataset from {custom_url}")
+        r = httpx.get(custom_url)
+        content = r.content
+        df = pd.read_csv(io.StringIO(content.decode("utf-8")))
+    else:
+        logger.info(f"Loading dataset {dataset_name} from Hugging Face datasets")
+        dataset = load_dataset(dataset_name)
+        df = pd.DataFrame(dataset[dataset_split])
+
+    # Apply column mappings if provided
+    if column_mappings:
+        df.rename(columns=column_mappings, inplace=True)
+
+    # Filter rows if filter_fn is provided
+    if filter_fn:
+        df = df[df.apply(filter_fn, axis=1)]
+
+    # Extract prompts
+    prompts = df[column_mappings.get("prompt", "prompt")].tolist()
+
+    return ProbeDataset(
+        dataset_name=dataset_name,
+        metadata=additional_metadata or {},
+        prompts=prompts,
+        tokens=count_words_in_list(prompts),
+        approx_cost=0.0,
+    )
 
 
 def count_words_in_list(str_list):
@@ -31,66 +81,37 @@ def count_words_in_list(str_list):
 
 @cache_to_disk()
 def load_dataset_v1():
-    dataset = load_dataset("ShawnMenz/DAN_jailbreak")
-    dp = dataset["train"]["prompt"]
-    dj = dataset["train"]["jailbreak"]
-    # good_prompts = [p for p, j in zip(dp, dj) if not j]
-    bad_prompts = [p for p, j in zip(dp, dj) if j]
-
-    return ProbeDataset(
+    return load_dataset_general(
         dataset_name="ShawnMenz/DAN_jailbreak",
-        metadata={},
-        prompts=bad_prompts,
-        tokens=count_words_in_list(bad_prompts),
-        approx_cost=0.0,
+        column_mappings={"prompt": "prompt", "jailbreak": "jailbreak"},
+        filter_fn=lambda row: row["jailbreak"],
     )
 
 
 @cache_to_disk()
 def load_dataset_v2():
-    dataset = load_dataset("deepset/prompt-injections")
-    dp = dataset["train"]["text"]
-    dj = dataset["train"]["label"]
-    # good_prompts = [p for p, j in zip(dp, dj) if not j]
-    bad_prompts = [p for p, j in zip(dp, dj) if j]
-
-    return ProbeDataset(
+    return load_dataset_general(
         dataset_name="deepset/prompt-injections",
-        metadata={},
-        prompts=bad_prompts,
-        tokens=count_words_in_list(bad_prompts),
-        approx_cost=0.0,
+        column_mappings={"prompt": "text", "jailbreak": "label"},
+        filter_fn=lambda row: row["label"],
     )
 
 
 @cache_to_disk()
 def load_dataset_v4():
-    dataset = dataset = load_dataset("notrichardren/refuse-to-answer-prompts")
-    dp = dataset["train"]["claim"]
-    dj = dataset["train"]["label"]
-    # good_prompts = [p for p, j in zip(dp, dj) if not j]
-    bad_prompts = [p for p, j in zip(dp, dj) if j]
-
-    return ProbeDataset(
+    return load_dataset_general(
         dataset_name="notrichardren/refuse-to-answer-prompts",
-        metadata={},
-        prompts=bad_prompts,
-        tokens=count_words_in_list(bad_prompts),
-        approx_cost=0.0,
+        column_mappings={"prompt": "claim", "jailbreak": "label"},
+        filter_fn=lambda row: row["label"],
     )
 
 
 @cache_to_disk()
 def load_dataset_v3():
-
-    dataset = load_dataset("rubend18/ChatGPT-Jailbreak-Prompts")
-    bad_prompts = dataset["train"]["Prompt"]
-    return ProbeDataset(
+    return load_dataset_general(
         dataset_name="rubend18/ChatGPT-Jailbreak-Prompts",
-        metadata={},
-        prompts=bad_prompts,
-        tokens=count_words_in_list(bad_prompts),
-        approx_cost=0.0,
+        column_mappings={"prompt": "Prompt"},
+        filter_fn=lambda row: row["label"],
     )
 
 

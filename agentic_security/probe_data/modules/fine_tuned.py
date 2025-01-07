@@ -65,7 +65,7 @@ class Module:
                 return {}
 
     async def fetch_prompts(self) -> list[str]:
-        api_url = "https://msoedov--agesec-backend-fastapi-app.modal.run/infer"
+        api_url = "https://edge.metaheuristic.co/infer"
         headers = {
             "Authorization": f"Bearer {AUTH_TOKEN}",
             "Content-Type": "application/json",
