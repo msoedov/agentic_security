@@ -82,7 +82,7 @@
             </label>
             <div
               v-if="!isFocused"
-              class="w-full bg-dark-bg text-dark-accent-orange border border-gray-600 rounded-lg p-3 cursor-text"
+              class="w-full bg-dark-bg text-dark-accent-orange border border-gray-600 rounded-lg p-3 cursor-text mb-5"
               @click="focusTextarea"
               v-html="highlightedText"></div>
 
@@ -356,11 +356,16 @@
                 v-for="(package, index) in dataConfig"
                 :key="index"
                 @click="addPackage(index)"
-                class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md"
-                :class="{'border-dark-accent-green bg-dark-accent-green bg-opacity-20': package.selected, 'border-gray-600': !package.selected}">
-                <div class="font-medium mb-1">{{ package.dataset_name }}</div>
-                <div class="text-sm text-gray-400">{{ package.source ||
-                  'Local dataset' }}</div>
+                class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md overflow-hidden"
+                :class="{
+                'border-dark-accent-green bg-dark-accent-green bg-opacity-20': package.selected,
+                'border-gray-600': !package.selected
+              }">
+                <div class="font-medium mb-1 truncate">{{ package.dataset_name
+                  }}</div>
+                <div class="text-sm text-gray-400 truncate">
+                  {{ package.source || 'Local dataset' }}
+                </div>
                 <div class="mt-2 text-sm font-semibold">
                   {{ package.dynamic ? 'Dynamic dataset' :
                   `${package.num_prompts.toLocaleString()} prompts` }}

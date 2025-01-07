@@ -272,6 +272,9 @@ var app = new Vue({
         },
         adjustHeight(event) {
             const element = event.target;
+            if (!element) {
+                return
+            }
             // Reset height to ensure accurate measurement
             element.style.height = 'auto';
             // Adjust height based on scrollHeight

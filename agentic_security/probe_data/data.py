@@ -238,6 +238,7 @@ def prepare_prompts(dataset_names, budget, tools_inbox=None, options=[]):
         ),
         "Custom CSV": load_local_csv,
     }
+    dataset_map.update(dataset_map_generics)
 
     group = []
     for dataset_name in dataset_names:
@@ -376,3 +377,74 @@ def dataset_from_iterator(name: str, iterator, lazy=False) -> list:
 
 
 # TODO: refactor this abstraction
+
+dataset_map_generics = {
+    "simonycl/aya-23-8B_advbench_jailbreak": lambda: load_dataset_general(
+        dataset_name="simonycl/aya-23-8B_advbench_jailbreak",
+        column_mappings={"prompt": "prompt"},
+    ),
+    "acmc/jailbreaks_dataset_with_perplexity_bigcode_starcoder2-3b_bigcode_starcoder2-7b": lambda: load_dataset_general(
+        dataset_name="acmc/jailbreaks_dataset_with_perplexity_bigcode_starcoder2-3b_bigcode_starcoder2-7b"
+    ),
+    "karanxa/dolphin-jailbreak-finetuning-dataset": lambda: load_dataset_general(
+        dataset_name="karanxa/dolphin-jailbreak-finetuning-dataset",
+        column_mappings={"prompt": "text"},
+    ),
+    "karanxa/llama-2-jailbreak-dataset": lambda: load_dataset_general(
+        dataset_name="karanxa/llama-2-jailbreak-dataset",
+        column_mappings={"prompt": "text"},
+    ),
+    "karanxa/llama2-uncensored-jailbreak-dataset-finetuning": lambda: load_dataset_general(
+        dataset_name="karanxa/llama2-uncensored-jailbreak-dataset-finetuning",
+        column_mappings={"prompt": "text"},
+    ),
+    "liuyanchen1015/Llama-3.2-1B_jailbreak_responses": lambda: load_dataset_general(
+        dataset_name="liuyanchen1015/Llama-3.2-1B_jailbreak_responses",
+        column_mappings={"prompt": "jailbreak_prompt_text"},
+    ),
+    "liuyanchen1015/Llama-3.2-1B-Instruct_jailbreak_responses": lambda: load_dataset_general(
+        dataset_name="liuyanchen1015/Llama-3.2-1B-Instruct_jailbreak_responses",
+        column_mappings={"prompt": "jailbreak_prompt_text"},
+    ),
+    "liuyanchen1015/Llama-3.2-1B-Instruct_jailbreak_responses_with_judgment": lambda: load_dataset_general(
+        dataset_name="liuyanchen1015/Llama-3.2-1B-Instruct_jailbreak_responses_with_judgment",
+        column_mappings={"prompt": "jailbreak_prompt_text"},
+    ),
+    "jackhhao/jailbreak-classification": lambda: load_dataset_general(
+        dataset_name="jackhhao/jailbreak-classification",
+        column_mappings={"prompt": "prompt"},
+    ),
+    "markush1/LLM-Jailbreak-Classifier": lambda: load_dataset_general(
+        dataset_name="markush1/LLM-Jailbreak-Classifier",
+        column_mappings={"prompt": "prompt"},
+    ),
+    "walledai/JailbreakBench": lambda: load_dataset_general(
+        dataset_name="walledai/JailbreakBench", column_mappings={"prompt": "prompt"}
+    ),
+    "walledai/JailbreakHub": lambda: load_dataset_general(
+        dataset_name="walledai/JailbreakHub", column_mappings={"prompt": "prompt"}
+    ),
+    "Granther/evil-jailbreak": lambda: load_dataset_general(
+        dataset_name="Granther/evil-jailbreak", column_mappings={"prompt": "text"}
+    ),
+    "sevdeawesome/jailbreak_success": lambda: load_dataset_general(
+        dataset_name="sevdeawesome/jailbreak_success",
+        column_mappings={"prompt": "jailbreak_prompt_text"},
+    ),
+    "IDA-SERICS/Disaster-tweet-jailbreaking": lambda: load_dataset_general(
+        dataset_name="IDA-SERICS/Disaster-tweet-jailbreaking",
+        column_mappings={"prompt": "prompt_attack"},
+    ),
+    "GeorgeDaDude/Jailbreak_Complete_DS_labeled": lambda: load_dataset_general(
+        dataset_name="GeorgeDaDude/Jailbreak_Complete_DS_labeled",
+        column_mappings={"prompt": "question"},
+    ),
+    "dayone3nder/jailbreak_prompt_JBB_sft_trainset": lambda: load_dataset_general(
+        dataset_name="dayone3nder/jailbreak_prompt_JBB_sft_trainset",
+        column_mappings={"prompt": "prompt"},
+    ),
+    "dayone3nder/general_safe_mix_jailbreak_prompt_JBB_trainset": lambda: load_dataset_general(
+        dataset_name="dayone3nder/general_safe_mix_jailbreak_prompt_JBB_trainset",
+        column_mappings={"prompt": "prompt"},
+    ),
+}

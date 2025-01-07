@@ -3,6 +3,8 @@ import platform
 import subprocess
 import uuid
 
+from cache_to_disk import cache_to_disk
+
 
 def generate_audio_mac_wav(prompt: str) -> bytes:
     """
@@ -43,6 +45,7 @@ def generate_audio_mac_wav(prompt: str) -> bytes:
     return audio_bytes
 
 
+@cache_to_disk()
 def generate_audioform(prompt: str) -> bytes:
     """
     Generate an audio file from the provided prompt in WAV format.

@@ -1,6 +1,7 @@
 import io
 
 import matplotlib.pyplot as plt
+from cache_to_disk import cache_to_disk
 from tqdm import tqdm
 
 from agentic_security.probe_data.models import ImageProbeDataset, ProbeDataset
@@ -34,6 +35,7 @@ def generate_image_dataset(
     return image_datasets
 
 
+@cache_to_disk()
 def generate_image(prompt: str) -> bytes:
     """
     Generate an image based on the provided prompt and return it as bytes.

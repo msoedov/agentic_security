@@ -1,6 +1,207 @@
 from .data import load_local_csv
 
-REGISTRY = [
+REGISTRY_V0 = [
+    {
+        "dataset_name": "simonycl/aya-23-8B_advbench_jailbreak",
+        "num_prompts": 416,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/simonycl/aya-23-8B_advbench_jailbreak",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "acmc/jailbreaks_dataset_with_perplexity_bigcode_starcoder2-3b_bigcode_starcoder2-7b",
+        "num_prompts": 11191,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/acmc/jailbreaks_dataset_with_perplexity_bigcode_starcoder2-3b_bigcode_starcoder2-7b",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "karanxa/dolphin-jailbreak-finetuning-dataset",
+        "num_prompts": 42684,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/karanxa/dolphin-jailbreak-finetuning-dataset",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "karanxa/llama-2-jailbreak-dataset",
+        "num_prompts": 40613,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/karanxa/llama-2-jailbreak-dataset",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "karanxa/llama2-uncensored-jailbreak-dataset-finetuning",
+        "num_prompts": 42854,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/karanxa/llama2-uncensored-jailbreak-dataset-finetuning",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "liuyanchen1015/Llama-3.2-1B_jailbreak_responses",
+        "num_prompts": 9888,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/liuyanchen1015/Llama-3.2-1B_jailbreak_responses",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "liuyanchen1015/Llama-3.2-1B-Instruct_jailbreak_responses",
+        "num_prompts": 9888,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/liuyanchen1015/Llama-3.2-1B-Instruct_jailbreak_responses",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "liuyanchen1015/Llama-3.2-1B-Instruct_jailbreak_responses_with_judgment",
+        "num_prompts": 9888,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/liuyanchen1015/Llama-3.2-1B-Instruct_jailbreak_responses_with_judgment",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "jackhhao/jailbreak-classification",
+        "num_prompts": 1044,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/jackhhao/jailbreak-classification",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "markush1/LLM-Jailbreak-Classifier",
+        "num_prompts": 201193,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/markush1/LLM-Jailbreak-Classifier",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "walledai/JailbreakBench",
+        "num_prompts": 200,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/walledai/JailbreakBench",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "walledai/JailbreakHub",
+        "num_prompts": 15140,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/walledai/JailbreakHub",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "Granther/evil-jailbreak",
+        "num_prompts": 1200,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/Granther/evil-jailbreak",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "sevdeawesome/jailbreak_success",
+        "num_prompts": 10800,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/sevdeawesome/jailbreak_success",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "IDA-SERICS/Disaster-tweet-jailbreaking",
+        "num_prompts": 3000,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/IDA-SERICS/Disaster-tweet-jailbreaking",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "GeorgeDaDude/Jailbreak_Complete_DS_labeled",
+        "num_prompts": 11383,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/GeorgeDaDude/Jailbreak_Complete_DS_labeled",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "dayone3nder/jailbreak_prompt_JBB_sft_trainset",
+        "num_prompts": 4785,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/dayone3nder/jailbreak_prompt_JBB_sft_trainset",
+        "modality": "text",
+    },
+    {
+        "dataset_name": "dayone3nder/general_safe_mix_jailbreak_prompt_JBB_trainset",
+        "num_prompts": 24679,
+        "tokens": None,  # Add actual token count if available
+        "approx_cost": 0.0,
+        "source": "Hugging Face Datasets",
+        "selected": False,
+        "dynamic": False,
+        "url": "https://huggingface.co/dayone3nder/general_safe_mix_jailbreak_prompt_JBB_trainset",
+        "modality": "text",
+    },
+]
+
+REGISTRY = REGISTRY_V0 + [
     {
         "dataset_name": "AgenticBackend",
         "num_prompts": 2000,
