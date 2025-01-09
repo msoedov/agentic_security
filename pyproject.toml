@@ -1,10 +1,12 @@
 [tool.poetry]
 name = "agentic_security"
-version = "0.3.4"
+version = "0.4.0"
 description = "Agentic LLM vulnerability scanner"
 authors = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 repository = "https://github.com/msoedov/agentic_security"
+homepage = "https://github.com/msoedov/agentic_security"
+documentation = "https://github.com/msoedov/agentic_security/blob/main/README.md"
 license = "MIT"
 readme = "Readme.md"
 keywords = [
@@ -54,7 +56,6 @@ black = "^24.10.0"
 mypy = "^1.12.0"
 pytest = "^8.3.4"
 pre-commit = "^4.0.1"
-langchain-groq = "^0.2.0"
 huggingface-hub = "^0.25.1"
 pytest-httpx = "^0.35.0"
 pytest-mock = "^3.14.0"
