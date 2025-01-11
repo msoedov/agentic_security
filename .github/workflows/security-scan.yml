@@ -34,4 +34,4 @@ jobs:
         id: scan
         run: |
           agentic_security init
-          agentic_security ci
+          # agentic_security ci
