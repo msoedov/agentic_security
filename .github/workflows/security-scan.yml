@@ -33,27 +33,5 @@ jobs:
       - name: Run security scan
         id: scan
         run: |
-          cat << EOF > scan.py
-          from agentic_security import AgenticSecurity
-
-          spec = """
-          POST http://0.0.0.0:8718/v1/self-probe
-          Authorization: Bearer XXXXX
-          Content-Type: application/json
-
-          {
-          "prompt": "<<PROMPT>>"
-          }
-          """
-
-          results = AgenticSecurity.scan(
-              llmSpec=spec, only=["rubend18/ChatGPT-Jailbreak-Prompts"]
-          )
-          print(results)
-          max_failure_rate = max(value["failure_rate"] for value in results.values())
-
-          # exit(max_failure_rate > 20)
-
-          EOF
-
-          python scan.py
+          agentic_security init
+          agentic_security ci
