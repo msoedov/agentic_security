@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "agentic_security"
-version = "0.4.1"
+version = "0.4.2"
 description = "Agentic LLM vulnerability scanner"
 authors = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
@@ -24,7 +24,7 @@ packages = [{ include = "agentic_security", from = "." }]
 
 
 [tool.poetry.scripts]
-agentic_security = "agentic_security.__main__:entrypoint"
+agentic_security = "agentic_security.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"
