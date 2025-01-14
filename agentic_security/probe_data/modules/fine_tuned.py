@@ -20,7 +20,7 @@ class Module:
         self.batch_size = self.opts.get("batch_size", 500)
 
     async def apply(self):
-        for _ in range(self.max_prompts // self.batch_size):
+        for _ in range(max(self.max_prompts // self.batch_size, 1)):
             # Fetch prompts from the API
             prompts = await self.fetch_prompts()
 

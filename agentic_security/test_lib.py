@@ -124,7 +124,7 @@ class TestAS:
         print(result)
         assert len(result) in [0, 1]
 
-    def _test_image_modality(self):
+    def test_image_modality(self):
         llmSpec = test_spec_assets.IMAGE_SPEC
         maxBudget = 2
         max_th = 0.3
@@ -139,8 +139,10 @@ class TestAS:
                 "url": "",
                 "dynamic": True,
                 "opts": {
+                    # "port": 8718,
                     "port": 9094,
                     "modules": ["encoding"],
+                    "max_prompts": 2,
                 },
                 "modality": "text",
             },

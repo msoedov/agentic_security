@@ -18,7 +18,7 @@ from agentic_security.probe_data.data import prepare_prompts
 
 
 async def generate_prompts(
-    prompts: list[str] | AsyncGenerator, modality: Modality = Modality.TEXT
+    prompts: list[str] | AsyncGenerator,
 ) -> AsyncGenerator[str, None]:
     if isinstance(prompts, list):
         for prompt in prompts:
@@ -26,6 +26,20 @@ async def generate_prompts(
     else:
         async for prompt in prompts:
             yield prompt
+
+
+def multi_modality_spec(llm_spec):
+    match llm_spec.modality:
+        case Modality.IMAGE:
+            return image_generator.RequestAdapter(llm_spec)
+        case Modality.AUDIO:
+            return audio_generator.RequestAdapter(llm_spec)
+        case Modality.TEXT:
+            return llm_spec
+        case _:
+            return llm_spec
+        # case _:
+        #     raise NotImplementedError(f"Modality {llm_spec.modality} not supported yet")
 
 
 async def process_prompt(
@@ -69,6 +83,7 @@ async def perform_single_shot_scan(
     """Perform a standard security scan."""
     max_budget = max_budget * 100_000_000
     selected_datasets = [m for m in datasets if m["selected"]]
+    request_factory = multi_modality_spec(request_factory)
     try:
         yield ScanResult.status_msg("Loading datasets...")
         prompt_modules = prepare_prompts(
@@ -102,9 +117,7 @@ async def perform_single_shot_scan(
             module_size = 0 if module.lazy else len(module.prompts)
             logger.info(f"Scanning {module.dataset_name} {module_size}")
 
-            async for prompt in generate_prompts(
-                module.prompts, modality=request_factory.modality
-            ):
+            async for prompt in generate_prompts(module.prompts):
                 if stop_event and stop_event.is_set():
                     stop_event.clear()
                     logger.info("Scan stopped by user.")
@@ -186,6 +199,7 @@ async def perform_many_shot_scan(
     max_ctx_length: int = 10_000,
 ) -> AsyncGenerator[str, None]:
     """Perform a multi-step security scan with probe injection."""
+    request_factory = multi_modality_spec(request_factory)
     try:
         # Load main and probe datasets
         yield ScanResult.status_msg("Loading datasets...")
@@ -215,9 +229,7 @@ async def perform_many_shot_scan(
             module_size = 0 if module.lazy else len(module.prompts)
             logger.info(f"Scanning {module.dataset_name} {module_size}")
 
-            async for prompt in generate_prompts(
-                module.prompts, modality=request_factory.modality
-            ):
+            async for prompt in generate_prompts(module.prompts):
                 if stop_event and stop_event.is_set():
                     stop_event.clear()
                     logger.info("Scan stopped by user.")

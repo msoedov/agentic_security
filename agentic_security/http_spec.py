@@ -10,6 +10,7 @@ class Modality(Enum):
     IMAGE = 1
     AUDIO = 2
     FILES = 3
+    MIXED = 4
 
 
 def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") -> str:
@@ -107,6 +108,7 @@ class LLMSpec(BaseModel):
             case LLMSpec(has_audio=True):
                 return await self.probe(
                     "test",
+                    # TODO: fix url for mp3
                     encoded_audio=encode_audio_base64_by_url(
                         "https://www.example.com/audio.mp3"
                     ),

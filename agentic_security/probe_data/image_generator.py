@@ -1,5 +1,7 @@
+import base64
 import io
 
+import httpx
 import matplotlib.pyplot as plt
 from cache_to_disk import cache_to_disk
 from tqdm import tqdm
@@ -75,3 +77,26 @@ def generate_image(prompt: str) -> bytes:
 
     # Return the image bytes
     return buffer.getvalue()
+
+
+def encode(image: bytes) -> str:
+    encoded_content = base64.b64encode(image).decode("utf-8")
+    return "data:image/jpeg;base64," + encoded_content
+
+
+class RequestAdapter:
+    # Adapter of http_spec.LLMSpec
+
+    def __init__(self, llm_spec):
+        self.llm_spec = llm_spec
+        if not llm_spec.has_image:
+            raise ValueError("LLMSpec must have an image")
+
+    async def probe(
+        self, prompt: str, encoded_image: str = "", encoded_audio: str = "", files={}
+    ) -> httpx.Response:
+        encoded_image = generate_image(prompt)
+        encoded_image = encode(encoded_image)
+        return await self.llm_spec.probe(prompt, encoded_image, encoded_audio, files)
+
+    fn = probe

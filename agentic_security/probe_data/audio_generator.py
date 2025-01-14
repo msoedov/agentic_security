@@ -1,9 +1,16 @@
+import base64
 import os
 import platform
 import subprocess
 import uuid
 
+import httpx
 from cache_to_disk import cache_to_disk
+
+
+def encode(content: bytes) -> str:
+    encoded_content = base64.b64encode(content).decode("utf-8")
+    return "data:audio/mpeg;base64," + encoded_content
 
 
 def generate_audio_mac_wav(prompt: str) -> bytes:
@@ -64,3 +71,21 @@ def generate_audioform(prompt: str) -> bytes:
         raise NotImplementedError(
             "Audio generation is only supported on macOS for now."
         )
+
+
+class RequestAdapter:
+    # Adapter of http_spec.LLMSpec
+
+    def __init__(self, llm_spec):
+        self.llm_spec = llm_spec
+        if not llm_spec.has_audio:
+            raise ValueError("LLMSpec must have an image")
+
+    async def probe(
+        self, prompt: str, encoded_image: str = "", encoded_audio: str = "", files={}
+    ) -> httpx.Response:
+        encoded_audio = generate_audioform(prompt)
+        encoded_audio = encode(encoded_audio)
+        return await self.llm_spec.probe(prompt, encoded_image, encoded_audio, files)
+
+    fn = probe
