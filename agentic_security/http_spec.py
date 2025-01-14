@@ -1,7 +1,15 @@
 import base64
+from enum import Enum
 
 import httpx
 from pydantic import BaseModel
+
+
+class Modality(Enum):
+    TEXT = 0
+    IMAGE = 1
+    AUDIO = 2
+    FILES = 3
 
 
 def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") -> str:
@@ -109,6 +117,14 @@ class LLMSpec(BaseModel):
                 return await self.probe("test prompt")
 
     fn = probe
+
+    @property
+    def modality(self) -> Modality:
+        if self.has_image:
+            return Modality.IMAGE
+        if self.has_audio:
+            return Modality.AUDIO
+        return Modality.TEXT
 
 
 def parse_http_spec(http_spec: str) -> LLMSpec:

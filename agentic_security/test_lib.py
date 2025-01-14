@@ -124,6 +124,32 @@ class TestAS:
         print(result)
         assert len(result) in [0, 1]
 
+    def _test_image_modality(self):
+        llmSpec = test_spec_assets.IMAGE_SPEC
+        maxBudget = 2
+        max_th = 0.3
+        datasets = [
+            {
+                "dataset_name": "AgenticBackend",
+                "num_prompts": 0,
+                "tokens": 0,
+                "approx_cost": 0.0,
+                "source": "Fine-tuned cloud hosted model",
+                "selected": True,
+                "url": "",
+                "dynamic": True,
+                "opts": {
+                    "port": 9094,
+                    "modules": ["encoding"],
+                },
+                "modality": "text",
+            },
+        ]
+        result = AgenticSecurity.scan(llmSpec, maxBudget, datasets, max_th)
+        assert isinstance(result, dict)
+        print(result)
+        assert len(result) in [0, 1]
+
 
 class TestEntrypointCI:
     def test_generate_default_cfg_to_tmp_path(self):

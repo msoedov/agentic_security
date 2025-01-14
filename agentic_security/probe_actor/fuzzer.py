@@ -8,16 +8,17 @@ from loguru import logger
 from skopt import Optimizer
 from skopt.space import Real
 
+from agentic_security.http_spec import Modality
 from agentic_security.models.schemas import Scan, ScanResult
 from agentic_security.probe_actor.refusal import refusal_heuristic
-from agentic_security.probe_data import msj_data
+from agentic_security.probe_data import audio_generator, image_generator, msj_data
 from agentic_security.probe_data.data import prepare_prompts
 
 # TODO: full log file
 
 
 async def generate_prompts(
-    prompts: list[str] | AsyncGenerator,
+    prompts: list[str] | AsyncGenerator, modality: Modality = Modality.TEXT
 ) -> AsyncGenerator[str, None]:
     if isinstance(prompts, list):
         for prompt in prompts:
@@ -101,7 +102,9 @@ async def perform_single_shot_scan(
             module_size = 0 if module.lazy else len(module.prompts)
             logger.info(f"Scanning {module.dataset_name} {module_size}")
 
-            async for prompt in generate_prompts(module.prompts):
+            async for prompt in generate_prompts(
+                module.prompts, modality=request_factory.modality
+            ):
                 if stop_event and stop_event.is_set():
                     stop_event.clear()
                     logger.info("Scan stopped by user.")
@@ -212,7 +215,9 @@ async def perform_many_shot_scan(
             module_size = 0 if module.lazy else len(module.prompts)
             logger.info(f"Scanning {module.dataset_name} {module_size}")
 
-            async for prompt in generate_prompts(module.prompts):
+            async for prompt in generate_prompts(
+                module.prompts, modality=request_factory.modality
+            ):
                 if stop_event and stop_event.is_set():
                     stop_event.clear()
                     logger.info("Scan stopped by user.")

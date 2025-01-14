@@ -102,6 +102,7 @@ To add your own dataset you can place one or multiples csv files with `prompt` c
 ## Run as CI check
 
 Init config
+
 ```shell
 agentic_security init
 
@@ -110,6 +111,7 @@ agentic_security init
 ```
 
 default config sample
+
 ```toml
 
 [general]
@@ -151,6 +153,7 @@ high = 0.5
 ```
 
 List module
+
 ```shell
 agentic_security ls
 
@@ -196,6 +199,7 @@ Threshold: 30.0%
 Summary:
 Total Passing: 2/2 (100.0%)
 ```
+
 ## Extending dataset collections
 
 1. Add new metadata to agentic_security.probe_data.REGISTRY
