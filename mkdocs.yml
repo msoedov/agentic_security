@@ -1,0 +1,73 @@
+site_name: Agentic Security
+repo_url: https://github.com/msoedov/agentic_security
+site_url: https://msoedov.github.io/agentic_security
+site_description: Open-source LLM Vulnerability Scanner for safe and reliable AI.
+site_author: Agentic Security Team
+edit_uri: edit/main/docs/
+repo_name: msoedov/agentic_security
+copyright: Maintained by <a href="https://msoedov.github.io">Agentic Security Team</a>.
+
+nav:
+  - Home: index.md
+  - Features: probe_data.md
+  - Probe Actor: probe_actor.md
+  - Installation: installation.md
+  - Getting Started: getting_started.md
+  - Configuration: configuration.md
+  - Dataset Extension: datasets.md
+  - CI/CD Integration: ci_cd.md
+  - API Reference: api_reference.md
+  - Contributing: contributing.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [agentic_security]
+  - mkdocs-jupyter
+
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/msoedov/agentic_security
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/agentic_security
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
