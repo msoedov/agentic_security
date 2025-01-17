@@ -8,3 +8,4 @@ cache_to_disk
 # datasets
 loguru
 pandas
+agentic_security
