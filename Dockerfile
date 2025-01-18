@@ -16,8 +16,3 @@ RUN poetry self add "poetry-plugin-export" && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-
-EXPOSE 8718
-
-# Run the initialization command first, then start the application
-# CMD ["sh", "-c", "python -m agentic_security i && python -m agentic_security s"]
