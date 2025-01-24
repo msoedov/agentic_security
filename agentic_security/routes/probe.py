@@ -1,6 +1,7 @@
 import random
 
 from fastapi import APIRouter, File, Header, HTTPException, UploadFile
+from fastapi.responses import JSONResponse
 
 from ..models.schemas import FileProbeResponse, Probe
 from ..probe_actor.refusal import REFUSAL_MARKS
@@ -70,3 +71,9 @@ async def self_probe_image():
 @router.get("/v1/data-config")
 async def data_config():
     return [m for m in REGISTRY]
+
+
+@router.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return JSONResponse(content={"status": "ok"})
