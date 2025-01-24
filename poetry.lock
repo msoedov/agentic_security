@@ -1183,22 +1183,23 @@ files = [
 
 [[package]]
 name = "inline-snapshot"
-version = "0.18.1"
+version = "0.19.3"
 description = "golden master/snapshot/approval testing library which puts the values right into your source code"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "inline_snapshot-0.18.1-py3-none-any.whl", hash = "sha256:6751b95c10ae940879bec429c160d58c376ad449fcf6e213db7735d91ae40209"},
-    {file = "inline_snapshot-0.18.1.tar.gz", hash = "sha256:a93bcf0aec68edf27323fa8dfc902354ef9a730050ab8939a4b174419828db6b"},
+    {file = "inline_snapshot-0.19.3-py3-none-any.whl", hash = "sha256:81ed10eedb593aee630d2fc0cfe5d10a843c4bd507c2d96ea058c28413985452"},
+    {file = "inline_snapshot-0.19.3.tar.gz", hash = "sha256:1e40f34da64fe2406c6bba3f473905e22386da43e16c85060610692325aa94d7"},
 ]
 
 [package.dependencies]
 asttokens = ">=2.0.5"
-black = ">=23.3.0"
-click = ">=8.1.4"
 executing = ">=2.1.0"
 rich = ">=13.7.1"
-typing-extensions = "*"
+
+[package.extras]
+black = ["black (>=23.3.0)", "click (>=8.1.4)"]
+dirty-equals = ["dirty-equals (>=0.9.0)"]
 
 [[package]]
 name = "ipykernel"
@@ -4370,4 +4371,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0bcc2b3626cb51fd26f47b70e278640696edc6a9a5a0ef4f6b25241b9919f2d7"
+content-hash = "358d28b3b34913d4fc1f6f4a7476c9b5fd9da03d594f20d2ddbe76a8a3cc0697"
