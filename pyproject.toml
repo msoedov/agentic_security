@@ -54,7 +54,7 @@ rich = "13.9.4"
 # Pytest
 pytest = "^8.3.4"
 pytest-asyncio = "^0.25.2"
-inline-snapshot = ">=0.13.3,<0.19.0"
+inline-snapshot = ">=0.13.3,<0.20.0"
 pytest-httpx = "^0.35.0"
 pytest-mock = "^3.14.0"
 
