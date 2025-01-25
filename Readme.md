@@ -376,6 +376,10 @@ This sample GitHub Action is designed to perform automated security scans
 
 This setup ensures a continuous integration approach towards maintaining security in your projects.
 
+## Module Class
+
+The `Module` class is designed to manage prompt processing and interaction with external AI models and tools. It supports fetching, processing, and posting prompts asynchronously for model vulnerabilities. Check out [module.md](https://github.com/msoedov/agentic_security/blob/main/docs/module.md) for details.
+
 ## Documentation
 
 For more detailed information on how to use Agentic Security, including advanced features and customization options, please refer to the official documentation.
