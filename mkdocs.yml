@@ -20,6 +20,7 @@ nav:
     - Configuration: configuration.md
   - Advanced Topics:
     - Dataset Extension: datasets.md
+    - External Modules: external_module.md
     - CI/CD Integration: ci_cd.md
   - Reference:
     - API Reference: api_reference.md
