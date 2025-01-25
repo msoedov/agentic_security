@@ -43,6 +43,7 @@ This section provides detailed information about the Agentic Security API.
 ## Authentication
 
 All API requests require an API key. Include it in the `Authorization` header:
+
 ```
 Authorization: Bearer YOUR_API_KEY
 ```

@@ -5,11 +5,11 @@ Welcome to Agentic Security! This guide will help you get started with using the
 ## Quick Start
 
 1. Ensure you have completed the [installation](installation.md) steps.
-2. Run the following command to start the application:
+1. Run the following command to start the application:
    ```bash
    agentic_security
    ```
-3. Access the application at `http://localhost:8718`.
+1. Access the application at `http://localhost:8718`.
 
 ## Basic Usage
 

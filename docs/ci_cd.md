@@ -29,8 +29,9 @@ jobs:
 ## Custom CI/CD Pipelines
 
 For custom pipelines, ensure the following steps:
+
 1. Install dependencies.
-2. Run the `agentic_security ci` command.
+1. Run the `agentic_security ci` command.
 
 ## Further Reading
 

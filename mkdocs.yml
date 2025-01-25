@@ -10,14 +10,21 @@ copyright: Maintained by <a href="https://msoedov.github.io">Agentic Security Te
 nav:
   - Home: index.md
   - Features: probe_data.md
-  - Probe Actor: probe_actor.md
-  - Installation: installation.md
-  - Getting Started: getting_started.md
-  - Configuration: configuration.md
-  - Dataset Extension: datasets.md
-  - CI/CD Integration: ci_cd.md
-  - API Reference: api_reference.md
-  - Contributing: contributing.md
+  - Core Concepts:
+    - Probe Actor: probe_actor.md
+    - Refusal Actor: refusal_classifier_plugins.md
+    - Agent Spec: http_spec.md
+  - Setup:
+    - Installation: installation.md
+    - Getting Started: getting_started.md
+    - Configuration: configuration.md
+  - Advanced Topics:
+    - Dataset Extension: datasets.md
+    - CI/CD Integration: ci_cd.md
+  - Reference:
+    - API Reference: api_reference.md
+  - Community:
+    - Contributing: contributing.md
 
 plugins:
   - search
@@ -25,21 +32,27 @@ plugins:
       handlers:
         python:
           paths: [agentic_security]
-  - mkdocs-jupyter
+
+extra:
+  # hide the "Made with Material for MkDocs" message
+  generator: false
+
+footer:
+  links: []  # Removes the default footer credits
 
 theme:
   name: material
   feature:
     tabs: true
   palette:
-    - media: "(prefers-color-scheme: light)"
+    - media: "(prefers-color-scheme: dark)"
       scheme: default
       primary: custom
       accent: deep orange
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
+    - media: "(prefers-color-scheme: light)"
       scheme: slate
       primary: custom
       accent: deep orange
@@ -48,6 +61,7 @@ theme:
         name: Switch to light mode
   icon:
     repo: fontawesome/brands/github
+  favicon: "https://res.cloudinary.com/dq0w2rtm9/image/upload/v1737555066/r17hrkre246doczwmvbv.png"
 
 extra:
   social:

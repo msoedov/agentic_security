@@ -13,7 +13,7 @@ The default configuration file is `agesec.toml`. It includes settings for:
 ## Customizing Configuration
 
 1. Open the `agesec.toml` file in a text editor.
-2. Modify the settings as needed. For example, to change the port:
+1. Modify the settings as needed. For example, to change the port:
    ```toml
    [modules.AgenticBackend.opts]
    port = 8718

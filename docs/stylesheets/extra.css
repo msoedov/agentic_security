@@ -1,5 +1,79 @@
 :root {
-  --md-primary-fg-color: #073763;
-  --md-primary-fg-color--light: #073763;
-  --md-primary-fg-color--dark: #073763;
+  --md-primary-fg-color: #e92063;
+  --md-primary-fg-color--light: #e92063;
+  --md-primary-fg-color--dark: #e92063;
+}
+
+
+/* Revert hue value to that of pre mkdocs-material v9.4.0 */
+[data-md-color-scheme="slate"] {
+  --md-hue: 230;
+  --md-default-bg-color: hsla(230, 15%, 21%, 1);
+}
+
+.hide {
+  display: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+img.index-header {
+  width: 70%;
+  max-width: 500px;
+}
+
+.pydantic-pink {
+  color: #FF007F;
+}
+
+.team-blue {
+  color: #0072CE;
+}
+
+.secure-green {
+  color: #00A86B;
+}
+
+.shapes-orange {
+  color: #FF7F32;
+}
+
+.puzzle-purple {
+  color: #652D90;
+}
+
+.wheel-gray {
+  color: #6E6E6E;
+}
+
+.vertical-middle {
+  vertical-align: middle;
+}
+
+.text-emphasis {
+  font-size: 1rem;
+  font-weight: 300;
+  font-style: italic;
+}
+
+#version-warning {
+  min-height: 120px;
+  margin-bottom: 10px;
+}
+
+.mermaid {
+  text-align: center;
+}
+
+
+/* Hide the entire footer */
+.md-footer {
+  display: none;
+}
+
+/* OR, hide only the "Made with Material" credit */
+.md-footer__made-with {
+  display: none;
 }

@@ -5,7 +5,7 @@ Agentic Security allows you to extend datasets to enhance its capabilities.
 ## Adding New Datasets
 
 1. Place your dataset files in the `datasets` directory.
-2. Ensure each file contains a `prompt` column for processing.
+1. Ensure each file contains a `prompt` column for processing.
 
 ## Supported Formats
 
@@ -15,6 +15,7 @@ Agentic Security allows you to extend datasets to enhance its capabilities.
 ## Example
 
 To add a new dataset:
+
 ```bash
 cp my_dataset.csv datasets/
 ```
