@@ -7,7 +7,6 @@
     <br />
     <br />
 
-
 </p>
 </p>
 
@@ -19,7 +18,6 @@
 - Wide range of fuzzing and attack techniques 🌀
 
 Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
-
 
 ## UI 🧙
 

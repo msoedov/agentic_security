@@ -1,5 +1,5 @@
-from typing import List, Dict
 from abc import ABC, abstractmethod
+
 from agentic_security.refusal_classifier import RefusalClassifier
 
 classifier = RefusalClassifier()
@@ -56,7 +56,7 @@ class RefusalClassifierPlugin(ABC):
 class DefaultRefusalClassifier(RefusalClassifierPlugin):
     """Default refusal classifier using a list of refusal phrases."""
 
-    def __init__(self, refusal_phrases: List[str] = REFUSAL_MARKS):
+    def __init__(self, refusal_phrases: list[str] = REFUSAL_MARKS):
         self.refusal_phrases = refusal_phrases
 
     def is_refusal(self, response: str) -> bool:
@@ -75,7 +75,7 @@ class RefusalClassifierManager:
     """Manager for refusal classifier plugins."""
 
     def __init__(self):
-        self.plugins: Dict[str, RefusalClassifierPlugin] = {}
+        self.plugins: dict[str, RefusalClassifierPlugin] = {}
 
     def register_plugin(self, name: str, plugin: RefusalClassifierPlugin):
         """Register a refusal classifier plugin.

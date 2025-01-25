@@ -4,7 +4,6 @@ The `Module` class interface provides a standardized way to create and use modul
 
 Here is an example of a module that implements the `ModuleProtocol` interface. This example shows how to create a module that processes prompts and sends results to a queue.
 
-
 ```python
 from typing import List, Dict, Any, AsyncGenerator
 import asyncio
@@ -42,4 +41,3 @@ async def main():
 
 asyncio.run(main())
 ```
-

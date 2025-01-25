@@ -34,9 +34,6 @@ plugins:
         python:
           paths: [agentic_security]
 
-extra:
-  # hide the "Made with Material for MkDocs" message
-  generator: false
 
 footer:
   links: []  # Removes the default footer credits
@@ -65,6 +62,7 @@ theme:
   favicon: "https://res.cloudinary.com/dq0w2rtm9/image/upload/v1737555066/r17hrkre246doczwmvbv.png"
 
 extra:
+  generator: false
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/msoedov/agentic_security
