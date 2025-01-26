@@ -24,6 +24,7 @@ nav:
     - CI/CD Integration: ci_cd.md
     - Bayesian Optimization: optimizer.md
     - Image Generation: image_generation.md
+    - Stenography Functions: stenography.md
   - Reference:
     - API Reference: api_reference.md
   - Community:
