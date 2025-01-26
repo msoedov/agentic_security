@@ -42,8 +42,8 @@ footer:
 
 theme:
   name: material
-  feature:
-    tabs: true
+  features:
+    - navigation.expand
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: default
