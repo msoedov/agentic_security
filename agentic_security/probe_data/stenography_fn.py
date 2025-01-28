@@ -1,5 +1,6 @@
 import base64
 import random
+import string
 
 
 def rot13(input_text):
@@ -98,3 +99,47 @@ def zigzag_obfuscation(text):
         else:
             new_text += char
     return new_text
+
+
+def caesar_cipher(text, shift=3):
+    """Encrypts text using Caesar cipher with specified shift."""
+    result = []
+    for char in text:
+        if char.isupper():
+            result.append(chr((ord(char) + shift - 65) % 26 + 65))
+        elif char.islower():
+            result.append(chr((ord(char) + shift - 97) % 26 + 97))
+        else:
+            result.append(char)
+    return "".join(result)
+
+
+def substitution_cipher(text, key=None):
+    """Encrypts text using a substitution cipher with optional key."""
+    if key is None:
+        key = list(string.ascii_lowercase)
+        random.shuffle(key)
+        key = "".join(key)
+
+    # Create translation table
+    alphabet = string.ascii_lowercase
+    translation = str.maketrans(alphabet, key)
+
+    # Apply translation
+    return text.lower().translate(translation)
+
+
+def vigenere_cipher(text, key):
+    """Encrypts text using Vigenère cipher with provided key."""
+    result = []
+    key_length = len(key)
+    key_as_int = [ord(i) for i in key.lower()]
+    text = text.lower()
+
+    for i, char in enumerate(text):
+        if char.isalpha():
+            shift = key_as_int[i % key_length] - 97
+            result.append(chr((ord(char) + shift - 97) % 26 + 97))
+        else:
+            result.append(char)
+    return "".join(result)

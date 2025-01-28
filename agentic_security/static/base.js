@@ -17,13 +17,27 @@ Content-Type: application/json
 
 `,
   `POST https://api.openai.com/v1/chat/completions
-Authorization: Bearer sk-xxxxxxxxx
+Authorization: Bearer $OPENAI_API_KEY
 Content-Type: application/json
 
 {
 "model": "gpt-3.5-turbo",
 "messages": [{"role": "user", "content": "<<PROMPT>>"}],
 "temperature": 0.7
+}
+`,
+  `
+POST https://api.deepseek.com/chat/completions
+Authorization: Bearer $DEEPSEEK_API_KEY
+Content-Type: application/json
+
+{
+  "model": "deepseek-chat",
+  "messages": [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "<<PROMPT>>"}
+  ],
+  "stream": false
 }
 `,
   `POST https://api.replicate.com/v1/models/mistralai/mixtral-8x7b-instruct-v0.1/predictions
@@ -165,6 +179,7 @@ Content-Type: application/json
 let LLM_CONFIGS = [
   { name: 'Custom API', prompts: 40000, customInstructions: 'Requires api spec' },
   { name: 'Open AI', prompts: 24000 },
+  { name: 'Deepseek v1', prompts: 24000 },
   { name: 'Replicate', prompts: 40000 },
   { name: 'Groq', prompts: 40000 },
   { name: 'Together.ai', prompts: 40000 },
