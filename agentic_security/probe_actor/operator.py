@@ -1,17 +1,19 @@
 import asyncio
 from typing import Any
 
+from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
-from pydantic import  BaseModel, Field
-from typing import Optional, List, Dict, Any
 
 
 class AgentSpecification(BaseModel):
-    name: Optional[str] = Field(None, description="Name of the LLM/agent")
-    version: Optional[str] = Field(None, description="Version of the LLM/agent")
-    description: Optional[str] = Field(None, description="Description of the LLM/agent")
-    capabilities: Optional[List[str]] = Field(None, description="List of capabilities")
-    configuration: Optional[Dict[str, Any]] = Field(None, description="Configuration settings")
+    name: str | None = Field(None, description="Name of the LLM/agent")
+    version: str | None = Field(None, description="Version of the LLM/agent")
+    description: str | None = Field(None, description="Description of the LLM/agent")
+    capabilities: list[str] | None = Field(None, description="List of capabilities")
+    configuration: dict[str, Any] | None = Field(
+        None, description="Configuration settings"
+    )
+
 
 # Define the OperatorToolBox class
 class OperatorToolBox:
@@ -66,16 +68,14 @@ spec = AgentSpecification(
     version="4.0",
     description="A powerful language model",
     capabilities=["text-generation", "question-answering"],
-    configuration={"max_tokens": 100}
+    configuration={"max_tokens": 100},
 )
 
 # dataset_manager_agent.py
 
 
 # Initialize OperatorToolBox
-toolbox = OperatorToolBox(
-    spec=spec, datasets=["dataset1", "dataset2", "dataset3"]
-)
+toolbox = OperatorToolBox(spec=spec, datasets=["dataset1", "dataset2", "dataset3"])
 
 # Define the agent with OperatorToolBox as its dependency
 dataset_manager_agent = Agent(
