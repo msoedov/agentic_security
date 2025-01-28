@@ -2,32 +2,47 @@ import asyncio
 from typing import Any
 
 from pydantic_ai import Agent, RunContext
+from pydantic import  BaseModel, Field
+from typing import Optional, List, Dict, Any
+
+
+class AgentSpecification(BaseModel):
+    name: Optional[str] = Field(None, description="Name of the LLM/agent")
+    version: Optional[str] = Field(None, description="Version of the LLM/agent")
+    description: Optional[str] = Field(None, description="Description of the LLM/agent")
+    capabilities: Optional[List[str]] = Field(None, description="List of capabilities")
+    configuration: Optional[Dict[str, Any]] = Field(None, description="Configuration settings")
 
 # Define the OperatorToolBox class
-
-
 class OperatorToolBox:
-    def __init__(self, llm_spec: str, datasets: list[dict[str, Any]]):
-        self.llm_spec = llm_spec
+    def __init__(self, spec: AgentSpecification, datasets: list[dict[str, Any]]):
+        self.spec = spec
         self.datasets = datasets
+        self.failures = []
 
-    def get_spec(self) -> str:
-        return self.llm_spec
+    def get_spec(self) -> AgentSpecification:
+        return self.spec
 
     def get_datasets(self) -> list[dict[str, Any]]:
         return self.datasets
 
     def validate(self) -> bool:
-        # Validate the tool box
+        # Validate the tool box based on the specification
+        if not self.spec.name or not self.spec.version:
+            self.failures.append("Invalid specification: Name or version is missing.")
+            return False
+        if not self.datasets:
+            self.failures.append("No datasets provided.")
+            return False
         return True
 
     def stop(self) -> None:
         # Stop the tool box
-        pass
+        print("Stopping the toolbox...")
 
     def run(self) -> None:
         # Run the tool box
-        pass
+        print("Running the toolbox...")
 
     def get_results(self) -> list[dict[str, Any]]:
         # Get the results
@@ -35,19 +50,31 @@ class OperatorToolBox:
 
     def get_failures(self) -> list[str]:
         # Handle failure
-        return []
+        return self.failures
 
     def run_operation(self, operation: str) -> str:
-        # Run an operation
+        # Run an operation based on the specification
+        if operation not in ["dataset1", "dataset2", "dataset3"]:
+            self.failures.append(f"Operation '{operation}' failed: Dataset not found.")
+            return f"Operation '{operation}' failed: Dataset not found."
         return f"Operation '{operation}' executed successfully."
 
+
+# Initialize OperatorToolBox with AgentSpecification
+spec = AgentSpecification(
+    name="GPT-4",
+    version="4.0",
+    description="A powerful language model",
+    capabilities=["text-generation", "question-answering"],
+    configuration={"max_tokens": 100}
+)
 
 # dataset_manager_agent.py
 
 
 # Initialize OperatorToolBox
 toolbox = OperatorToolBox(
-    llm_spec="GPT-4", datasets=["dataset1", "dataset2", "dataset3"]
+    spec=spec, datasets=["dataset1", "dataset2", "dataset3"]
 )
 
 # Define the agent with OperatorToolBox as its dependency
