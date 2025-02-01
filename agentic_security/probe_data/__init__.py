@@ -430,3 +430,4 @@ REGISTRY = REGISTRY_V0 + [
         "modality": "text",
     },
 ]
+
