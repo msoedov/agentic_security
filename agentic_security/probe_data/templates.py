@@ -1,4 +1,5 @@
-{
+# templates.py
+FUNCTION_TEMPLATES = {
     "hello_world": {
         "name": "hello_world",
         "params": ["name"],

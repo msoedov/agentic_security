@@ -182,21 +182,6 @@ def embed_prompt(code, prompt):
     return ast.unparse(tree)
 
 
-def load_templates(file_path):
-    """
-    Load function templates from a JSON file.
-
-    Args:
-        file_path (str): Path to the JSON file containing function templates.
-
-    Returns:
-        dict: A dictionary of function templates.
-    """
-    with open(file_path, "r") as file:
-        templates = json.load(file)
-    return templates
-
-
 def generate_function_from_template(template, prompt):
     """
     Generates a function from a template and embeds the given prompt in its docstring.
