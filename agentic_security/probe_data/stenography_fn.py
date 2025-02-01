@@ -1,7 +1,8 @@
 import base64
 import random
 import string
-
+import json
+import ast
 
 def rot13(input_text):
     result = []
@@ -143,3 +144,79 @@ def vigenere_cipher(text, key):
         else:
             result.append(char)
     return "".join(result)
+
+def embed_prompt(code, prompt):
+    """
+    Embeds the given prompt into the docstring of the first function in the provided code.
+
+    Args:
+        code (str): The source code containing the function to modify.
+        prompt (str): The prompt text to embed into the function's docstring.
+
+    Returns:
+        str: The modified code with the prompt embedded in the function's docstring.
+    """
+    # Parse the code into an AST
+    tree = ast.parse(code)
+
+    # Traverse the AST to find the first function definition
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef):
+            # Create a new docstring node with the prompt
+            new_docstring = ast.Expr(value=ast.Constant(value=prompt))
+
+            # Check if the function already has a docstring
+            if (
+                node.body
+                and isinstance(node.body[0], ast.Expr)
+                and isinstance(node.body[0].value, (ast.Str, ast.Constant))
+            ):
+                # Replace the existing docstring
+                node.body[0] = new_docstring
+            else:
+                # Insert the new docstring at the beginning of the function body
+                node.body.insert(0, new_docstring)
+            break
+
+    # Convert the modified AST back into code
+    return ast.unparse(tree)
+
+
+def load_templates(file_path):
+    """
+    Load function templates from a JSON file.
+
+    Args:
+        file_path (str): Path to the JSON file containing function templates.
+
+    Returns:
+        dict: A dictionary of function templates.
+    """
+    with open(file_path, "r") as file:
+        templates = json.load(file)
+    return templates
+
+
+def generate_function_from_template(template, prompt):
+    """
+    Generates a function from a template and embeds the given prompt in its docstring.
+
+    Args:
+        template (dict): A function template containing name, params, docstring, and body.
+        prompt (str): The prompt text to embed into the function's docstring.
+
+    Returns:
+        str: The generated function code with the prompt embedded in the docstring.
+    """
+    # Replace the placeholder {PROMPT} with the actual prompt
+    docstring = template["docstring"].replace("{PROMPT}", prompt)
+
+    # Generate the function code
+    function_code = f"""
+def {template['name']}({', '.join(template['params'])}):
+    \"\"\"
+    {docstring}
+    \"\"\"
+    {template['body']}
+"""
+    return function_code.strip()  # Remove leading/trailing whitespace
