@@ -770,13 +770,13 @@ files = [
 
 [[package]]
 name = "executing"
-version = "2.1.0"
+version = "2.2.0"
 description = "Get the currently executing AST node of a frame, and other information"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "executing-2.1.0-py2.py3-none-any.whl", hash = "sha256:8d63781349375b5ebccc3142f4b30350c0cd9c79f921cde38be2be4637e98eaf"},
-    {file = "executing-2.1.0.tar.gz", hash = "sha256:8ea27ddd260da8150fa5a708269c4a10e76161e2496ec3e587da9e3c0fe4b9ab"},
+    {file = "executing-2.2.0-py2.py3-none-any.whl", hash = "sha256:11387150cad388d62750327a53d3339fad4888b39a6fe233c3afbb54ecffd3aa"},
+    {file = "executing-2.2.0.tar.gz", hash = "sha256:5d108c028108fe2551d1a7b2e8b713341e2cb4fc0aa7dcf966fa4327a5226755"},
 ]
 
 [package.extras]
@@ -1183,18 +1183,18 @@ files = [
 
 [[package]]
 name = "inline-snapshot"
-version = "0.19.3"
+version = "0.20.0"
 description = "golden master/snapshot/approval testing library which puts the values right into your source code"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "inline_snapshot-0.19.3-py3-none-any.whl", hash = "sha256:81ed10eedb593aee630d2fc0cfe5d10a843c4bd507c2d96ea058c28413985452"},
-    {file = "inline_snapshot-0.19.3.tar.gz", hash = "sha256:1e40f34da64fe2406c6bba3f473905e22386da43e16c85060610692325aa94d7"},
+    {file = "inline_snapshot-0.20.0-py3-none-any.whl", hash = "sha256:811df51d0b5cbd1a0a03445084772e8f84ac71cdfb240c10f4f2d3c6cb07cca2"},
+    {file = "inline_snapshot-0.20.0.tar.gz", hash = "sha256:9c94e9f3644f2fc9026b8b5d13527ac07f2dab85891abef394b6ae48edd5a539"},
 ]
 
 [package.dependencies]
 asttokens = ">=2.0.5"
-executing = ">=2.1.0"
+executing = ">=2.2.0"
 rich = ">=13.7.1"
 
 [package.extras]
@@ -4365,4 +4365,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3e3c96f941ba07c0708648aa4dd251cba59c874597c22b693ff361167e9bfdde"
+content-hash = "211d8b41dfd43afee62345619497bd7b6b64dad2b39ad2013c47beafd3f0a26b"
