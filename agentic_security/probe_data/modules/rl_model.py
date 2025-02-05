@@ -11,10 +11,8 @@ class PromptSelectionInterface(ABC):
     """Abstract base class for prompt selection strategies."""
 
     @abstractmethod
-    def select_next_prompt(
-        self, current_prompt: str, model_response: str | None = None
-    ) -> str:
-        """Selects the next prompt based on current state and optional model response."""
+    def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> str:
+        """Selects the next prompt based on current state and guard result."""
         pass
 
     @abstractmethod
@@ -23,7 +21,7 @@ class PromptSelectionInterface(ABC):
         previous_prompt: str,
         current_prompt: str,
         reward: float,
-        model_response: str | None = None,
+        passed_guard: bool,
     ) -> None:
         """Updates internal rewards based on the outcome of the last selected prompt."""
         pass
@@ -38,9 +36,7 @@ class RandomPromptSelector(PromptSelectionInterface):
         self.prompts = prompts
         self.history: Deque[str] = deque(maxlen=history_size)
 
-    def select_next_prompt(
-        self, current_prompt: str, model_response: str | None = None
-    ) -> str:
+    def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> str:
         self.history.append(current_prompt)
         available = [p for p in self.prompts if p not in self.history]
 
@@ -55,7 +51,7 @@ class RandomPromptSelector(PromptSelectionInterface):
         previous_prompt: str,
         current_prompt: str,
         reward: float,
-        model_response: str | None = None,
+        passed_guard: bool,
     ) -> None:
         pass  # No learning in random selection
 
@@ -79,9 +75,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
         self.history: Deque[str] = deque(maxlen=history_size)
         self.timeout = timeout
 
-    def select_next_prompt(
-        self, current_prompt: str, model_response: str | None = None
-    ) -> str:
+    def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> str:
         self.history.append(current_prompt)
 
         try:
@@ -89,7 +83,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
                 f"{self.api_url}/rl-select",
                 json={
                     "current_prompt": current_prompt,
-                    "model_response": model_response,
+                    "passed_guard": passed_guard,
                     "history": list(self.history),
                 },
                 headers=self.headers,
@@ -114,7 +108,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
         previous_prompt: str,
         current_prompt: str,
         reward: float,
-        model_response: str | None = None,
+        passed_guard: bool,
     ) -> None:
         try:
             requests.post(
@@ -123,7 +117,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
                     "previous_prompt": previous_prompt,
                     "current_prompt": current_prompt,
                     "reward": reward,
-                    "model_response": model_response,
+                    "passed_guard": passed_guard,
                 },
                 headers=self.headers,
                 timeout=self.timeout,
@@ -166,9 +160,7 @@ class QLearningPromptSelector(PromptSelectionInterface):
             for state in prompts
         }
 
-    def select_next_prompt(
-        self, current_prompt: str, model_response: str | None = None
-    ) -> str:
+    def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> str:
         self.history.append(current_prompt)
         available = [a for a in self.prompts if a not in self.history]
 
@@ -194,7 +186,7 @@ class QLearningPromptSelector(PromptSelectionInterface):
         previous_prompt: str,
         current_prompt: str,
         reward: float,
-        model_response: str | None = None,
+        passed_guard: bool,
     ) -> None:
         if (
             previous_prompt not in self.q_table
