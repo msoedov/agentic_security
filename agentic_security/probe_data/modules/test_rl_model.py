@@ -1,21 +1,20 @@
-import pytest
 from collections import deque
-from typing import List, Optional
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
+
 import numpy as np
+import pytest
 
 # Import the classes to be tested
 from agentic_security.probe_data.modules.rl_model import (
-    PromptSelectionInterface,
-    RandomPromptSelector,
     CloudRLPromptSelector,
     QLearningPromptSelector,
+    RandomPromptSelector,
 )
 
 
 # Fixtures for reusable test data
 @pytest.fixture
-def dataset_prompts() -> List[str]:
+def dataset_prompts() -> list[str]:
     return [
         "What is AI?",
         "How does RL work?",
