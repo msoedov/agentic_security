@@ -61,7 +61,7 @@ class TestCloudRLPromptSelector:
 
     def test_select_next_prompt_success(self, dataset_prompts, mock_requests):
         mock_requests.return_value.status_code = 200
-        mock_requests.return_value.json.return_value = {"next_prompt": "What is AI?"}
+        mock_requests.return_value.json.return_value = {"next_prompts": ["What is AI?"]}
 
         selector = CloudRLPromptSelector(dataset_prompts, "http://example.com", "token")
         next_prompt = selector.select_next_prompt(
@@ -75,6 +75,16 @@ class TestCloudRLPromptSelector:
         selector = CloudRLPromptSelector(dataset_prompts, "http://example.com", "token")
         next_prompt = selector.select_next_prompt("What is AI?", passed_guard=True)
         assert next_prompt in dataset_prompts
+
+    def test_select_next_prompt_success_service(self, dataset_prompts):
+        selector = CloudRLPromptSelector(
+            dataset_prompts,
+            api_url="https://edge.metaheuristic.co",
+        )
+        next_prompt = selector.select_next_prompt(
+            "How does RL work?", passed_guard=True
+        )
+        assert next_prompt
 
 
 # Tests for QLearningPromptSelector
