@@ -41,7 +41,7 @@ class PromptSelectionInterface(ABC):
 class RandomPromptSelector(PromptSelectionInterface):
     """Random prompt selector with cycle prevention using history."""
 
-    def __init__(self, prompts: list[str], history_size: int = 3):
+    def __init__(self, prompts: list[str], history_size: int = 300):
         if not prompts:
             raise ValueError("Prompts list cannot be empty")
         self.prompts = prompts
@@ -120,7 +120,8 @@ class CloudRLPromptSelector(PromptSelectionInterface):
         current_prompt: str,
         reward: float,
         passed_guard: bool,
-    ) -> None: ...
+    ) -> None:
+        ...
 
 
 class QLearningPromptSelector(PromptSelectionInterface):

@@ -25,6 +25,7 @@ nav:
     - Bayesian Optimization: optimizer.md
     - Image Generation: image_generation.md
     - Stenography Functions: stenography.md
+    - Reinforcement Learning Optimization: rl_model.md
   - Reference:
     - API Reference: api_reference.md
   - Community:
