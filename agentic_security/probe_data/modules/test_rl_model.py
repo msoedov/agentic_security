@@ -1,3 +1,4 @@
+import asyncio
 from collections import deque
 from unittest.mock import Mock, patch
 
@@ -8,6 +9,7 @@ import requests
 # Import the classes to be tested
 from agentic_security.probe_data.modules.rl_model import (
     CloudRLPromptSelector,
+    Module,
     QLearningPromptSelector,
     RandomPromptSelector,
 )
@@ -28,6 +30,19 @@ def dataset_prompts() -> list[str]:
 def mock_requests() -> Mock:
     with patch("requests.post") as mock_requests:
         yield mock_requests
+
+
+@pytest.fixture
+def mock_rl_selector() -> Mock:
+    return CloudRLPromptSelector(
+        dataset_prompts,
+        api_url="https://edge.metaheuristic.co",
+    )
+
+
+@pytest.fixture
+def tools_inbox() -> asyncio.Queue:
+    return asyncio.Queue()
 
 
 # Tests for RandomPromptSelector
@@ -141,3 +156,60 @@ def test_cloud_rl_selector_invalid_url(dataset_prompts):
 def test_q_learning_selector_invalid_reward(dataset_prompts):
     selector = QLearningPromptSelector(dataset_prompts)
     selector.update_rewards("What is AI?", "How does RL work?", np.nan, True)
+
+
+# Tests for Module class
+class TestModule:
+    @pytest.fixture
+    def mock_uuid(self):
+        with patch("uuid.uuid4") as mock:
+            mock.return_value.hex = "test_run_id"
+            yield mock
+
+    def test_initialization(self, dataset_prompts, tools_inbox, mock_uuid):
+        module = Module(dataset_prompts, tools_inbox)
+        assert module.prompt_groups == dataset_prompts
+        assert module.tools_inbox == tools_inbox
+        assert module.max_prompts == 2000
+        assert module.batch_size == 500
+        assert module.run_id == "test_run_id"
+        assert isinstance(module.rl_model, CloudRLPromptSelector)
+
+    def test_initialization_with_options(self, dataset_prompts, tools_inbox, mock_uuid):
+        opts = {
+            "max_prompts": 100,
+            "batch_size": 50,
+        }
+        module = Module(dataset_prompts, tools_inbox, opts)
+        assert module.max_prompts == 100
+        assert module.batch_size == 50
+
+    @pytest.mark.asyncio
+    async def test_apply_basic_flow(
+        self, dataset_prompts, tools_inbox, mock_rl_selector
+    ):
+        module = Module(dataset_prompts, tools_inbox)
+
+        count = 0
+        async for prompt in module.apply():
+            assert prompt == "Test prompt"
+            count += 1
+            if count >= 3:  # Test a few iterations
+                break
+
+    @pytest.mark.asyncio
+    async def test_apply_rl_with_tools_inbox(self, dataset_prompts, tools_inbox):
+        # Add a test message to the tools inbox
+        test_message = {
+            "message": "Test message",
+            "reply": None,
+            "ready": asyncio.Event(),
+        }
+        await tools_inbox.put(test_message)
+
+        module = Module(dataset_prompts, tools_inbox)
+
+        async for output in module.apply():
+            if output == "Test message":
+                test_message["ready"].set()
+                break

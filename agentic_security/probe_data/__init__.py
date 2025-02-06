@@ -409,6 +409,21 @@ REGISTRY = REGISTRY_V0 + [
         "modality": "text",
     },
     {
+        "dataset_name": "Reinforcement Learning Optimization",
+        "num_prompts": 0,
+        "tokens": 0,
+        "approx_cost": 0.0,
+        "source": "Cloud hosted model",
+        "selected": False,
+        "url": "",
+        "dynamic": True,
+        "opts": {
+            "port": 8718,
+            "modules": ["encoding"],
+        },
+        "modality": "text",
+    },
+    {
         "dataset_name": "InspectAI",
         "num_prompts": 0,
         "tokens": 0,

@@ -1,5 +1,7 @@
+import asyncio
 import os
 import random
+import uuid as U
 from abc import ABC, abstractmethod
 from collections import deque
 from typing import Deque
@@ -78,6 +80,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
         auth_token: str = AUTH_TOKEN,
         history_size: int = 300,
         timeout: int = 5,
+        run_id: str = "",
     ):
         if not prompts:
             raise ValueError("Prompts list cannot be empty")
@@ -85,6 +88,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
         self.api_url = api_url
         self.headers = {"Authorization": f"Bearer {auth_token}"}
         self.timeout = timeout
+        self.run_id = run_id or U.uuid4().hex
 
     def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> list[str]:
         return self.select_next_prompts(current_prompt, passed_guard)[0]
@@ -94,6 +98,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
             response = requests.post(
                 f"{self.api_url}/rl-model/select-next-prompt",
                 json={
+                    "run_id": U.uuid4().hex,
                     "current_prompt": current_prompt,
                     "passed_guard": passed_guard,
                 },
@@ -115,8 +120,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
         current_prompt: str,
         reward: float,
         passed_guard: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class QLearningPromptSelector(PromptSelectionInterface):
@@ -197,3 +201,46 @@ class QLearningPromptSelector(PromptSelectionInterface):
 
         # Update Q-value
         self.q_table[previous_prompt][current_prompt] += self.learning_rate * td_error
+
+
+class Module:
+    def __init__(
+        self, prompt_groups: list[str], tools_inbox: asyncio.Queue, opts: dict = {}
+    ):
+        self.tools_inbox = tools_inbox
+        self.opts = opts
+        self.prompt_groups = prompt_groups
+        self.max_prompts = self.opts.get("max_prompts", 10)  # Default max M prompts
+        self.run_id = U.uuid4().hex
+        self.batch_size = self.opts.get("batch_size", 500)
+        self.rl_model = CloudRLPromptSelector(
+            prompt_groups, "https://edge.metaheuristic.co", run_id=self.run_id
+        )
+
+    async def apply(self):
+        current_prompt = "What is AI?"
+        passed_guard = False
+        for _ in range(max(self.max_prompts, 1)):
+            # Fetch prompts from the API
+            prompts = await asyncio.to_thread(
+                lambda: self.rl_model.select_next_prompts(
+                    current_prompt, passed_guard=passed_guard
+                )
+            )
+
+            if not prompts:
+                logger.error("No prompts retrieved from the API.")
+                return
+
+            logger.info(f"Retrieved {len(prompts)} prompts.")
+
+            for i, prompt in enumerate(prompts):
+                logger.info(f"Processing prompt {i+1}/{len(prompts)}: {prompt}")
+                yield prompt
+                current_prompt = prompt
+                while not self.tools_inbox.empty():
+                    ref = await self.tools_inbox.get()
+                    print(ref, "ref")
+                    message, _, ready = ref["message"], ref["reply"], ref["ready"]
+                    yield message
+                    ready.set()
