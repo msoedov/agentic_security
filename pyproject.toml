@@ -7,7 +7,7 @@ maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 repository = "https://github.com/msoedov/agentic_security"
 homepage = "https://github.com/msoedov/agentic_security"
 documentation = "https://github.com/msoedov/agentic_security/blob/main/README.md"
-license = "MIT"
+license = "Apache-2.0"
 readme = "Readme.md"
 keywords = [
     "LLM vulnerability scanner",
