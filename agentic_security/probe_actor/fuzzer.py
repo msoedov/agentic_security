@@ -10,6 +10,7 @@ from skopt.space import Real
 
 from agentic_security.http_spec import Modality
 from agentic_security.models.schemas import Scan, ScanResult
+from agentic_security.probe_actor.cost_module import calculate_cost
 from agentic_security.probe_actor.refusal import refusal_heuristic
 from agentic_security.probe_data import audio_generator, image_generator, msj_data
 from agentic_security.probe_data.data import prepare_prompts
@@ -38,8 +39,6 @@ def multi_modality_spec(llm_spec):
             return llm_spec
         case _:
             return llm_spec
-        # case _:
-        #     raise NotImplementedError(f"Modality {llm_spec.modality} not supported yet")
 
 
 async def process_prompt(
@@ -143,7 +142,7 @@ async def perform_single_shot_scan(
                     module_failures += 1
                 failure_rate = module_failures / max(processed_prompts, 1)
                 failure_rates.append(failure_rate)
-                cost = round(tokens * 1.5 / 1000_000, 2)
+                cost = calculate_cost(tokens)
 
                 yield ScanResult(
                     module=module.dataset_name,
@@ -274,7 +273,7 @@ async def perform_many_shot_scan(
 
                 failure_rate = module_failures / max(processed_prompts, 1)
                 failure_rates.append(failure_rate)
-                cost = round(tokens * 1.5 / 1000_000, 2)
+                cost = calculate_cost(tokens)
 
                 yield ScanResult(
                     module=module.dataset_name,
