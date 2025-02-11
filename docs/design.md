@@ -42,9 +42,9 @@ The Refusal Classifier analyzes responses from language models to detect potenti
 ## Interaction Flow
 
 1. **Initialization**: The system is initialized with the necessary configurations and datasets.
-2. **Execution**: The Probe Actor executes security scans on the language models using the datasets provided by the Probe Data module.
-3. **Analysis**: The Refusal Classifier analyzes the responses to identify potential security issues.
-4. **Reporting**: Results are compiled and presented to the user, highlighting any vulnerabilities detected.
+1. **Execution**: The Probe Actor executes security scans on the language models using the datasets provided by the Probe Data module.
+1. **Analysis**: The Refusal Classifier analyzes the responses to identify potential security issues.
+1. **Reporting**: Results are compiled and presented to the user, highlighting any vulnerabilities detected.
 
 ## Conclusion
 
