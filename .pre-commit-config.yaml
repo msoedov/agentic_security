@@ -43,6 +43,10 @@ repos:
     -   id: check-shebang-scripts-are-executable
     -   id: check-added-large-files
         args: ['--maxkb=100']
+    -   id: trailing-whitespace
+        types: [python]
+    -   id: end-of-file-fixer
+        types: [python]
 
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.17

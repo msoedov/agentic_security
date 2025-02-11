@@ -8,9 +8,13 @@ repo_name: msoedov/agentic_security
 copyright: Maintained by <a href="https://msoedov.github.io">Agentic Security Team</a>.
 
 nav:
-  - Home: index.md
+  - Adventure starts here:
+      - Overview: index.md
+      - Quickstart: quickstart.md
+      - Design: design.md
+      - Abstractions: abstractions.md
   - Features: probe_data.md
-  - Core Concepts:
+  - Concepts:
     - Probe Actor: probe_actor.md
     - Refusal Actor: refusal_classifier_plugins.md
     - Agent Spec: http_spec.md
@@ -26,10 +30,32 @@ nav:
     - Image Generation: image_generation.md
     - Stenography Functions: stenography.md
     - Reinforcement Learning Optimization: rl_model.md
+  - WIP:
+    - Agent Operator: operator.md
   - Reference:
     - API Reference: api_reference.md
-  - Community:
-    - Contributing: contributing.md
+  # - Project:
+  #     - Setup: setup.md
+  #     - Version control: version_control.md
+  #     - Docker: docker.md
+  #     - Variables: variables.md
+  #     - Custom libraries: custom_libraries.md
+  #     - Database: database.md
+  #     - Credentials: credentials.md
+  #     - Code execution: code_execution.md
+  #     - Settings: settings.md
+  #     - Version upgrades: version_upgrades.md
+  # - Contributing:
+  #     - Overview: contributing_overview.md
+  #     - Dev environment: dev_environment.md
+  #     - Backend: backend.md
+  #     - Frontend: frontend.md
+  #     - Documentation: documentation.md
+  # - About:
+  #     - Code of conduct: code_of_conduct.md
+  #     - Usage statistics: usage_statistics.md
+  #     - FAQ: faq.md
+  #     - Changelog: changelog.md
 
 plugins:
   - search
