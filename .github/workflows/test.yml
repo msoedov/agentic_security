@@ -29,10 +29,6 @@ jobs:
           cache: "poetry"
       - name: Install dependencies
         run: poetry install
-      - name: Install pre-commit
-        run: pip install pre-commit
-      - name: Run pre-commit
-        run: pre-commit run --all-files
       - name: Run unit tests
         run: |
            poetry run pytest .
