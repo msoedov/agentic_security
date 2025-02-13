@@ -6,25 +6,30 @@
     The open-source Agentic LLM Vulnerability Scanner
     <br />
     <br />
-
-<p>
-<img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/msoedov/agentic_security" />
-<img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/msoedov/agentic_security" />
-<img alt="" src="https://img.shields.io/github/repo-size/msoedov/agentic_security" />
-<img alt="Downloads" src="https://static.pepy.tech/badge/agentic_security" />
-<img alt="GitHub Issues" src="https://img.shields.io/github/issues/msoedov/agentic_security" />
-<img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr/msoedov/agentic_security" />
-<img alt="Github License" src="https://img.shields.io/github/license/msoedov/agentic_security" />
 </p>
-  </p>
+
+<p align="center">
+  <a href="https://github.com/msoedov/agentic_security/commits/main">
+    <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/msoedov/agentic_security?style=for-the-badge&logo=git&labelColor=000000&logoColor=FFFFFF&label=Last Commit&color=6A35FF" />
+  </a>
+  <a href="https://github.com/msoedov/agentic_security">
+    <img alt="GitHub Repo Size" src="https://img.shields.io/github/repo-size/msoedov/agentic_security?style=for-the-badge&logo=database&labelColor=000000&logoColor=FFFFFF&label=Repo Size&color=yellow" />
+  </a>
+  </a>
+  <a href="https://github.com/msoedov/agentic_security/blob/master/LICENSE">
+    <img alt="GitHub License" src="https://img.shields.io/github/license/msoedov/agentic_security?style=for-the-badge&logo=codeigniter&labelColor=000000&logoColor=FFFFFF&label=License&color=FFCC19" />
+  </a>
+  <a href="https://"><img alt="Join the community" src="https://img.shields.io/badge/Join%20the%20community-black.svg?style=for-the-badge&logo=lightning&labelColor=000000&logoColor=FFFFFF&label=&color=DD55FF&logoWidth=20" /></a>
+
 </p>
 
 ## Features
 
-- Customizable Rule Sets or Agent based attacks🛠️
+- Multi modal attacks and vulnerability scanners🛠️
+- Multi-Step/multi-round Jailbreaks 🌀
 - Comprehensive fuzzing for any LLMs 🧪
 - LLM API integration and stress testing 🛠️
-- Wide range of fuzzing and attack techniques 🌀
+- RL based attacks 📡
 
 Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
 
