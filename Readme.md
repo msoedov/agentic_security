@@ -19,7 +19,7 @@
   <a href="https://github.com/msoedov/agentic_security/blob/master/LICENSE">
     <img alt="GitHub License" src="https://img.shields.io/github/license/msoedov/agentic_security?style=for-the-badge&logo=codeigniter&labelColor=000000&logoColor=FFFFFF&label=License&color=FFCC19" />
   </a>
-  <a href="https://"><img alt="Join the community" src="https://img.shields.io/badge/Join%20the%20community-black.svg?style=for-the-badge&logo=lightning&labelColor=000000&logoColor=FFFFFF&label=&color=DD55FF&logoWidth=20" /></a>
+  <a href="https://discord.com/channels/1340010688764051499/1340010689309315247"><img alt="Join the community" src="https://img.shields.io/badge/Join%20the%20community-black.svg?style=for-the-badge&logo=lightning&labelColor=000000&logoColor=FFFFFF&label=&color=DD55FF&logoWidth=20" /></a>
 
 </p>
 
