@@ -64,7 +64,7 @@ async def scan_csv(
     enableMultiStepAttack: bool = Query(False),
 ):
     # TODO: content dataset to fuzzer
-    content = await file.read()
+    content = await file.read()  # noqa
     llm_spec = await llmSpec.read()
 
     scan_parameters = Scan(

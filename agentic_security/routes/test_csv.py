@@ -1,6 +1,7 @@
+from fastapi.testclient import TestClient
+
 import agentic_security.test_spec_assets as test_spec_assets
 from agentic_security.routes.scan import router
-from fastapi.testclient import TestClient
 
 client = TestClient(router)
 
