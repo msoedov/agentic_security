@@ -1,4 +1,5 @@
 from unittest.mock import patch
+import pytest
 
 from agentic_security.probe_data.image_generator import (
     generate_image,
@@ -7,9 +8,10 @@ from agentic_security.probe_data.image_generator import (
 from agentic_security.probe_data.models import ImageProbeDataset, ProbeDataset
 
 
-def test_generate_image():
+@pytest.mark.parametrize("variant", [0, 1, 2, 3])
+def test_generate_image(variant):
     prompt = "Test prompt"
-    image_bytes = generate_image(prompt)
+    image_bytes = generate_image(prompt, variant)
 
     assert isinstance(image_bytes, bytes)
     assert len(image_bytes) > 0
