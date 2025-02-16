@@ -1,25 +1,25 @@
 import asyncio
-from typing import Any, Optional
-from pydantic import BaseModel, Field
-from pydantic_ai import Agent, RunContext
+import logging
+from typing import Any
+
 import httpx
 from httpx import LLMSpec
-import logging
+from pydantic import BaseModel, Field
+from pydantic_ai import Agent, RunContext
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
 class AgentSpecification(BaseModel):
-    name: Optional[str] = Field(None, description="Name of the LLM/agent")
-    version: Optional[str] = Field(None, description="Version of the LLM/agent")
-    description: Optional[str] = Field(None, description="Description of the LLM/agent")
-    capabilities: Optional[list[str]] = Field(None, description="List of capabilities")
-    configuration: Optional[dict[str, Any]] = Field(
+    name: str | None = Field(None, description="Name of the LLM/agent")
+    version: str | None = Field(None, description="Version of the LLM/agent")
+    description: str | None = Field(None, description="Description of the LLM/agent")
+    capabilities: list[str] | None = Field(None, description="List of capabilities")
+    configuration: dict[str, Any] | None = Field(
         None, description="Configuration settings"
     )
-    endpoint: Optional[str] = Field(
+    endpoint: str | None = Field(
         None, description="Endpoint URL of the deployed agent"
     )
 
