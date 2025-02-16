@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Optional, Dict, List
+from typing import Any, Optional
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 import httpx
@@ -14,8 +14,8 @@ class AgentSpecification(BaseModel):
     name: Optional[str] = Field(None, description="Name of the LLM/agent")
     version: Optional[str] = Field(None, description="Version of the LLM/agent")
     description: Optional[str] = Field(None, description="Description of the LLM/agent")
-    capabilities: Optional[List[str]] = Field(None, description="List of capabilities")
-    configuration: Optional[Dict[str, Any]] = Field(None, description="Configuration settings")
+    capabilities: Optional[list[str]] = Field(None, description="List of capabilities")
+    configuration: Optional[dict[str, Any]] = Field(None, description="Configuration settings")
     endpoint: Optional[str] = Field(None, description="Endpoint URL of the deployed agent")
 
 class OperatorToolBox:
@@ -45,10 +45,10 @@ class OperatorToolBox:
     def run(self) -> None:
         logger.info("Running the toolbox...")
 
-    def get_results(self) -> List[Dict[str, Any]]:
+    def get_results(self) -> list[dict[str, Any]]:
         return self.datasets
 
-    def get_failures(self) -> List[str]:
+    def get_failures(self) -> list[str]:
         return self.failures
 
     def run_operation(self, operation: str) -> str:
@@ -57,7 +57,7 @@ class OperatorToolBox:
             return f"Operation '{operation}' failed: Dataset not found."
         return f"Operation '{operation}' executed successfully."
 
-    async def test(self, description: str, sample_test: Dict[str, Any]) -> str:
+    async def test(self, description: str, sample_test: dict[str, Any]) -> str:
         agent = Agent(
             'openai:gpt-4o',
             result_type=LLMSpec,
@@ -153,7 +153,7 @@ async def retrieve_failures(ctx: RunContext[OperatorToolBox]) -> str:
         return "No failures recorded."
 
 @dataset_manager_agent.tool
-async def test_agent(ctx: RunContext[OperatorToolBox], description: str, sample_test: Dict[str, Any]) -> str:
+async def test_agent(ctx: RunContext[OperatorToolBox], description: str, sample_test: dict[str, Any]) -> str:
     result = await ctx.deps.test(description, sample_test)
     return result
 
