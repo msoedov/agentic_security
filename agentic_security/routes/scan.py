@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, File, HTTPException, Query, UploadFile
 from fastapi.responses import StreamingResponse
 
 from ..core.app import get_stop_event, get_tools_inbox, set_current_run
@@ -52,3 +52,28 @@ async def scan(scan_parameters: Scan, background_tasks: BackgroundTasks):
 async def stop_scan():
     get_stop_event().set()
     return {"status": "Scan stopped"}
+
+
+@router.post("/scan-csv")
+async def scan_csv(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    llmSpec: UploadFile = File(...),
+    optimize: bool = Query(False),
+    maxBudget: int = Query(10_000),
+    enableMultiStepAttack: bool = Query(False),
+):
+    # TODO: content dataset to fuzzer
+    content = await file.read()  # noqa
+    llm_spec = await llmSpec.read()
+
+    scan_parameters = Scan(
+        llmSpec=llm_spec,
+        optimize=optimize,
+        maxBudget=1000,
+        enableMultiStepAttack=enableMultiStepAttack,
+    )
+
+    return StreamingResponse(
+        streaming_response_generator(scan_parameters), media_type="application/json"
+    )

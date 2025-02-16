@@ -16,6 +16,7 @@ from agentic_security.probe_data.modules import (
     fine_tuned,
     garak_tool,
     inspect_ai_tool,
+    rl_model,
 )
 
 
@@ -263,6 +264,11 @@ def prepare_prompts(dataset_names, budget, tools_inbox=None, options=[]):
         "Garak": lambda opts: dataset_from_iterator(
             "Garak",
             garak_tool.Module(group, tools_inbox=tools_inbox, opts=opts).apply(),
+            lazy=True,
+        ),
+        "Reinforcement Learning Optimization": lambda opts: dataset_from_iterator(
+            "Reinforcement Learning Optimization",
+            rl_model.Module(group, tools_inbox=tools_inbox, opts=opts).apply(),
             lazy=True,
         ),
         "InspectAI": lambda opts: dataset_from_iterator(

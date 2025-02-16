@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "agentic_security"
-version = "0.4.3"
+version = "0.4.5"
 description = "Agentic LLM vulnerability scanner"
 authors = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
 repository = "https://github.com/msoedov/agentic_security"
 homepage = "https://github.com/msoedov/agentic_security"
 documentation = "https://github.com/msoedov/agentic_security/blob/main/README.md"
-license = "MIT"
+license = "Apache-2.0"
 readme = "Readme.md"
 keywords = [
     "LLM vulnerability scanner",
@@ -28,14 +28,14 @@ agentic_security = "agentic_security.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.115.6"
+fastapi = "^0.115.8"
 uvicorn = "^0.34.0"
 fire = "0.7.0"
 loguru = "^0.7.3"
 httpx = "^0.28.1"
 cache-to-disk = "^2.0.0"
 pandas = ">=1.4,<3.0"
-datasets = ">=1.14,<4.0"
+datasets = "^3.3.0"
 tabulate = ">=0.8.9,<0.10.0"
 colorama = "^0.4.4"
 matplotlib = "^3.9.2"
@@ -47,6 +47,7 @@ jinja2 = "^3.1.4"
 python-multipart = "^0.0.20"
 tomli = "^2.2.1"
 rich = "13.9.4"
+gTTS = "^2.5.4"
 # garak = { version = "*", optional = true }
 
 
@@ -54,19 +55,19 @@ rich = "13.9.4"
 # Pytest
 pytest = "^8.3.4"
 pytest-asyncio = "^0.25.2"
-inline-snapshot = ">=0.13.3,<0.20.0"
+inline-snapshot = ">=0.13.3,<0.21.0"
 pytest-httpx = "^0.35.0"
 pytest-mock = "^3.14.0"
 
 # Rest
-black = "^24.10.0"
+black = ">=24.10,<26.0"
 mypy = "^1.12.0"
 pre-commit = "^4.0.1"
 huggingface-hub = ">=0.25.1,<0.29.0"
 
 # Docs
 mkdocs = ">=1.4.2"
-mkdocs-material = ">=8.5.10"
+mkdocs-material = "^9.6.4"
 mkdocstrings = ">=0.26.1"
 mkdocs-jupyter = ">=0.25.1"
 
