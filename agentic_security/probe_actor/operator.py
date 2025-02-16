@@ -11,6 +11,7 @@ from pydantic_ai import Agent, RunContext
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class AgentSpecification(BaseModel):
     name: str | None = Field(None, description="Name of the LLM/agent")
     version: str | None = Field(None, description="Version of the LLM/agent")
@@ -19,9 +20,7 @@ class AgentSpecification(BaseModel):
     configuration: dict[str, Any] | None = Field(
         None, description="Configuration settings"
     )
-    endpoint: str | None = Field(
-        None, description="Endpoint URL of the deployed agent"
-    )
+    endpoint: str | None = Field(None, description="Endpoint URL of the deployed agent")
 
 
 class OperatorToolBox:
