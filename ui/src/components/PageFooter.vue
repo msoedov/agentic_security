@@ -3,12 +3,16 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h3 class="text-lg font-semibold text-dark-accent-green mb-4">Home</h3>
-          <p class="text-gray-400">Dedicated to LLM Security, 2024</p>
+          <h3 class="text-lg font-semibold text-dark-accent-green mb-4">
+            Home
+          </h3>
+          <p class="text-gray-400">Dedicated to LLM Security, 2025</p>
         </div>
 
         <div>
-          <h3 class="text-lg font-semibold text-dark-accent-green mb-4">Connect</h3>
+          <h3 class="text-lg font-semibold text-dark-accent-green mb-4">
+            Connect
+          </h3>
           <ul class="space-y-2">
             <li>
               <a
@@ -32,10 +36,12 @@
         </div>
 
         <div>
-          <h3 class="text-lg font-semibold text-dark-accent-green mb-4">About</h3>
+          <h3 class="text-lg font-semibold text-dark-accent-green mb-4">
+            About
+          </h3>
           <p class="text-gray-400">
-            This is the LLM Vulnerability Scanner. Easy to use—no coding
-            needed, just pure security testing.
+            This is the LLM Vulnerability Scanner. Easy to use—no coding needed,
+            just pure security testing.
           </p>
         </div>
       </div>
@@ -49,7 +55,7 @@
 
 <script>
 export default {
-  name: 'PageFooter', // Descriptive name
+  name: "PageFooter", // Descriptive name
 };
 </script>
 
