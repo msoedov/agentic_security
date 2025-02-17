@@ -175,25 +175,23 @@ Content-Type: application/json
 
 ]
 
+let fallbackIcon = '/icons/myshell.png';
 
 let LLM_CONFIGS = [
-  { name: 'Custom API', prompts: 40000, customInstructions: 'Requires api spec' },
-  { name: 'Open AI', prompts: 24000 },
-  { name: 'Deepseek v1', prompts: 24000 },
-  { name: 'Replicate', prompts: 40000 },
-  { name: 'Groq', prompts: 40000 },
-  { name: 'Together.ai', prompts: 40000 },
-  { name: 'Custom API Image', prompts: 40000, customInstructions: 'Requires api spec', modality: 'Image' },
-  { name: 'Custom API Files', prompts: 40000, customInstructions: 'Requires api spec', modality: 'Files' },
-  { name: 'Gemini', prompts: 40000 },
-  { name: 'Claude', prompts: 40000 },
-  { name: 'Cohere', prompts: 40000 },
-  { name: 'Azure OpenAI', prompts: 40000 },
-  { name: 'assemblyai', prompts: 40000 },
-
-
-]
-
+  { name: 'Custom API', prompts: 40000, customInstructions: 'Requires api spec', logo: fallbackIcon },
+  { name: 'Open AI', prompts: 24000, logo: '/icons/openai.png' },
+  { name: 'Deepseek v1', prompts: 24000, logo: '/icons/deepseek.png' },
+  { name: 'Replicate', prompts: 40000, logo: '/icons/replicate.png' },
+  { name: 'Groq', prompts: 40000, logo: '/icons/groq.png' },
+  { name: 'Together.ai', prompts: 40000, logo: '/icons/together.png' },
+  { name: 'Custom API Image', prompts: 40000, customInstructions: 'Requires api spec', modality: 'Image', logo: fallbackIcon },
+  { name: 'Custom API Files', prompts: 40000, customInstructions: 'Requires api spec', modality: 'Files', logo: fallbackIcon },
+  { name: 'Gemini', prompts: 40000, logo: '/icons/gemini.png' },
+  { name: 'Claude', prompts: 40000, logo: '/icons/claude.png' },
+  { name: 'Cohere', prompts: 40000, logo: '/icons/cohere.png' },
+  { name: 'Azure OpenAI', prompts: 40000, logo: '/icons/azureai.png' },
+  { name: 'assemblyai', prompts: 40000, logo: fallbackIcon },
+];
 function has_image(spec) {
   return spec.includes('<<BASE64_IMAGE>>');
 }

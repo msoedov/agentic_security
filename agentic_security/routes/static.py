@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import requests
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -10,6 +10,7 @@ from ..models.schemas import Settings
 
 router = APIRouter()
 STATIC_DIR = Path(__file__).parent.parent / "static"
+ICONS_DIR = STATIC_DIR / "icons"
 
 # Configure templates with custom delimiters to avoid conflicts
 templates = Jinja2Templates(directory=str(STATIC_DIR))
@@ -28,6 +29,8 @@ CONTENT_TYPES = {
     ".ico": "image/x-icon",
     ".html": "text/html",
     ".css": "text/css",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
 }
 
 
@@ -88,3 +91,19 @@ async def telemetry_js() -> FileResponse:
 async def favicon() -> FileResponse:
     """Serve the favicon."""
     return get_static_file(STATIC_DIR / "favicon.ico")
+
+
+@router.get("/icons/{icon_name}")
+async def serve_icon(icon_name: str) -> FileResponse:
+    """Serve an icon from the icons directory."""
+    icon_path = ICONS_DIR / icon_name
+    if not icon_path.exists():
+        # Fetch the icon from the external URL and cache it
+        url = f"https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/{icon_name}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            icon_path.write_bytes(response.content)
+        else:
+            raise HTTPException(status_code=404, detail="Icon not found")
+
+    return get_static_file(icon_path, content_type="image/png")
