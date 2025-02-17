@@ -250,15 +250,14 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
         )
 
         refusals = []
-        with self.assertRaises(httpx.HTTPStatusError):
-            await process_prompt(
-                request_factory=mock_request_factory,
-                prompt="test prompt",
-                tokens=0,
-                module_name="module_a",
-                refusals=refusals,
-                errors=[],
-            )
+        await process_prompt(
+            request_factory=mock_request_factory,
+            prompt="test prompt",
+            tokens=0,
+            module_name="module_a",
+            refusals=refusals,
+            errors=[],
+        )
 
     async def test_request_error(self):
         mock_request_factory = Mock()

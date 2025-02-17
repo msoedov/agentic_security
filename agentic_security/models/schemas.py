@@ -32,6 +32,9 @@ class ScanResult(BaseModel):
     progress: float
     status: bool = False
     failureRate: float = 0.0
+    prompt: str = ""
+    model: str = ""
+    refused: bool = False
 
     @classmethod
     def status_msg(cls, msg: str) -> str:
@@ -42,6 +45,9 @@ class ScanResult(BaseModel):
             progress=0,
             failureRate=0,
             status=True,
+            prompt="",
+            model="",
+            refused=False,
         ).model_dump_json()
 
 
