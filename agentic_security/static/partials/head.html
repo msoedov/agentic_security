@@ -2,12 +2,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Vulnerability Scanner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <link href="https://fonts.cdnfonts.com/css/technopollas" rel="stylesheet">
+    <script src="/cdn/tailwindcss.js"></script>
+    <script src="/cdn/vue.js"></script>
+    <script src="/cdn/lucide.js"></script>
+    <link href="/cdn/technopollas.css" rel="stylesheet">
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+      @import url('/cdn/inter.css');
     </style>
     <script>
       tailwind.config = {
@@ -28,7 +28,44 @@
                   red: '#F44336',
                   orange: '#FF9800',
                   yellow: '#FFEB3B',
+                // bg: '#0D0D0D', // Jet Black
+                // card: '#1A1A1A', // Dark Carbon Fiber
+                // text: '#FFFFFF',
+                // accent: {
+                //   green: '#E0A3B6', // Frozen Berry
+                //   red: '#1C3F74', // Neptune Blue
+                //   orange: '#A5A5A5', // Dolomite Silver
+                //   yellow: '#2E4053', // Jet Black
+
+                  berry: '#E0A3B6', // Frozen Berry
+                  blue: '#1C3F74', // Neptune Blue
+                  silver: '#A5A5A5', // Dolomite Silver
+                  black: '#DAF7A6', // Jet Black
                 },
+                variant1: {
+                    primary: '#E0A3B6', // Frozen Berry
+                    secondary: '#1C3F74', // Neptune Blue
+                    highlight: '#A5A5A5', // Dolomite Silver
+                    dark: '#000000' // Jet Black
+                  },
+                  variant2: {
+                    primary: '#FF5733', // Lava Red
+                    secondary: '#2E4053', // Midnight Blue
+                    highlight: '#C0C0C0', // Platinum Silver
+                    dark: '#121212' // Deep Black
+                  },
+                  variant3: {
+                    primary: '#3D9970', // Racing Green
+                    secondary: '#85144B', // Burgundy Red
+                    highlight: '#AAAAAA', // Light Silver
+                    dark: '#111111' // Matte Black
+                  },
+                  variant4: {
+                    primary: '#FFC300', // Golden Yellow
+                    secondary: '#DAF7A6', // Soft Mint
+                    highlight: '#888888', // Titanium Gray
+                    dark: '#222222' // Charcoal Black
+                  },
               },
             },
             borderRadius: {
