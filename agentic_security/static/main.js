@@ -4,6 +4,7 @@ var app = new Vue({
         progressWidth: '0%',
         modelSpec: LLM_SPECS[0],
         budget: 50,
+        latency: 0,
         isFocused: false, // Tracks if the textarea is focused
         showParams: false,
         showResetConfirmation: false,
@@ -121,6 +122,7 @@ var app = new Vue({
             const state = {
                 modelSpec: this.modelSpec,
                 budget: this.budget,
+                selectedConfig: this.selectedConfig,
                 dataConfig: this.dataConfig,
                 optimize: this.optimize,
                 enableChartDiagram: this.enableChartDiagram,
@@ -139,6 +141,7 @@ var app = new Vue({
                 this.optimize = state.optimize;
                 this.enableChartDiagram = state.enableChartDiagram;
                 this.enableMultiStepAttack = state.enableMultiStepAttack;
+                this.selectedConfig = state.selectedConfig;
             }
         },
         resetState() {
@@ -198,10 +201,11 @@ var app = new Vue({
                 body: JSON.stringify(payload),
             });
             console.log(response);
-            let txt = await response.text();
+            let r = await response.json();
+            this.latency = r.elapsed;
             if (!response.ok) {
                 this.updateStatusDot(false);
-                this.errorMsg = 'Integration verification failed:' + txt;
+                this.errorMsg = 'Integration verification failed:' + JSON.stringify(r);
             } else {
                 this.errorMsg = '';
                 this.updateStatusDot(true);
