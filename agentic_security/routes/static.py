@@ -108,3 +108,78 @@ async def serve_icon(icon_name: str) -> FileResponse:
             raise HTTPException(status_code=404, detail="Icon not found")
 
     return get_static_file(icon_path, content_type="image/png")
+
+
+# New endpoints for proxying external resources
+@router.get("/cdn/tailwindcss.js")
+async def proxy_tailwindcss() -> FileResponse:
+    """Proxy the Tailwind CSS script."""
+    return proxy_external_resource(
+        "https://cdn.tailwindcss.com",
+        STATIC_DIR / "tailwindcss.js",
+        "application/javascript",
+    )
+
+
+@router.get("/cdn/vue.js")
+async def proxy_vue() -> FileResponse:
+    """Proxy the Vue.js script."""
+    return proxy_external_resource(
+        "https://unpkg.com/vue@2.6.12/dist/vue.js",
+        STATIC_DIR / "vue.js",
+        "application/javascript",
+    )
+
+
+@router.get("/cdn/lucide.js")
+async def proxy_lucide() -> FileResponse:
+    """Proxy the Lucide.js script."""
+    return proxy_external_resource(
+        "https://unpkg.com/lucide@latest/dist/umd/lucide.js",
+        STATIC_DIR / "lucide.js",
+        "application/javascript",
+    )
+
+
+@router.get("/cdn/technopollas.css")
+async def proxy_technopollas() -> FileResponse:
+    """Proxy the Technopollas font stylesheet."""
+    return proxy_external_resource(
+        "https://fonts.cdnfonts.com/css/technopollas",
+        STATIC_DIR / "technopollas.css",
+        "text/css",
+    )
+
+
+@router.get("/cdn/inter.css")
+async def proxy_inter() -> FileResponse:
+    """Proxy the Inter font stylesheet."""
+    return proxy_external_resource(
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap",
+        STATIC_DIR / "inter.css",
+        "text/css",
+    )
+
+
+def proxy_external_resource(
+    url: str, local_path: Path, content_type: str
+) -> FileResponse:
+    """
+    Fetch and cache an external resource, then serve it locally.
+
+    Args:
+        url: The URL of the external resource
+        local_path: The local path to cache the resource
+        content_type: The content type of the resource
+
+    Returns:
+        FileResponse with the cached resource
+    """
+    if not local_path.exists():
+        response = requests.get(url)
+        if response.status_code == 200:
+            local_path.write_bytes(response.content)
+        else:
+            raise HTTPException(status_code=404, detail="Resource not found")
+
+    return get_static_file(local_path, content_type=content_type)
