@@ -94,7 +94,8 @@
 
             <h2 class="text-2xl font-bold">LLM API Spec</h2>
             <span :class="statusDotClass"
-              class="w-3 h-3 rounded-full mr-2"></span>
+                class="w-3 h-3 rounded-full mr-2"></span>
+                <span v-if="latency" class="text-sm text-gray-400 ml-2">Latency: {{latency}}s</span>
             <svg :class="{'rotate-180': showLLMSpec}"
               class="w-6 h-6 transition-transform duration-200"
               xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -104,7 +105,7 @@
             </svg>
           </div>
 
-          <div v-show="showLLMSpec" class="mt-4">
+          <div class="mt-4">
             <label v-if="isFocused" for="llm-spec"
               class="block text-sm font-medium mb-2">
               LLM API Spec, PROMPT variable will be replaced with the testing
