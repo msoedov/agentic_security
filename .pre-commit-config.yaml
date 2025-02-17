@@ -50,18 +50,19 @@ repos:
         files: \.(py|js|vue)$
 
 
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.22
-    hooks:
-      - id: mdformat
-        name: mdformat
-        entry: mdformat .
-        language_version: python3.11
-
-  # - repo: https://github.com/hadialqattan/pycln
-  #   rev: v2.4.0
+  # - repo: https://github.com/executablebooks/mdformat
+  #   rev: 0.7.22
   #   hooks:
-  #     - id: pycln
+  #     - id: mdformat
+  #       name: mdformat
+  #       entry: mdformat .
+  #       language_version: python3.11
+  #       files: "docs/.*\\.md$"
+
+  - repo: https://github.com/hadialqattan/pycln
+    rev: v2.5.0
+    hooks:
+      - id: pycln
 
   - repo: https://github.com/isidentical/teyit
     rev: 0.4.3
@@ -81,7 +82,7 @@ repos:
     rev: v2.2.6
     hooks:
     -   id: codespell
-        exclude: '^(third_party/)|(poetry.lock)|(ui/package-lock.json)'
+        exclude: '^(third_party/)|(poetry.lock)|(ui/package-lock.json)|(agentic_security/static/.*)'
         args:
         # if you've got a short variable name that's getting flagged, add it here
         - -L bu,ro,te,ue,alo,hda,ois,nam,nams,ned,som,parm,setts,inout,warmup,bumb,nd,sie,vEw
