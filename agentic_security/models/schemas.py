@@ -35,6 +35,7 @@ class ScanResult(BaseModel):
     prompt: str = ""
     model: str = ""
     refused: bool = False
+    latency: float = 0.0
 
     @classmethod
     def status_msg(cls, msg: str) -> str:
@@ -48,6 +49,7 @@ class ScanResult(BaseModel):
             prompt="",
             model="",
             refused=False,
+            latency=0,
         ).model_dump_json()
 
 

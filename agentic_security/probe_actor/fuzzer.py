@@ -1,7 +1,7 @@
 import asyncio
 import random
 from collections.abc import AsyncGenerator
-
+import time
 import httpx
 import pandas as pd
 from loguru import logger
@@ -44,7 +44,7 @@ def multi_modality_spec(llm_spec):
 
 
 async def process_prompt(
-    request_factory, prompt, tokens, module_name, refusals, errors
+    request_factory, prompt, tokens, module_name, refusals, errors, outputs
 ) -> tuple[int, bool]:
     """
     Process a single prompt and update the token count and failure status.
@@ -63,10 +63,12 @@ async def process_prompt(
         response_text = response.text
         tokens += len(response_text.split())
 
-        if refusal_heuristic(response.json()):
+        refused = refusal_heuristic(response.json())
+        if refused:
             refusals.append((module_name, prompt, response.status_code, response_text))
-            return tokens, True
-        return tokens, False
+
+        outputs.append((module_name, prompt, response_text, refused))
+        return tokens, refused
 
     except httpx.RequestError as exc:
         logger.error(f"Request error: {exc}")
@@ -98,6 +100,7 @@ async def perform_single_shot_scan(
 
         errors = []
         refusals = []
+        outputs = []
         total_prompts = sum(len(m.prompts) for m in prompt_modules if not m.lazy)
         processed_prompts = 0
 
@@ -131,6 +134,7 @@ async def perform_single_shot_scan(
                     100 * processed_prompts / total_prompts if total_prompts else 0
                 )
                 total_tokens -= tokens
+                start = time.time()
                 tokens, failed = await process_prompt(
                     request_factory,
                     prompt,
@@ -138,7 +142,9 @@ async def perform_single_shot_scan(
                     module.dataset_name,
                     refusals,
                     errors,
+                    outputs,
                 )
+                end = time.time()
                 total_tokens += tokens
                 # logger.debug(f"Trying prompt: {prompt}, {failed=}")
                 if failed:
@@ -147,6 +153,13 @@ async def perform_single_shot_scan(
                 failure_rates.append(failure_rate)
                 cost = calculate_cost(tokens)
 
+                # TODO: improve this cond
+                last_output = outputs[-1] if outputs else None
+                if last_output and last_output[1] == prompt:
+                    response_text = last_output[2]
+                else:
+                    response_text = ""
+
                 yield ScanResult(
                     module=module.dataset_name,
                     tokens=round(tokens / 1000, 1),
@@ -154,6 +167,8 @@ async def perform_single_shot_scan(
                     progress=round(progress, 2),
                     failureRate=round(failure_rate * 100, 2),
                     prompt=prompt[:MAX_PROMPT_LENGTH],
+                    latency=end - start,
+                    model=response_text,
                 ).model_dump_json()
 
                 if optimize and len(failure_rates) >= 5:
@@ -219,6 +234,7 @@ async def perform_many_shot_scan(
 
         errors = []
         refusals = []
+        outputs = []
         total_prompts = sum(len(m.prompts) for m in prompt_modules if not m.lazy)
         processed_prompts = 0
 
@@ -270,6 +286,7 @@ async def perform_many_shot_scan(
                         module.dataset_name,
                         refusals,
                         errors,
+                        outputs,
                     )
                     if failed:
                         module_failures += 1

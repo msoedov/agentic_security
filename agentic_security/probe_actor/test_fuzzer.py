@@ -209,6 +209,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             module_name="module_a",
             refusals=[],
             errors=[],
+            outputs=[],
         )
 
         self.assertEqual(tokens, 3)  # Tokens from "Valid response text"
@@ -226,6 +227,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
         )
 
         refusals = []
+        outputs = []
         tokens, refusal = await process_prompt(
             request_factory=mock_request_factory,
             prompt="test prompt",
@@ -233,6 +235,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             module_name="module_a",
             refusals=refusals,
             errors=[],
+            outputs=outputs,
         )
 
         self.assertEqual(tokens, 3)  # Tokens from "Response indicating refusal"
@@ -257,6 +260,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             module_name="module_a",
             refusals=refusals,
             errors=[],
+            outputs=[],
         )
 
     async def test_request_error(self):
@@ -273,6 +277,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             module_name="module_a",
             refusals=[],
             errors=errors,
+            outputs=[],
         )
 
         self.assertEqual(tokens, 0)

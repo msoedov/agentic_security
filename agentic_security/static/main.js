@@ -193,7 +193,8 @@ var app = new Vue({
             let payload = {
                 spec: this.modelSpec,
             };
-            const response = await fetch(`${URL}/verify`, {
+            let startTime = performance.now(); // Capture start time
+            const response = await fetch(`${SELF_URL}/verify`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -202,7 +203,10 @@ var app = new Vue({
             });
             console.log(response);
             let r = await response.json();
-            this.latency = r.elapsed;
+            let endTime = performance.now(); // Capture end time
+            let latency = endTime - startTime; // Calculate latency in milliseconds
+            latency = latency.toFixed(3) / 1000; // Round to 2 decimal places
+            this.latency = latency;
             if (!response.ok) {
                 this.updateStatusDot(false);
                 this.errorMsg = 'Integration verification failed:' + JSON.stringify(r);
@@ -218,7 +222,7 @@ var app = new Vue({
             this.saveStateToLocalStorage();
         },
         loadConfigs: async function () {
-            const response = await fetch(`${URL}/v1/data-config`, {
+            const response = await fetch(`${SELF_URL}/v1/data-config`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -290,6 +294,7 @@ var app = new Vue({
                 this.okMsg = `${event.module}`;
                 return
             }
+            this.latency = event.latency.toFixed(3);
             console.log('New event');
             //  { "module": "Module 49", "tokens": 480, "cost": 4.800000000000001, "progress": 9.8 }
             let progress = event.progress;
@@ -325,14 +330,14 @@ var app = new Vue({
             let payload = {
                 table: this.mainTable,
             };
-            const response = await fetch(`${URL}/plot.jpeg`, {
+            const response = await fetch(`${SELF_URL}/plot.jpeg`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(payload),
             });
-            // Convert image response to a data URL for the <img> src
+            // Convert image response to a data SELF_URL for the <img> src
             const blob = await response.blob();
             const reader = new FileReader();
             reader.readAsDataURL(blob);
@@ -375,7 +380,7 @@ var app = new Vue({
         },
         stopScan: async function () {
             this.scanRunning = false;
-            const response = await fetch(`${URL}/stop`, {
+            const response = await fetch(`${SELF_URL}/stop`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -391,7 +396,7 @@ var app = new Vue({
                 optimize: this.optimize,
                 enableMultiStepAttack: this.enableMultiStepAttack,
             };
-            const response = await fetch(`${URL}/scan`, {
+            const response = await fetch(`${SELF_URL}/scan`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

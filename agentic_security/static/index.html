@@ -95,7 +95,6 @@
             <h2 class="text-2xl font-bold">LLM API Spec</h2>
             <span :class="statusDotClass"
                 class="w-3 h-3 rounded-full mr-2"></span>
-                <span v-if="latency" class="text-sm text-gray-400 ml-2">Latency: {{latency}}s</span>
             <svg :class="{'rotate-180': showLLMSpec}"
               class="w-6 h-6 transition-transform duration-200"
               xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -140,6 +139,8 @@
               <strong class="font-bold">></strong>
               <span class="block sm:inline">{{okMsg}}</span>
             </div>
+            <span v-if="latency" class="text-sm text-gray-400 ml-2">Latency: {{latency}}s</span>
+
 
             <!-- Action Buttons -->
             <section class="flex justify-center space-x-4 mt-10">
@@ -419,6 +420,8 @@
           <strong class="font-bold">></strong>
           <span class="block sm:inline">{{okMsg}}</span>
         </div>
+        <span v-if="latency" class="text-sm text-gray-400 ml-2">Latency: {{latency}}s</span>
+
 
         <!-- Action Buttons -->
         <section class="flex justify-center space-x-4">

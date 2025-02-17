@@ -1,13 +1,13 @@
 
-let URL = window.location.href;
-if (URL.endsWith('/')) {
-  URL = URL.slice(0, -1);
+let SELF_URL = window.location.href;
+if (SELF_URL.endsWith('/')) {
+  SELF_URL = SELF_URL.slice(0, -1);
 }
-URL = URL.replace('/#', '');
+SELF_URL = SELF_URL.replace('/#', '');
 
 // Vue application
 let LLM_SPECS = [
-  `POST ${URL}/v1/self-probe
+  `POST ${SELF_URL}/v1/self-probe
 Authorization: Bearer XXXXX
 Content-Type: application/json
 
@@ -79,7 +79,7 @@ Content-Type: application/json
 ]
 }
 `,
-  `POST ${URL}/v1/self-probe-image
+  `POST ${SELF_URL}/v1/self-probe-image
 Authorization: Bearer XXXXX
 Content-Type: application/json
 
@@ -101,7 +101,7 @@ Content-Type: application/json
     }
 ]
 `,
-  `POST ${URL}/v1/self-probe-file
+  `POST ${SELF_URL}/v1/self-probe-file
 Authorization: Bearer $GROQ_API_KEY
 Content-Type: multipart/form-data
 
