@@ -46,7 +46,9 @@ repos:
     -   id: trailing-whitespace
         types: [python]
     -   id: end-of-file-fixer
-        types: [python]
+        types: [file]
+        files: \.(py|js|vue)$
+
 
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.17
