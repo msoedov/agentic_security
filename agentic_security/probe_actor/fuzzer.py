@@ -1,7 +1,8 @@
 import asyncio
 import random
-from collections.abc import AsyncGenerator
 import time
+from collections.abc import AsyncGenerator
+
 import httpx
 import pandas as pd
 from loguru import logger
