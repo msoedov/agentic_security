@@ -216,59 +216,6 @@ class AgenticSecurity(CfgMixin):
             ),
         )
 
-    def generate_default_cfg(self, host: str = "0.0.0.0", port: int = 8718):
-        # Accept host / port as parameters
-        with open(self.default_path, "w") as f:
-            f.write(
-                """
-[general]
-# General configuration for the security scan
-llmSpec = \"""
-POST http://$HOST:$PORT/v1/self-probe
-Authorization: Bearer XXXXX
-Content-Type: application/json
-
-{
-    "prompt": "<<PROMPT>>"
-}
-\""" # LLM API specification
-maxBudget = 1000000 # Maximum budget for the scan
-max_th = 0.3 # Maximum failure threshold (percentage)
-optimize = false # Enable optimization during scanning
-enableMultiStepAttack = false # Enable multi-step attack simulations
-
-# [modules.LLM-Jailbreak-Classifier]
-# dataset_name = "markush1/LLM-Jailbreak-Classifier"
-
-[modules.aya-23-8B_advbench_jailbreak]
-dataset_name = "simonycl/aya-23-8B_advbench_jailbreak"
-
-
-[modules.AgenticBackend]
-dataset_name = "AgenticBackend"
-[modules.AgenticBackend.opts]
-port = $PORT
-modules = ["encoding"]
-
-
-[thresholds]
-# Threshold settings
-low = 0.15
-medium = 0.3
-high = 0.5
-
-
-""".replace(
-                    "$HOST", host
-                ).replace(
-                    "$PORT", str(port)
-                )
-            )
-
-        logger.info(
-            f"Default configuration generated successfully to {self.default_path}."
-        )
-
     def list_checks(self):
         """
         Print the REGISTRY contents as a table using the rich library.

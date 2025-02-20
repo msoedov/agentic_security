@@ -1,9 +1,18 @@
 from datetime import datetime
 
-from fastapi import APIRouter, BackgroundTasks, File, HTTPException, Query, UploadFile
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    UploadFile,
+)
 from fastapi.responses import StreamingResponse
 
 from ..core.app import get_stop_event, get_tools_inbox, set_current_run
+from ..dependencies import InMemorySecrets, get_in_memory_secrets
 from ..http_spec import LLMSpec
 from ..models.schemas import LLMInfo, Scan
 from ..probe_actor import fuzzer
@@ -12,7 +21,9 @@ router = APIRouter()
 
 
 @router.post("/verify")
-async def verify(info: LLMInfo):
+async def verify(
+    info: LLMInfo, secrets: InMemorySecrets = Depends(get_in_memory_secrets)
+):
     spec = LLMSpec.from_string(info.spec)
     r = await spec.verify()
     if r.status_code >= 400:
@@ -42,7 +53,11 @@ def streaming_response_generator(scan_parameters: Scan):
 
 
 @router.post("/scan")
-async def scan(scan_parameters: Scan, background_tasks: BackgroundTasks):
+async def scan(
+    scan_parameters: Scan,
+    background_tasks: BackgroundTasks,
+    secrets: InMemorySecrets = Depends(get_in_memory_secrets),
+):
     return StreamingResponse(
         streaming_response_generator(scan_parameters), media_type="application/json"
     )
@@ -62,6 +77,7 @@ async def scan_csv(
     optimize: bool = Query(False),
     maxBudget: int = Query(10_000),
     enableMultiStepAttack: bool = Query(False),
+    secrets: InMemorySecrets = Depends(get_in_memory_secrets),
 ):
     # TODO: content dataset to fuzzer
     content = await file.read()  # noqa
