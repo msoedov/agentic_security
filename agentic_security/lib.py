@@ -25,7 +25,14 @@ BLUE = colorama.Fore.BLUE
 
 class CfgMixin:
     config = {}
-    default_path = "agesec.toml"
+    default_path = "agentic_security.toml"
+
+    def get_or_create_config(self) -> bool:
+        if not self.has_local_config():
+            self.generate_default_cfg()
+            return False
+        self.load_config(self.default_path)
+        return True
 
     def has_local_config(self):
         try:
