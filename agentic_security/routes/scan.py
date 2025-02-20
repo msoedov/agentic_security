@@ -58,6 +58,7 @@ async def scan(
     background_tasks: BackgroundTasks,
     secrets: InMemorySecrets = Depends(get_in_memory_secrets),
 ):
+    scan_parameters.with_secrets(secrets)
     return StreamingResponse(
         streaming_response_generator(scan_parameters), media_type="application/json"
     )
@@ -89,7 +90,7 @@ async def scan_csv(
         maxBudget=1000,
         enableMultiStepAttack=enableMultiStepAttack,
     )
-
+    scan_parameters.with_secrets(secrets)
     return StreamingResponse(
         streaming_response_generator(scan_parameters), media_type="application/json"
     )

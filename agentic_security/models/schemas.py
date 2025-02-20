@@ -23,6 +23,18 @@ class Scan(BaseModel):
     enableMultiStepAttack: bool = False
     # MSJ only mode
     probe_datasets: list[dict] = []
+    # Set and managed by the backend
+    secrets: dict[str, str] = {}
+
+    def with_secrets(self, secrets) -> "Scan":
+        match secrets:
+            case dict():
+                self.secrets.update(secrets)
+            case obj if hasattr(obj, "secrets"):
+                self.secrets.update(obj.secrets)
+            case _:
+                raise ValueError("Invalid secrets type")
+        return self
 
 
 class ScanResult(BaseModel):

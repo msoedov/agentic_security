@@ -84,6 +84,7 @@ async def perform_single_shot_scan(
     tools_inbox=None,
     optimize=False,
     stop_event: asyncio.Event = None,
+    secrets: dict[str, str] = {},
 ) -> AsyncGenerator[str, None]:
     """Perform a standard security scan."""
     max_budget = max_budget * 100_000_000
@@ -218,6 +219,7 @@ async def perform_many_shot_scan(
     stop_event: asyncio.Event = None,
     probe_frequency: float = 0.2,
     max_ctx_length: int = 10_000,
+    secrets: dict[str, str] = {},
 ) -> AsyncGenerator[str, None]:
     """Perform a multi-step security scan with probe injection."""
     request_factory = multi_modality_spec(request_factory)
@@ -346,6 +348,7 @@ def scan_router(
             tools_inbox=tools_inbox,
             optimize=scan_parameters.optimize,
             stop_event=stop_event,
+            secrets=scan_parameters.secrets,
         )
     else:
         return perform_single_shot_scan(
@@ -355,4 +358,5 @@ def scan_router(
             tools_inbox=tools_inbox,
             optimize=scan_parameters.optimize,
             stop_event=stop_event,
+            secrets=scan_parameters.secrets,
         )
