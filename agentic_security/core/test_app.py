@@ -1,5 +1,7 @@
 import os
+
 import pytest
+
 from agentic_security.core.app import expand_secrets
 
 
