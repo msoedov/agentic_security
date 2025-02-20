@@ -169,7 +169,7 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
 
     for key, value in secrets.items():
         if not value:
-            continue
+            continuev
         key = key.strip("$")
         body = body.replace(f"${key}", value)
 
