@@ -27,8 +27,7 @@ def encode_audio_base64_by_url(url: str) -> str:
     return "data:audio/mpeg;base64," + encoded_content
 
 
-class InvalidHTTPSpecError(Exception):
-    ...
+class InvalidHTTPSpecError(Exception): ...
 
 
 class LLMSpec(BaseModel):
@@ -169,6 +168,8 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     has_audio = "<<BASE64_AUDIO>>" in body
 
     for key, value in secrets.items():
+        if not value:
+            continue
         key = key.strip("$")
         body = body.replace(f"${key}", value)
 
