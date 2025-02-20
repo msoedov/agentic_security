@@ -1,7 +1,7 @@
 <p align="center">
   <h1 align="center">Agentic Security</h1>
   <p align="center">
-    An open-source vulnerability scanner for Agentic Large Language Models (LLMs)<br />
+    An open-source vulnerability scanner for Agent Workflows and Large Language Models (LLMs)<br />
     Protecting AI systems from jailbreaks, fuzzing, and multimodal attacks.<br />
     <a href="https://agentic-security.vercel.app">Explore the docs »</a> ·
     <a href="https://github.com/msoedov/agentic_security/issues">Report a Bug »</a>
