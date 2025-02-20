@@ -1,4 +1,5 @@
 from fastapi import Depends
+
 from agentic_security.config import CfgMixin
 
 
