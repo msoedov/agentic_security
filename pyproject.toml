@@ -48,6 +48,7 @@ python-multipart = "^0.0.20"
 tomli = "^2.2.1"
 rich = "13.9.4"
 gTTS = "^2.5.4"
+sentry_sdk = "^2.22.0"
 # garak = { version = "*", optional = true }
 
 

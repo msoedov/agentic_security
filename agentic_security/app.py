@@ -8,6 +8,7 @@ from .routes import (
     report_router,
     scan_router,
     static_router,
+    telemetry,
 )
 
 # Create the FastAPI app
@@ -26,3 +27,4 @@ app.include_router(scan_router)
 app.include_router(probe_router)
 app.include_router(proxy_router)
 app.include_router(report_router)
+telemetry.setup(app)
