@@ -105,6 +105,10 @@ low = 0.15
 medium = 0.3
 high = 0.5
 
+[secrets]
+# Secrets for the security scan from environment variables
+OPENAI_API_KEY = "$OPENAI_API_KEY"
+DEEPSEEK_API_KEY = "$DEEPSEEK_API_KEY"
 
 """.replace(
                     "$HOST", host

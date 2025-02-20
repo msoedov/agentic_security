@@ -138,6 +138,9 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     Returns:
         LLMSpec: An object representing the parsed HTTP specification, with attributes for the method, URL, headers, and body.
     """
+    from agentic_security.core.app import get_secrets
+
+    secrets = get_secrets()
 
     # Split the spec by lines
     lines = http_spec.strip().split("\n")
@@ -164,6 +167,11 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     has_files = "multipart/form-data" in headers.get("Content-Type", "")
     has_image = "<<BASE64_IMAGE>>" in body
     has_audio = "<<BASE64_AUDIO>>" in body
+
+    for key, value in secrets.items():
+        key = key.strip("$")
+        body = body.replace(f"${key}", value)
+
     return LLMSpec(
         method=method,
         url=url,

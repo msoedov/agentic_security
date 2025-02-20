@@ -1,8 +1,8 @@
 import sentry_sdk
+from loguru import logger
 from sentry_sdk.integrations.logging import ignore_logger
 
 from ..models.schemas import Settings
-from loguru import logger
 
 
 def setup(app):

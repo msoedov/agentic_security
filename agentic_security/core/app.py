@@ -1,3 +1,4 @@
+import os
 from asyncio import Event, Queue
 
 from fastapi import FastAPI
@@ -5,6 +6,7 @@ from fastapi import FastAPI
 tools_inbox: Queue = Queue()
 stop_event: Event = Event()
 current_run: str = {"spec": "", "id": ""}
+_secrets = {}
 
 
 def create_app() -> FastAPI:
@@ -33,3 +35,20 @@ def set_current_run(spec):
     current_run["id"] = hash(id(spec))
     current_run["spec"] = spec
     return current_run
+
+
+def get_secrets():
+    return _secrets
+
+
+def set_secrets(secrets):
+    _secrets.update(secrets)
+    expand_secrets(_secrets)
+    return _secrets
+
+
+def expand_secrets(secrets):
+    for key in secrets:
+        val = secrets[key]
+        if val.startswith("$"):
+            secrets[key] = os.getenv(val.strip("$"))
