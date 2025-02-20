@@ -1,6 +1,8 @@
 import sentry_sdk
+from sentry_sdk.integrations.logging import ignore_logger
 
 from ..models.schemas import Settings
+from loguru import logger
 
 
 def setup(app):
@@ -21,3 +23,5 @@ def setup(app):
             "continuous_profiling_auto_start": True,
         },
     )
+    ignore_logger("logging.error")
+    ignore_logger(logger.error)
