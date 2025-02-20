@@ -1,37 +1,54 @@
 <p align="center">
-
-<h1 align="center">Agentic Security</h1>
-
-<p align="center">
-    The open-source Agentic LLM Vulnerability Scanner
-    <br />
-    <br />
+  <h1 align="center">Agentic Security</h1>
+  <p align="center">
+    An open-source vulnerability scanner for Agentic Large Language Models (LLMs)<br />
+    Protecting AI systems from jailbreaks, fuzzing, and multimodal attacks.<br />
+    <a href="https://agentic-security.vercel.app">Explore the docs »</a> ·
+    <a href="https://github.com/msoedov/agentic_security/issues">Report a Bug »</a>
+  </p>
 </p>
 
 <p align="center">
   <a href="https://github.com/msoedov/agentic_security/commits/main">
-    <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/msoedov/agentic_security?style=for-the-badge&logo=git&labelColor=000000&logoColor=FFFFFF&label=Last Commit&color=6A35FF" />
+    <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/msoedov/agentic_security?style=for-the-badge&logo=git&labelColor=000000&color=6A35FF" />
   </a>
   <a href="https://github.com/msoedov/agentic_security">
-    <img alt="GitHub Repo Size" src="https://img.shields.io/github/repo-size/msoedov/agentic_security?style=for-the-badge&logo=database&labelColor=000000&logoColor=FFFFFF&label=Repo Size&color=yellow" />
-  </a>
+    <img alt="GitHub Repo Size" src="https://img.shields.io/github/repo-size/msoedov/agentic_security?style=for-the-badge&logo=database&labelColor=000000&color=yellow" />
   </a>
   <a href="https://github.com/msoedov/agentic_security/blob/master/LICENSE">
-    <img alt="GitHub License" src="https://img.shields.io/github/license/msoedov/agentic_security?style=for-the-badge&logo=codeigniter&labelColor=000000&logoColor=FFFFFF&label=License&color=FFCC19" />
+    <img alt="GitHub License" src="https://img.shields.io/github/license/msoedov/agentic_security?style=for-the-badge&logo=codeigniter&labelColor=000000&color=FFCC19" />
   </a>
-  <a href="https://discord.gg/stw3DfZQ"><img alt="Join the community" src="https://img.shields.io/badge/Join%20the%20community-black.svg?style=for-the-badge&logo=lightning&labelColor=000000&logoColor=FFFFFF&label=&color=DD55FF&logoWidth=20" /></a>
-
+  <a href="https://pypi.org/project/agentic-security/">
+    <img alt="PyPI Version" src="https://img.shields.io/pypi/v/agentic-security?style=for-the-badge&logo=pypi&labelColor=000000&color=00CCFF" />
+  </a>
+  <a href="https://discord.gg/stw3DfZQ">
+    <img alt="Join Discord" src="https://img.shields.io/badge/Discord-Join%20Us-black?style=for-the-badge&logo=discord&labelColor=000000&color=DD55FF" />
+  </a>
 </p>
+
 
 ## Features
 
-- Multi modal attacks and vulnerability scanners🛠️
-- Multi-Step/multi-round Jailbreaks 🌀
-- Comprehensive fuzzing for any LLMs 🧪
-- LLM API integration and stress testing 🛠️
-- RL based attacks 📡
 
-Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
+Agentic Security equips you with powerful tools to safeguard LLMs against emerging threats. Here's what you can do:
+
+- **Multimodal Attacks** 🖼️🎙️
+  Probe vulnerabilities across text, images, and audio inputs to ensure your LLM is robust against diverse threats.
+
+- **Multi-Step Jailbreaks** 🌀
+  Simulate sophisticated, iterative attack sequences to uncover weaknesses in LLM safety mechanisms.
+
+- **Comprehensive Fuzzing** 🧪
+  Stress-test any LLM with randomized inputs to identify edge cases and unexpected behaviors.
+
+- **API Integration & Stress Testing** 🌐
+  Seamlessly connect to LLM APIs and push their limits with high-volume, real-world attack scenarios.
+
+- **RL-Based Attacks** 📡
+  Leverage reinforcement learning to craft adaptive, intelligent probes that evolve with your model’s defenses.
+
+> **Why It Matters**: These features help developers, researchers, and security teams proactively identify and mitigate risks in AI systems, ensuring safer and more reliable deployments.
+
 
 ## 📦 Installation
 
