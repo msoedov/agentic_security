@@ -1,13 +1,11 @@
-from agentic_security.config import CfgMixin
+from agentic_security.config import get_or_create_config
 from agentic_security.core.app import set_secrets
 
 
 class InMemorySecrets:
     def __init__(self):
-        self.secrets = {}
-        self.config = CfgMixin()
-        self.config.get_or_create_config()
-        self.secrets = self.config.config.get("secrets", {})
+        config = get_or_create_config()
+        self.secrets = config.get_config_value("secrets", {})
         set_secrets(self.secrets)
 
     def set_secret(self, key: str, value: str):

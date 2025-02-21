@@ -4,6 +4,8 @@ from enum import Enum
 import httpx
 from pydantic import BaseModel
 
+from agentic_security.config import settings_var
+
 
 class Modality(Enum):
     TEXT = 0
@@ -90,7 +92,9 @@ class LLMSpec(BaseModel):
         content = self.body.replace("<<PROMPT>>", escape_special_chars_for_json(prompt))
         content = content.replace("<<BASE64_IMAGE>>", encoded_image)
         content = content.replace("<<BASE64_AUDIO>>", encoded_audio)
-        async with httpx.AsyncClient() as client:
+
+        transport = httpx.AsyncHTTPTransport(retries=settings_var("network.retry", 3))
+        async with httpx.AsyncClient(transport=transport) as client:
             response = await client.request(
                 method=self.method,
                 url=self.url,

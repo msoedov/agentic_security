@@ -9,7 +9,7 @@ from rich.console import Console
 from rich.table import Table
 from tabulate import tabulate
 
-from agentic_security.config import CfgMixin  # Importing the configuration mixin
+from agentic_security.config import SettingsMixin  # Importing the configuration mixin
 from agentic_security.models.schemas import Scan
 from agentic_security.probe_data import REGISTRY
 from agentic_security.routes.scan import streaming_response_generator
@@ -23,7 +23,7 @@ YELLOW = colorama.Fore.YELLOW
 BLUE = colorama.Fore.BLUE
 
 
-class AgenticSecurity(CfgMixin):
+class AgenticSecurity(SettingsMixin):
     @classmethod
     async def async_scan(
         cls,
