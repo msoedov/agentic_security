@@ -241,5 +241,6 @@ function _getFailureRateScore(failureRate) {
   else if (strengthRate >= 80) return 'B';
   else if (strengthRate >= 70) return 'C';
   else if (strengthRate >= 60) return 'D';
+  else if (strengthRate >= 1) return '?';
   else return 'E'; // For strengthRate less than 60
 }
