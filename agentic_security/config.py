@@ -140,6 +140,8 @@ use_disk_cache = false
 
 [network]
 retry = 3
+timeout_connect = 30
+timeout_response = 90
 """.replace(
                     "$HOST", host
                 )

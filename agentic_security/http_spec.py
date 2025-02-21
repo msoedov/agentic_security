@@ -49,14 +49,21 @@ class LLMSpec(BaseModel):
         except Exception as e:
             raise InvalidHTTPSpecError(f"Failed to parse HTTP spec: {e}") from e
 
+    def timeout(self):
+        return (
+            settings_var("network.timeout_connect", 30),
+            settings_var("network.timeout_response", 90),
+        )
+
     async def _probe_with_files(self, files):
-        async with httpx.AsyncClient() as client:
+        transport = httpx.AsyncHTTPTransport(retries=settings_var("network.retry", 3))
+        async with httpx.AsyncClient(transport=transport) as client:
             response = await client.request(
                 method=self.method,
                 url=self.url,
                 headers=self.headers,
                 files=files,
-                timeout=(30, 90),
+                timeout=self.timeout(),
             )
 
         return response
@@ -100,7 +107,7 @@ class LLMSpec(BaseModel):
                 url=self.url,
                 headers=self.headers,
                 content=content,
-                timeout=(30, 90),
+                timeout=self.timeout(),
             )
 
         return response
