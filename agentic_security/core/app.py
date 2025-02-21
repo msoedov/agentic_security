@@ -2,6 +2,7 @@ import os
 from asyncio import Event, Queue
 
 from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 
 tools_inbox: Queue = Queue()
 stop_event: Event = Event()
@@ -11,7 +12,7 @@ _secrets = {}
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
-    app = FastAPI()
+    app = FastAPI(default_response_class=ORJSONResponse)
     return app
 
 
