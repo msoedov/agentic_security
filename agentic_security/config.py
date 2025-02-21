@@ -1,8 +1,24 @@
+from functools import lru_cache
+
 import tomli
 from loguru import logger
 
+SETTINGS_VERSION = 1
 
-class CfgMixin:
+
+@lru_cache(maxsize=1)
+def settings_var(name: str, default=None):
+    return get_or_create_config().get_config_value(name, default)
+
+
+@lru_cache(maxsize=1)
+def get_or_create_config():
+    cfg = SettingsMixin()
+    cfg.get_or_create_config()
+    return cfg
+
+
+class SettingsMixin:
     config = {}
     default_path = "agentic_security.toml"
 
@@ -11,6 +27,12 @@ class CfgMixin:
             self.generate_default_cfg()
             return False
         self.load_config(self.default_path)
+        settings_version = self.get_config_value("general.version")
+        if settings_version and settings_version != SETTINGS_VERSION:
+            logger.error(
+                f"Configuration version mismatch: expected {SETTINGS_VERSION}, got {settings_version}."
+            )
+            return False
         return True
 
     def has_local_config(self):
@@ -84,6 +106,7 @@ maxBudget = 1000000 # Maximum budget for the scan
 max_th = 0.3 # Maximum failure threshold (percentage)
 optimize = false # Enable optimization during scanning
 enableMultiStepAttack = false # Enable multi-step attack simulations
+version = $SETTINGS_VERSION
 
 # [modules.LLM-Jailbreak-Classifier]
 # dataset_name = "markush1/LLM-Jailbreak-Classifier"
@@ -110,11 +133,16 @@ high = 0.5
 OPENAI_API_KEY = "$OPENAI_API_KEY"
 DEEPSEEK_API_KEY = "$DEEPSEEK_API_KEY"
 
+[caching]
+enable = true
+
+[network]
+retry = 3
 """.replace(
                     "$HOST", host
-                ).replace(
-                    "$PORT", str(port)
                 )
+                .replace("$PORT", str(port))
+                .replace("$SETTINGS_VERSION", str(SETTINGS_VERSION))
             )
 
         logger.info(
