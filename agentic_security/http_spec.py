@@ -30,7 +30,7 @@ def encode_audio_base64_by_url(url: str) -> str:
 
 
 class InvalidHTTPSpecError(Exception):
-    ...
+    pass
 
 
 class LLMSpec(BaseModel):

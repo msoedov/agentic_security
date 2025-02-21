@@ -135,6 +135,8 @@ DEEPSEEK_API_KEY = "$DEEPSEEK_API_KEY"
 
 [caching]
 enable = true
+cache_size = 10000
+use_disk_cache = false
 
 [network]
 retry = 3
