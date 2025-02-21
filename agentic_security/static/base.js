@@ -1,4 +1,3 @@
-
 let SELF_URL = window.location.href;
 if (SELF_URL.endsWith('/')) {
   SELF_URL = SELF_URL.slice(0, -1);
@@ -173,6 +172,21 @@ Content-Type: application/json
 }
 `,
 
+  `POST https://api.openrouter.ai/v1/chat/completions
+Authorization: Bearer $OPENROUTER_API_KEY
+Content-Type: application/json
+
+{
+  "model": "openrouter-latest",
+  "prompt": "<<PROMPT>>",
+  "temperature": 0.7,
+  "max_tokens": 150,
+  "top_p": 0.9,
+  "frequency_penalty": 0,
+  "presence_penalty": 0
+}
+`,
+
 ]
 
 let fallbackIcon = '/icons/myshell.png';
@@ -190,6 +204,7 @@ let LLM_CONFIGS = [
   { name: 'Claude', prompts: 40000, logo: '/icons/claude.png' },
   { name: 'Cohere', prompts: 40000, logo: '/icons/cohere.png' },
   { name: 'Azure OpenAI', prompts: 40000, logo: '/icons/azureai.png' },
+  { name: 'OpenRouter.ai', prompts: 40000, logo: '/icons/openrouter.png' },
   { name: 'assemblyai', prompts: 40000, logo: fallbackIcon },
 ];
 function has_image(spec) {
