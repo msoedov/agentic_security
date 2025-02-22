@@ -1,10 +1,10 @@
 import asyncio
 import logging
-from typing import Any, List, Dict
+from typing import Any
 
 import httpx
-from pydantic import BaseModel, Field, ConfigDict
-from pydantic_ai import Agent, Tool, RunContext
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic_ai import Agent, RunContext, Tool
 
 # Assuming LLMSpec is defined elsewhere; placeholder import
 from agentic_security.http_spec import LLMSpec
@@ -21,8 +21,8 @@ class AgentSpecification(BaseModel):
     name: str | None = Field(None, description="Name of the LLM/agent")
     version: str | None = Field(None, description="Version of the LLM/agent")
     description: str | None = Field(None, description="Description of the LLM/agent")
-    capabilities: List[str] | None = Field(None, description="List of capabilities")
-    configuration: Dict[str, Any] | None = Field(
+    capabilities: list[str] | None = Field(None, description="List of capabilities")
+    configuration: dict[str, Any] | None = Field(
         None, description="Configuration settings"
     )
     endpoint: str | None = Field(None, description="Endpoint URL of the deployed agent")
@@ -32,7 +32,7 @@ class AgentSpecification(BaseModel):
 
 # Define OperatorToolBox class
 class OperatorToolBox:
-    def __init__(self, spec: AgentSpecification, datasets: List[Dict[str, Any]]):
+    def __init__(self, spec: AgentSpecification, datasets: list[dict[str, Any]]):
         self.spec = spec
         self.datasets = datasets
         self.failures = []
@@ -41,7 +41,7 @@ class OperatorToolBox:
     def get_spec(self) -> AgentSpecification:
         return self.spec
 
-    def get_datasets(self) -> List[Dict[str, Any]]:
+    def get_datasets(self) -> list[dict[str, Any]]:
         return self.datasets
 
     def validate(self) -> bool:
@@ -59,10 +59,10 @@ class OperatorToolBox:
     def run(self) -> None:
         logger.info("Running the toolbox...")
 
-    def get_results(self) -> List[Dict[str, Any]]:
+    def get_results(self) -> list[dict[str, Any]]:
         return self.datasets
 
-    def get_failures(self) -> List[str]:
+    def get_failures(self) -> list[str]:
         return self.failures
 
     def run_operation(self, operation: str) -> str:
