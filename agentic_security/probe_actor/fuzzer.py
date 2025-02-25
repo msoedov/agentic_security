@@ -2,6 +2,7 @@ import asyncio
 import random
 import time
 from collections.abc import AsyncGenerator
+from json import JSONDecodeError
 
 import httpx
 import pandas as pd
@@ -74,6 +75,10 @@ async def process_prompt(
     except httpx.RequestError as exc:
         logger.error(f"Request error: {exc}")
         errors.append((module_name, prompt, "?", str(exc)))
+        return tokens, True
+    except JSONDecodeError as json_decode_error:
+        logger.error(f"Jason error: {json_decode_error}")
+        errors.append((module_name, prompt, "?", str(json_decode_error)))
         return tokens, True
 
 
