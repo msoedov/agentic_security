@@ -5,6 +5,7 @@ import fire
 import uvicorn
 
 from agentic_security.app import app
+from agentic_security.banner import init_banner
 from agentic_security.lib import AgenticSecurity
 
 
@@ -61,4 +62,5 @@ def main():
 
 
 if __name__ == "__main__":
+    init_banner()
     main()

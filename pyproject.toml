@@ -50,6 +50,9 @@ rich = "13.9.4"
 gTTS = "^2.5.4"
 sentry_sdk = "^2.22.0"
 orjson = "^3.10"
+pyfiglet = "^1.0.2"
+termcolor = "^2.4.0"
+
 # garak = { version = "*", optional = true }
 
 
