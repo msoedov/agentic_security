@@ -20,6 +20,10 @@ from agentic_security.probe_data.data import prepare_prompts
 # TODO: full log file
 
 MAX_PROMPT_LENGTH = 2048
+BUDGET_MULTIPLIER = 100_000_000
+INITIAL_OPTIMIZER_POINTS = 25
+MIN_FAILURE_SAMPLES = 5
+FAILURE_RATE_THRESHOLD = 0.5
 
 
 async def generate_prompts(
@@ -80,6 +84,27 @@ async def process_prompt(
         logger.error(f"Jason error: {json_decode_error}")
         errors.append((module_name, prompt, "?", str(json_decode_error)))
         return tokens, True
+
+
+async def process_prompt_batch(
+    request_factory,
+    prompts: list[str],
+    tokens: int,
+    module_name: str,
+    refusals,
+    errors,
+    outputs,
+) -> tuple[int, int]:
+    tasks = [
+        process_prompt(
+            request_factory, p, tokens, module_name, refusals, errors, outputs
+        )
+        for p in prompts
+    ]
+    results = await asyncio.gather(*tasks)
+    total_tokens = sum(r[0] for r in results)
+    failures = sum(1 for r in results if r[1])
+    return total_tokens, failures
 
 
 async def perform_single_shot_scan(
