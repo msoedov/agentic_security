@@ -1,12 +1,12 @@
 import pytest
-from agentic_security.probe_data import REGISTRY
 from datasets import load_dataset
+
+from agentic_security.probe_data import REGISTRY
 
 
 @pytest.mark.slow
 @pytest.mark.parametrize("dataset", REGISTRY)
 def test_registry_accessibility(dataset):
-
     source = dataset.get("source", "")
     if "hugging" not in source.lower():
         return pytest.skip("skipped dataset")
