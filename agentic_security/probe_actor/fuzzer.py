@@ -117,7 +117,7 @@ async def perform_single_shot_scan(
     secrets: dict[str, str] = {},
 ) -> AsyncGenerator[str, None]:
     """Perform a standard security scan."""
-    max_budget = max_budget * 100_000_000
+    max_budget = max_budget * BUDGET_MULTIPLIER
     selected_datasets = [m for m in datasets if m["selected"]]
     request_factory = multi_modality_spec(request_factory)
     try:
