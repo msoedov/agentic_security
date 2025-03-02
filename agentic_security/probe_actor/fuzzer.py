@@ -153,6 +153,7 @@ async def perform_single_shot_scan(
             module_failures = 0
             module_size = 0 if module.lazy else len(module.prompts)
             logger.info(f"Scanning {module.dataset_name} {module_size}")
+            module_prompts = 0  # Reset for each module
 
             async for prompt in generate_prompts(module.prompts):
                 if stop_event and stop_event.is_set():
@@ -162,9 +163,12 @@ async def perform_single_shot_scan(
                     return
 
                 processed_prompts += 1
+                module_prompts += 1  # Fixed increment syntax
+                # Calculate progress based on total processed prompts
                 progress = (
                     100 * processed_prompts / total_prompts if total_prompts else 0
                 )
+
                 total_tokens -= tokens
                 start = time.time()
                 tokens, failed = await process_prompt(
@@ -178,14 +182,13 @@ async def perform_single_shot_scan(
                 )
                 end = time.time()
                 total_tokens += tokens
-                # logger.debug(f"Trying prompt: {prompt}, {failed=}")
+
                 if failed:
                     module_failures += 1
-                failure_rate = module_failures / max(processed_prompts, 1)
+                failure_rate = module_failures / max(module_prompts, 1)
                 failure_rates.append(failure_rate)
                 cost = calculate_cost(tokens)
 
-                # TODO: improve this cond
                 last_output = outputs[-1] if outputs else None
                 if last_output and last_output[1] == prompt:
                     response_text = last_output[2]
@@ -234,7 +237,6 @@ async def perform_single_shot_scan(
     except Exception as e:
         logger.exception("Scan failed")
         yield ScanResult.status_msg(f"Scan failed: {str(e)}")
-        # raise e
     finally:
         yield ScanResult.status_msg("Scan completed.")
 
