@@ -350,6 +350,10 @@ var app = new Vue({
 
             // If all are selected, deselect all. Otherwise, select all.
             this.dataConfig.forEach(package => {
+                if (!package.is_active) {
+                    package.selected = false;
+                    return
+                }
                 package.selected = !allSelected;
             });
 

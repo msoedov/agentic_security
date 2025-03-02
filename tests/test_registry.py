@@ -10,6 +10,8 @@ def test_registry_accessibility(dataset):
     source = dataset.get("source", "")
     if "hugging" not in source.lower():
         return pytest.skip("skipped dataset")
+    if not dataset.get("is_active"):
+        return pytest.skip("skipped dataset")
 
     dataset_name = dataset.get("dataset_name")
     if not dataset_name:

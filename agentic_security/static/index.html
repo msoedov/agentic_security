@@ -383,27 +383,26 @@
                 class="text-gray-400 hover:underline">Deselect All</button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              <div
-                v-for="(package, index) in dataConfig"
-                :key="index"
-                @click="addPackage(index)"
-                class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md overflow-hidden"
-                :class="{
-                'border-dark-accent-green bg-dark-accent-green bg-opacity-20': package.selected,
-                'border-gray-600': !package.selected
-              }">
-                <div class="font-medium mb-1 truncate">{{ package.dataset_name
-                  }}</div>
-                <div class="text-sm text-gray-400 truncate">
-                  {{ package.source || 'Local dataset' }}
-                </div>
-                <div class="mt-2 text-sm font-semibold">
-                  {{ package.dynamic ? 'Dynamic dataset' :
-                  `${package.num_prompts.toLocaleString()} prompts` }}
-                </div>
-              </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div
+            v-for="(package, index) in dataConfig"
+            :key="index"
+            @click="package.is_active !== false && addPackage(index)"
+            class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md overflow-hidden"
+            :class="{
+              'border-dark-accent-green bg-dark-accent-green bg-opacity-20': package.selected,
+              'border-gray-600': !package.selected,
+              'opacity-30 pointer-events-none cursor-not-allowed': package.is_active === false
+            }">
+            <div class="font-medium mb-1 truncate">{{ package.dataset_name }}</div>
+            <div class="text-sm text-gray-400 truncate">
+              {{ package.source || 'Local dataset' }}
             </div>
+            <div class="mt-2 text-sm font-semibold">
+              {{ package.dynamic ? 'Dynamic dataset' : `${package.num_prompts.toLocaleString()} prompts` }}
+            </div>
+          </div>
+        </div>
           </div>
         </section>
 
