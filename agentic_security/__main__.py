@@ -5,8 +5,8 @@ import fire
 import uvicorn
 
 from agentic_security.app import app
-from agentic_security.banner import init_banner
 from agentic_security.lib import AgenticSecurity
+from agentic_security.misc.banner import init_banner
 
 
 class CLI:
