@@ -157,7 +157,7 @@ class TestLibraryLevel:
 class TestEntrypointCI:
     def test_generate_default_cfg_to_tmp_path(self):
         """
-        Test that the `generate_default_cfg` method generates a valid default config file in a temporary path.
+        Test that the `generate_default_settings` method generates a valid default config file in a temporary path.
         """
         # Create a temporary directory
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -168,7 +168,7 @@ class TestEntrypointCI:
 
             # Generate the default configuration
             security = AgenticSecurity()
-            security.generate_default_cfg()
+            security.generate_default_settings()
 
             # Check that the config file was created at the temporary path
             assert os.path.exists(temp_path), f"{temp_path} file should be generated."
@@ -193,7 +193,7 @@ class TestEntrypointCI:
 
             # Generate the default configuration
             security = AgenticSecurity()
-            security.generate_default_cfg()
+            security.generate_default_settings()
 
             # Load the generated configuration
             AgenticSecurity.load_config(temp_path)

@@ -39,7 +39,7 @@ class CLI:
         Generate the default CI configuration file.
         """
         sys.path.append(os.path.dirname("."))
-        AgenticSecurity().generate_default_cfg(host, port)
+        AgenticSecurity().generate_default_settings(host, port)
 
     i = init
 

@@ -128,7 +128,7 @@ Init config
 ```shell
 agentic_security init
 
-2025-01-08 20:12:02.449 | INFO     | agentic_security.lib:generate_default_cfg:324 - Default configuration generated successfully to agesec.toml.
+2025-01-08 20:12:02.449 | INFO     | agentic_security.lib:generate_default_settings:324 - Default configuration generated successfully to agesec.toml.
 
 ```
 

@@ -24,7 +24,7 @@ class SettingsMixin:
 
     def get_or_create_config(self) -> bool:
         if not self.has_local_config():
-            self.generate_default_cfg()
+            self.generate_default_settings()
             return False
         self.load_config(self.default_path)
         settings_version = self.get_config_value("general.version")
@@ -86,7 +86,7 @@ class SettingsMixin:
                 return default
         return value
 
-    def generate_default_cfg(self, host: str = "0.0.0.0", port: int = 8718):
+    def generate_default_settings(self, host: str = "0.0.0.0", port: int = 8718):
         # Accept host / port as parameters
         with open(self.default_path, "w") as f:
             f.write(
