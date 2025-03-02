@@ -50,7 +50,7 @@ def make_test_registry():
     ]
 
 
-class TestAS:
+class TestLibraryLevel:
     # Handles an empty dataset list.
     def test_class(self, test_server):
         llmSpec = test_spec_assets.SAMPLE_SPEC
@@ -62,8 +62,8 @@ class TestAS:
         print(result)
         assert len(result) in [0, 1]
 
-    # TODO: slow test
-    def _test_class_msj(self, test_server):
+    @pytest.mark.slow
+    def test_class_msj(self, test_server):
         llmSpec = test_spec_assets.SAMPLE_SPEC
         maxBudget = 1000
         max_th = 0.3
@@ -98,6 +98,7 @@ class TestAS:
         print(result)
         assert len(result) in [0, 1]
 
+    @pytest.mark.slow
     def test_backend(self, test_server):
         llmSpec = test_spec_assets.SAMPLE_SPEC
         maxBudget = 1000000
