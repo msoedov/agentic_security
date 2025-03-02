@@ -1,5 +1,6 @@
-import pytest
 import os
+
+import pytest
 
 
 def pytest_runtest_setup(item):
