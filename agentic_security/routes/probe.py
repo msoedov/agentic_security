@@ -77,3 +77,11 @@ async def data_config():
 async def health_check():
     """Health check endpoint."""
     return JSONResponse(content={"status": "ok"})
+
+
+@router.post("/v1/self-probe-t5")
+def self_probe_t5(probe: Probe):
+    import languagemodels as lm  # noqa
+
+    message = lm.do(probe.prompt)
+    return make_mock_response(message)
