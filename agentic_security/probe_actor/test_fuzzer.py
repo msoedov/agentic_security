@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, Mock, patch
 import httpx
 import pytest
 
-from agentic_security.models.schemas import Scan
+from agentic_security.primitives import Scan
 from agentic_security.probe_actor.fuzzer import (
     generate_prompts,
     perform_many_shot_scan,

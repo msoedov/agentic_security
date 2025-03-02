@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from loguru import logger
 
 from ..core.app import get_current_run, get_tools_inbox
-from ..models.schemas import CompletionRequest, Settings
+from ..primitives import CompletionRequest, Settings
 from ..probe_actor.refusal import REFUSAL_MARKS
 
 router = APIRouter()

@@ -10,7 +10,7 @@ from rich.table import Table
 from tabulate import tabulate
 
 from agentic_security.config import SettingsMixin  # Importing the configuration mixin
-from agentic_security.models.schemas import Scan
+from agentic_security.primitives import Scan
 from agentic_security.probe_data import REGISTRY
 from agentic_security.routes.scan import streaming_response_generator
 

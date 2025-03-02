@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse, StreamingResponse
 
-from ..models.schemas import Table
+from ..primitives import Table
 from ..report_chart import plot_security_report
 
 router = APIRouter()

@@ -4,7 +4,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from ..models.schemas import Settings
+from ..primitives import Settings
 from .static import get_static_file, router
 
 client = TestClient(router)

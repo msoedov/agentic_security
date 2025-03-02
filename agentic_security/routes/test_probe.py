@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from ..app import app
-from ..models.schemas import Probe
+from ..primitives import Probe
 from ..probe_actor.refusal import REFUSAL_MARKS
 from ..probe_data import REGISTRY
 

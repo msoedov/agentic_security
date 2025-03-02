@@ -3,7 +3,7 @@ import random
 from fastapi import APIRouter, File, Header, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 
-from ..models.schemas import FileProbeResponse, Probe
+from ..primitives import FileProbeResponse, Probe
 from ..probe_actor.refusal import REFUSAL_MARKS
 from ..probe_data import REGISTRY
 

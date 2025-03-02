@@ -14,7 +14,7 @@ from fastapi.responses import StreamingResponse
 from ..core.app import get_stop_event, get_tools_inbox, set_current_run
 from ..dependencies import InMemorySecrets, get_in_memory_secrets
 from ..http_spec import LLMSpec
-from ..models.schemas import LLMInfo, Scan
+from ..primitives import LLMInfo, Scan
 from ..probe_actor import fuzzer
 
 router = APIRouter()

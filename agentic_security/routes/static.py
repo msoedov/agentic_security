@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import Environment, FileSystemLoader
 from starlette.responses import Response
 
-from ..models.schemas import Settings
+from ..primitives import Settings
 
 router = APIRouter()
 STATIC_DIR = Path(__file__).parent.parent / "static"

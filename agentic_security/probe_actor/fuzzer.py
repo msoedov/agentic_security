@@ -11,7 +11,7 @@ from skopt import Optimizer
 from skopt.space import Real
 
 from agentic_security.http_spec import Modality
-from agentic_security.models.schemas import Scan, ScanResult
+from agentic_security.primitives import Scan, ScanResult
 from agentic_security.probe_actor.cost_module import calculate_cost
 from agentic_security.probe_actor.refusal import refusal_heuristic
 from agentic_security.probe_data import audio_generator, image_generator, msj_data
