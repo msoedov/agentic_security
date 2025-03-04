@@ -10,6 +10,7 @@ from fastapi import (
     UploadFile,
 )
 from fastapi.responses import StreamingResponse
+from loguru import logger
 
 from ..core.app import get_stop_event, get_tools_inbox, set_current_run
 from ..dependencies import InMemorySecrets, get_in_memory_secrets
@@ -25,7 +26,12 @@ async def verify(
     info: LLMInfo, secrets: InMemorySecrets = Depends(get_in_memory_secrets)
 ):
     spec = LLMSpec.from_string(info.spec)
-    r = await spec.verify()
+    try:
+        r = await spec.verify()
+    except Exception as e:
+        logger.exception(e)
+        raise HTTPException(status_code=400, detail=str(e))
+
     if r.status_code >= 400:
         raise HTTPException(status_code=r.status_code, detail=r.text)
     return dict(
