@@ -81,7 +81,11 @@ def generate_banner(
 
 def init_banner():
     ver = version("agentic_security")
-    print(generate_banner(version=ver))
+    try:
+        print(generate_banner(version=ver))
+    except Exception:
+        # UnicodeEncodeError with codec on some systems
+        pass
 
 
 if __name__ == "__main__":
