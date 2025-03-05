@@ -1,14 +1,16 @@
 :root {
-  --md-primary-fg-color: #e92063;
-  --md-primary-fg-color--light: #e92063;
-  --md-primary-fg-color--dark: #e92063;
+  --md-primary-fg-color: #2E4053;
+  /* Primary color changed to pinkish */
+  --md-primary-fg-color--light: #E0A3B6;
+  --md-primary-fg-color--dark: #1C3F74;
+  /* Dark variant changed to blue */
 }
 
-
-/* Revert hue value to that of pre mkdocs-material v9.4.0 */
+/* Updated slate color scheme with new background */
 [data-md-color-scheme="slate"] {
   --md-hue: 230;
-  --md-default-bg-color: hsla(230, 15%, 21%, 1);
+  --md-default-bg-color: #1A1A1A;
+  /* Background changed to dark gray */
 }
 
 .hide {
@@ -24,12 +26,15 @@ img.index-header {
   max-width: 500px;
 }
 
+/* Updated custom colors */
 .pydantic-pink {
-  color: #FF007F;
+  color: #E0A3B6;
+  /* Updated to match new theme */
 }
 
 .team-blue {
-  color: #0072CE;
+  color: #1C3F74;
+  /* Updated to match new theme */
 }
 
 .secure-green {
@@ -66,7 +71,6 @@ img.index-header {
 .mermaid {
   text-align: center;
 }
-
 
 /* Hide the entire footer */
 .md-footer {
