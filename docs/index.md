@@ -21,4 +21,4 @@ Note: Please be aware that Agentic Security is designed as a safety scanner tool
 
 ## UI 🧙
 
-<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1736433557/z0bsyzhsqlgcr3w4ovwp.gif">
+<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1741192668/final_aa9jhb.gif">
