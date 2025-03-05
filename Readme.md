@@ -83,7 +83,7 @@ agentic_security --port=PORT --host=HOST
 
 ## UI 🧙
 
-<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1741192668/final_aa9jhb.gif">
+![booking-screen](https://res.cloudinary.com/dq0w2rtm9/image/upload/v1741192668/final_aa9jhb.gif)
 
 ## LLM kwargs
 
@@ -445,7 +445,7 @@ Before contributing, please read the contributing guidelines.
 Agentic Security is released under the Apache License v2.
 
 
-## No Cryptocurrency Affiliation
+## 🚫 No Cryptocurrency Affiliation
 
 Agentic Security is focused solely on AI security and has no affiliation with cryptocurrency projects, blockchain technologies, or related initiatives. Our mission is to advance the safety and reliability of AI systems—no tokens, no coins, just code.
 
