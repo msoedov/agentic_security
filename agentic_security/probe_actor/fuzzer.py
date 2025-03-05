@@ -176,6 +176,7 @@ async def perform_single_shot_scan(
             module_prompts += 1  # Fixed increment syntax
             # Calculate progress based on total processed prompts
             progress = 100 * processed_prompts / total_prompts if total_prompts else 0
+            progress = progress % 100
 
             total_tokens -= tokens
             start = time.time()
@@ -295,6 +296,7 @@ async def perform_many_shot_scan(
             tokens = 0
             processed_prompts += 1
             progress = 100 * processed_prompts / total_prompts if total_prompts else 0
+            progress = progress % 100
 
             full_prompt = ""
             msj_module = random.choice(msj_modules)

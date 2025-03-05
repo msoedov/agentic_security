@@ -83,7 +83,7 @@ agentic_security --port=PORT --host=HOST
 
 ## UI 🧙
 
-<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1736433557/z0bsyzhsqlgcr3w4ovwp.gif">
+<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1741192668/final_aa9jhb.gif">
 
 ## LLM kwargs
 
@@ -408,10 +408,15 @@ For more detailed information on how to use Agentic Security, including advanced
 
 ## Roadmap and Future Goals
 
-- \[ \] Expand dataset variety
-- \[ \] Introduce two new attack vectors
-- \[ \] Develop initial attacker LLM
-- \[ \] Complete integration of OWASP Top 10 classification
+
+
+We’re just getting started! Here’s what’s on the horizon:
+
+- **RL-Powered Attacks**: An attacker LLM trained with reinforcement learning to dynamically evolve jailbreaks and outsmart defenses.
+- **Massive Dataset Expansion**: Scaling to 100,000+ prompts across text, image, and audio modalities—curated for real-world threats.
+- **Daily Attack Updates**: Fresh attack vectors delivered daily, keeping your scans ahead of the curve.
+- **Community Modules**: A plug-and-play ecosystem where you can share and deploy custom probes, datasets, and integrations.
+
 
 | Tool                    | Source                                                                        | Integrated |
 |-------------------------|-------------------------------------------------------------------------------|------------|
@@ -438,5 +443,10 @@ Before contributing, please read the contributing guidelines.
 ## License
 
 Agentic Security is released under the Apache License v2.
+
+
+## No Cryptocurrency Affiliation
+
+Agentic Security is focused solely on AI security and has no affiliation with cryptocurrency projects, blockchain technologies, or related initiatives. Our mission is to advance the safety and reliability of AI systems—no tokens, no coins, just code.
 
 ## Contact us
