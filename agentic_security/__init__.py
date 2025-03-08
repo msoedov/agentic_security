@@ -1,3 +1,3 @@
-from .lib import AgenticSecurity
+from .lib import SecurityScanner
 
-__all__ = ["AgenticSecurity"]
+__all__ = ["SecurityScanner"]

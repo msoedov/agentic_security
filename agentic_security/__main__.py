@@ -5,7 +5,7 @@ import fire
 import uvicorn
 
 from agentic_security.app import app
-from agentic_security.lib import AgenticSecurity
+from agentic_security.lib import SecurityScanner
 from agentic_security.misc.banner import init_banner
 
 
@@ -32,14 +32,14 @@ class CLI:
         Run Agentic Security in CI mode.
         """
         sys.path.append(os.path.dirname("."))
-        AgenticSecurity().entrypoint()
+        SecurityScanner().entrypoint()
 
     def init(self, host: str = "0.0.0.0", port: int = 8718):
         """
         Generate the default CI configuration file.
         """
         sys.path.append(os.path.dirname("."))
-        AgenticSecurity().generate_default_settings(host, port)
+        SecurityScanner().generate_default_settings(host, port)
 
     i = init
 
@@ -48,7 +48,7 @@ class CLI:
         List all available security checks.
         """
         sys.path.append(os.path.dirname("."))
-        AgenticSecurity().list_checks()
+        SecurityScanner().list_checks()
 
 
 def main():

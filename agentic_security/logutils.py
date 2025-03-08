@@ -24,7 +24,6 @@ import logging
 import logging.config
 from os import getenv
 
-
 LOGGER_NAME = None
 
 LOGGING_CONFIG = {

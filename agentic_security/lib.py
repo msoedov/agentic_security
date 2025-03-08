@@ -23,7 +23,7 @@ YELLOW = colorama.Fore.YELLOW
 BLUE = colorama.Fore.BLUE
 
 
-class AgenticSecurity(SettingsMixin):
+class SecurityScanner(SettingsMixin):
     @classmethod
     async def async_scan(
         cls,

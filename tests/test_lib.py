@@ -8,7 +8,7 @@ import time
 import pytest
 
 import agentic_security.test_spec_assets as test_spec_assets
-from agentic_security.lib import AgenticSecurity
+from agentic_security.lib import SecurityScanner
 
 
 def has_module(module_name):
@@ -57,7 +57,7 @@ class TestLibraryLevel:
         maxBudget = 1000000
         max_th = 0.3
         datasets = make_test_registry()
-        result = AgenticSecurity.scan(llmSpec, maxBudget, datasets, max_th)
+        result = SecurityScanner.scan(llmSpec, maxBudget, datasets, max_th)
         assert isinstance(result, dict)
         print(result)
         assert len(result) in [0, 1]
@@ -68,7 +68,7 @@ class TestLibraryLevel:
         maxBudget = 1000
         max_th = 0.3
         datasets = make_test_registry()
-        result = AgenticSecurity.scan(
+        result = SecurityScanner.scan(
             llmSpec, maxBudget, datasets, max_th, enableMultiStepAttack=True
         )
         assert isinstance(result, dict)
@@ -93,7 +93,7 @@ class TestLibraryLevel:
                 "opts": {"port": 9094},
             },
         ]
-        result = AgenticSecurity.scan(llmSpec, maxBudget, datasets, max_th)
+        result = SecurityScanner.scan(llmSpec, maxBudget, datasets, max_th)
         assert isinstance(result, dict)
         print(result)
         assert len(result) in [0, 1]
@@ -120,7 +120,7 @@ class TestLibraryLevel:
                 "modality": "text",
             },
         ]
-        result = AgenticSecurity.scan(llmSpec, maxBudget, datasets, max_th)
+        result = SecurityScanner.scan(llmSpec, maxBudget, datasets, max_th)
         assert isinstance(result, dict)
         print(result)
         assert len(result) in [0, 1]
@@ -148,7 +148,7 @@ class TestLibraryLevel:
                 "modality": "text",
             },
         ]
-        result = AgenticSecurity.scan(llmSpec, maxBudget, datasets, max_th)
+        result = SecurityScanner.scan(llmSpec, maxBudget, datasets, max_th)
         assert isinstance(result, dict)
         print(result)
         assert len(result) in [0, 1]
@@ -164,10 +164,10 @@ class TestEntrypointCI:
             temp_path = os.path.join(tmpdir, "custom_agesec.toml")
 
             # Override default_path to the temporary path
-            AgenticSecurity.default_path = temp_path
+            SecurityScanner.default_path = temp_path
 
             # Generate the default configuration
-            security = AgenticSecurity()
+            security = SecurityScanner()
             security.generate_default_settings()
 
             # Check that the config file was created at the temporary path
@@ -189,17 +189,17 @@ class TestEntrypointCI:
             temp_path = os.path.join(tmpdir, "custom_agesec.toml")
 
             # Override default_path to the temporary path
-            AgenticSecurity.default_path = temp_path
+            SecurityScanner.default_path = temp_path
 
             # Generate the default configuration
-            security = AgenticSecurity()
+            security = SecurityScanner()
             security.generate_default_settings()
 
             # Load the generated configuration
-            AgenticSecurity.load_config(temp_path)
+            SecurityScanner.load_config(temp_path)
 
             # Validate loaded configuration
-            config = AgenticSecurity.config
+            config = SecurityScanner.config
             assert (
                 config["general"]["maxBudget"] == 1000000
             ), "maxBudget should be 1000000"
