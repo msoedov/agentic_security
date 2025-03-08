@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from agentic_security.refusal_classifier import RefusalClassifier
+from agentic_security.refusal_classifier.model import RefusalClassifier
 
 classifier = RefusalClassifier()
 classifier.load_model()
