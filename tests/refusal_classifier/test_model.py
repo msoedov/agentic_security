@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 
-from .model import RefusalClassifier
+from agentic_security.refusal_classifier.model import RefusalClassifier
 
 
 @pytest.fixture
