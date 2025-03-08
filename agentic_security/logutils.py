@@ -1,45 +1,22 @@
-import logging
-from os import getenv
+import sys
 
-from rich.logging import RichHandler
+from loguru import logger
 
-LOGGER_NAME = "root"
+# Define custom colors
+BLUE = "#89CFF0"
+BROWN = "#8B4513"  # Brown for DEBUG
 
+# Define custom log level colors
+logger.level("DEBUG", color=f"<fg {BROWN}>")
+logger.level("INFO", color=f"<fg {BLUE}>")
 
-def get_logger(logger_name: str) -> logging.Logger:
-    # https://rich.readthedocs.io/en/latest/reference/logging.html#rich.logging.RichHandler
-    # https://rich.readthedocs.io/en/latest/logging.html#handle-exceptions
-    rich_handler = RichHandler(
-        show_time=False,
-        rich_tracebacks=False,
-        show_path=True if getenv("API_RUNTIME") == "dev" else False,
-        tracebacks_show_locals=False,
-    )
-    rich_handler.setFormatter(
-        logging.Formatter(
-            fmt="%(message)s",
-            datefmt="[%X]",
-        )
-    )
+# Define custom log format with aligned messages and colored levels
+LOG_FORMAT = (
+    "<level>{level:<8}</level> "  # Properly formatted and colored log level
+    "<level>{message:<100}</level> "  # Left-aligned message for readability
+    "<cyan>{file.name}</cyan>:<cyan>{line}</cyan>"  # File name and line number in cyan
+)
 
-    _logger = logging.getLogger(logger_name)
-    _logger.addHandler(rich_handler)
-    _logger.setLevel(logging.INFO)
-    _logger.propagate = True
-    return _logger
-
-
-logger: logging.Logger = get_logger(LOGGER_NAME)
-
-
-def set_log_level_to_debug():
-    _logger = logging.getLogger(LOGGER_NAME)
-    _logger.setLevel(logging.DEBUG)
-
-
-def set_log_level_to_info():
-    _logger = logging.getLogger(LOGGER_NAME)
-    _logger.setLevel(logging.INFO)
-
-
-set_log_level_to_debug()
+# Remove default handlers and add a new one with custom formatting
+logger.remove()
+logger.add(sys.stdout, format=LOG_FORMAT, level="DEBUG", colorize=True)

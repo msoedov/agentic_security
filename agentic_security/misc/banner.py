@@ -80,6 +80,7 @@ def generate_banner(
 
 
 def init_banner():
+    return
     ver = version("agentic_security")
     try:
         print(generate_banner(version=ver))

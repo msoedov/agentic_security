@@ -4,12 +4,12 @@ from datetime import datetime
 
 import colorama
 import tqdm.asyncio
-from loguru import logger
 from rich.console import Console
 from rich.table import Table
 from tabulate import tabulate
 
 from agentic_security.config import SettingsMixin  # Importing the configuration mixin
+from agentic_security.logutils import logger
 from agentic_security.primitives import Scan
 from agentic_security.probe_data import REGISTRY
 from agentic_security.routes.scan import streaming_response_generator
