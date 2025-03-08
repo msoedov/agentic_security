@@ -7,8 +7,8 @@ import httpx
 import pandas as pd
 from cache_to_disk import cache_to_disk
 from datasets import load_dataset
-from loguru import logger
 
+from agentic_security.logutils import logger
 from agentic_security.probe_data import stenography_fn
 from agentic_security.probe_data.models import ProbeDataset
 from agentic_security.probe_data.modules import (

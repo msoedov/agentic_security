@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 from typing import Any
 
@@ -10,12 +9,11 @@ from pydantic import BaseModel, ConfigDict, Field
 
 # Assuming LLMSpec is defined elsewhere; placeholder import
 from agentic_security.http_spec import LLMSpec
+from agentic_security.logutils import logger
 
 LLM_SPECS = []  # Populate with LLM spec strings if needed
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 # Define AgentSpecification model

@@ -2,7 +2,7 @@ import asyncio
 import importlib.util
 import os
 
-from loguru import logger
+from agentic_security.logutils import logger
 
 inspect_ai_task = (
     __file__.replace("inspect_ai_tool.py", "inspect_ai_task.py")

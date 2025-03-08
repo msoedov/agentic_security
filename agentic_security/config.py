@@ -1,7 +1,8 @@
 from functools import lru_cache
 
 import tomli
-from loguru import logger
+
+from agentic_security.logutils import logger
 
 SETTINGS_VERSION = 1
 

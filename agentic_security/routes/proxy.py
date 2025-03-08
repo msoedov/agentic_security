@@ -2,7 +2,8 @@ import random
 from asyncio import Event
 
 from fastapi import APIRouter
-from loguru import logger
+
+from agentic_security.logutils import logger
 
 from ..core.app import get_current_run, get_tools_inbox
 from ..primitives import CompletionRequest, Settings

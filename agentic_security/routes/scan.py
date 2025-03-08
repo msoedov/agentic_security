@@ -10,7 +10,8 @@ from fastapi import (
     UploadFile,
 )
 from fastapi.responses import StreamingResponse
-from loguru import logger
+
+from agentic_security.logutils import logger
 
 from ..core.app import get_stop_event, get_tools_inbox, set_current_run
 from ..dependencies import InMemorySecrets, get_in_memory_secrets

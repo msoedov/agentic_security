@@ -1,6 +1,7 @@
 from fastapi import Request
-from loguru import logger
 from starlette.middleware.base import BaseHTTPMiddleware
+
+from agentic_security.logutils import logger
 
 
 class LogNon200ResponsesMiddleware(BaseHTTPMiddleware):

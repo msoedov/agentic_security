@@ -3,7 +3,8 @@ import io
 
 import httpx
 import pandas as pd
-from loguru import logger
+
+from agentic_security.logutils import logger
 
 url = "https://raw.githubusercontent.com/tml-epfl/llm-adaptive-attacks/main/harmful_behaviors/harmful_behaviors_pair.csv"
 

@@ -6,11 +6,11 @@ from json import JSONDecodeError
 
 import httpx
 import pandas as pd
-from loguru import logger
 from skopt import Optimizer
 from skopt.space import Real
 
 from agentic_security.http_spec import Modality
+from agentic_security.logutils import logger
 from agentic_security.primitives import Scan, ScanResult
 from agentic_security.probe_actor.cost_module import calculate_cost
 from agentic_security.probe_actor.refusal import refusal_heuristic

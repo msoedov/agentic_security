@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from typing import Any
 
 import httpx
@@ -7,12 +6,9 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 
 from agentic_security.http_spec import LLMSpec
+from agentic_security.logutils import logger
 
 LLM_SPECS = []
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 class AgentSpecification(BaseModel):

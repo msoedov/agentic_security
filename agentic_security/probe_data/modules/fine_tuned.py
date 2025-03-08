@@ -3,7 +3,8 @@ import os
 import uuid as U
 
 import httpx
-from loguru import logger
+
+from agentic_security.logutils import logger
 
 AUTH_TOKEN: str = os.getenv("AS_TOKEN", "gh0-5f4a8ed2-37c6-4bd7-a0cf-7070eae8115b")
 

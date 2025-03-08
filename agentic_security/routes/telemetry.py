@@ -1,6 +1,7 @@
 import sentry_sdk
-from loguru import logger
 from sentry_sdk.integrations.logging import ignore_logger
+
+from agentic_security.logutils import logger
 
 from ..primitives import Settings
 

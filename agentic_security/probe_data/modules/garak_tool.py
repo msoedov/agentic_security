@@ -4,7 +4,7 @@ import json
 import os
 import subprocess
 
-from loguru import logger
+from agentic_security.logutils import logger
 
 # TODO: add probes modules
 
