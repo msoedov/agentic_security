@@ -3,7 +3,7 @@ from os import getenv
 
 from rich.logging import RichHandler
 
-LOGGER_NAME = "agentic_security"
+LOGGER_NAME = "root"
 
 
 def get_logger(logger_name: str) -> logging.Logger:
