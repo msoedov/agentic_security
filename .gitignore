@@ -17,3 +17,4 @@ inv/
 scripts/
 docx/
 agentic_security.toml
+/venv
