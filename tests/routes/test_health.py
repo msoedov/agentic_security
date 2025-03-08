@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from ..app import app
+from agentic_security.app import app
 
 
 def test_health_check():

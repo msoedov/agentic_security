@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
-from .report import router
+from agentic_security.routes.report import router
 
 client = TestClient(router)
 
