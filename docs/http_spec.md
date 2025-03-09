@@ -33,7 +33,7 @@ The `LLMSpec` class is the core of the HTTP specification. It provides the follo
 ### Methods
 
 - **`from_string(http_spec: str) -> LLMSpec`**: Parses an HTTP specification string into an `LLMSpec` object.
-- **`validate(prompt: str, encoded_image: str, encoded_audio: str, files: dict) -> None`**: Validates the request parameters based on the specified modality.
+- **`validate(prompt: str, encoded_image: str, encoded_audio: str, files: dict) -> null`**: Validates the request parameters based on the specified modality.
 - **`probe(prompt: str, encoded_image: str = "", encoded_audio: str = "", files: dict = {}) -> httpx.Response`**: Sends an HTTP request using the specified parameters.
 - **`verify() -> httpx.Response`**: Verifies the HTTP specification by sending a test request.
 
@@ -52,12 +52,11 @@ Authorization: Bearer sk-xxxxxxxxx
 Content-Type: application/json
 
 {
-    "model": "gpt-3.5-turbo",
-    "messages": [{"role": "user", "content": "<<PROMPT>>"}],
-    "temperature": 0.7
+  "model": "gpt-3.5-turbo",
+  "messages": [{"role": "user", "content": "<<PROMPT>>"}],
+  "temperature": 0.7
 }
 """
-
 spec = LLMSpec.from_string(http_spec)
 response = await spec.probe("What is the capital of France?")
 ```
@@ -71,12 +70,11 @@ Authorization: Bearer sk-xxxxxxxxx
 Content-Type: application/json
 
 {
-    "model": "gpt-4-vision-preview",
-    "messages": [{"role": "user", "content": "What is in this image? <<BASE64_IMAGE>>"}],
-    "temperature": 0.7
+  "model": "gpt-4-vision-preview",
+  "messages": [{"role": "user", "content": "What is in this image? <<BASE64_IMAGE>>"}],
+  "temperature": 0.7
 }
 """
-
 spec = LLMSpec.from_string(http_spec)
 encoded_image = encode_image_base64_by_url("https://example.com/image.jpg")
 response = await spec.probe("What is in this image?", encoded_image=encoded_image)
@@ -91,12 +89,11 @@ Authorization: Bearer sk-xxxxxxxxx
 Content-Type: application/json
 
 {
-    "model": "whisper-large-v3",
-    "messages": [{"role": "user", "content": "Transcribe this audio: <<BASE64_AUDIO>>"}],
-    "temperature": 0.7
+  "model": "whisper-large-v3",
+  "messages": [{"role": "user", "content": "Transcribe this audio: <<BASE64_AUDIO>>"}],
+  "temperature": 0.7
 }
 """
-
 spec = LLMSpec.from_string(http_spec)
 encoded_audio = encode_audio_base64_by_url("https://example.com/audio.mp3")
 response = await spec.probe("Transcribe this audio:", encoded_audio=encoded_audio)
@@ -111,12 +108,11 @@ Authorization: Bearer sk-xxxxxxxxx
 Content-Type: multipart/form-data
 
 {
-    "model": "gpt-3.5-turbo",
-    "messages": [{"role": "user", "content": "Process this file: <<FILE>>"}],
-    "temperature": 0.7
+  "model": "gpt-3.5-turbo",
+  "messages": [{"role": "user", "content": "Process this file: <<FILE>>"}],
+  "temperature": 0.7
 }
 """
-
 spec = LLMSpec.from_string(http_spec)
 files = {"file": ("document.txt", open("document.txt", "rb"))}
 response = await spec.probe("Process this file:", files=files)
