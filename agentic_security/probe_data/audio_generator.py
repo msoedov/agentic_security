@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 import platform
 import subprocess
@@ -6,6 +7,16 @@ import uuid
 
 import httpx
 from cache_to_disk import cache_to_disk
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+class AudioGenerationError(Exception):
+    """Custom exception for errors during audio generation."""
+
+    pass
 
 
 def encode(content: bytes) -> str:
@@ -41,12 +52,25 @@ def generate_audio_mac_wav(prompt: str) -> bytes:
         # Read the WAV file into memory
         with open(temp_wav_path, "rb") as f:
             audio_bytes = f.read()
+
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Subprocess error: {e}")
+        raise AudioGenerationError("Failed to generate or convert audio.") from e
+    except FileNotFoundError as e:
+        logger.error(f"File not found: {e}")
+        raise AudioGenerationError("Required file not found.") from e
+    except Exception as e:
+        logger.exception("Unexpected error occurred.")
+        raise AudioGenerationError(
+            "An unexpected error occurred during audio generation."
+        ) from e
     finally:
-        # Clean up the temporary files
-        if os.path.exists(temp_aiff_path):
-            os.remove(temp_aiff_path)
-        if os.path.exists(temp_wav_path):
-            os.remove(temp_wav_path)
+        for path in (temp_aiff_path, temp_wav_path):
+            try:
+                if os.path.exists(path):
+                    os.remove(path)
+            except Exception as e:
+                logger.warning(f"Failed to delete temporary file {path}: {e}")
 
     # Return the audio bytes
     return audio_bytes
