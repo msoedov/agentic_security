@@ -25,6 +25,8 @@ var app = new Vue({
         showModules: false,
         showLogs: false,
         showConsentModal: true,
+        toasts: [], // Array to store toast notifications
+        toastTimeout: 3000, // Duration in milliseconds (3 seconds)
         statusDotClass: 'bg-gray-500', // Default status dot class
         statusText: 'Verified', // Default status text
         statusClass: 'bg-green-500 text-dark-bg', // Default status class
@@ -93,6 +95,19 @@ var app = new Vue({
 
     },
     methods: {
+        showToast(message, type = 'success') {
+            const id = Date.now(); // Unique ID for each toast
+            this.toasts.push({ id, message, type });
+
+            // Automatically remove toast after timeout
+            setTimeout(() => {
+                this.removeToast(id);
+            }, this.toastTimeout);
+        },
+
+        removeToast(id) {
+            this.toasts = this.toasts.filter(toast => toast.id !== id);
+        },
         focusTextarea() {
             this.isFocused = true;
             self = this.$refs;
@@ -210,10 +225,12 @@ var app = new Vue({
             if (!response.ok) {
                 this.updateStatusDot(false);
                 this.errorMsg = 'Integration verification failed:' + JSON.stringify(r);
+                this.showToast('Integration verification failed', 'error');
             } else {
                 this.errorMsg = '';
                 this.updateStatusDot(true);
                 this.okMsg = 'Integration verified';
+                this.showToast('Integration verified successfully', 'success');
                 this.integrationVerified = true;
                 // console.log('Integration verified', this.integrationVerified);
                 // this.$forceUpdate();

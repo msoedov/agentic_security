@@ -63,6 +63,32 @@
           </div>
         </section>
       </main>
+      <div class="fixed top-6 right-6 z-50 space-y-3">
+        <transition-group name="toast">
+            <div
+                v-for="toast in toasts"
+                :key="toast.id"
+                class="flex items-center p-3 rounded-xl shadow-xl text-white max-w-md animate-toast-in border border-opacity-30"
+                :class="{
+                    'bg-success-toast border-accent-green': toast.type === 'success',
+                    'bg-error-toast border-accent-red': toast.type === 'error',
+                    'bg-info-toast border-accent-orange': toast.type === 'info'
+                }"
+            >
+                <span class="flex-1 font-medium tracking-wide text-sm">{{ toast.message }}</span>
+                <button
+                    @click="removeToast(toast.id)"
+                    class="ml-3 focus:outline-none hover:opacity-80 transition-opacity"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </transition-group>
+    </div>
+
+
       <main class="max-w-6xl mx-auto space-y-8">
         <section class="bg-dark-card rounded-lg p-6 shadow-lg" v-show="false">
           <h2 class="text-2xl font-bold mb-4">Select a Config</h2>
