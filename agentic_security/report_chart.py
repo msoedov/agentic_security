@@ -1,6 +1,5 @@
 import io
 import string
-from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,6 +8,7 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import LinearSegmentedColormap, Normalize
 
 from .primitives import Table
+
 
 def plot_security_report(table: Table) -> io.BytesIO:
     # Data preprocessing
@@ -143,7 +143,7 @@ def plot_security_report(table: Table) -> io.BytesIO:
     return buf
 
 
-def generate_identifiers(data : pd.DataFrame) -> List[str]:
+def generate_identifiers(data: pd.DataFrame) -> list[str]:
     data_length = len(data)
     alphabet = string.ascii_uppercase
     num_letters = len(alphabet)

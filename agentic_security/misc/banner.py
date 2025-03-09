@@ -1,6 +1,6 @@
+
 from pyfiglet import Figlet, FontNotFound
 from termcolor import colored
-from typing import Optional
 
 try:
     from importlib.metadata import version
@@ -15,7 +15,7 @@ def generate_banner(
     tagline: str = "Proactive Threat Detection & Automated Security Protocols",
     author: str = "Developed by: [Security Team]",
     website: str = "Website: https://github.com/msoedov/agentic_security",
-    warning: Optional[str] = "",  # Using Optional for warning since it might be None
+    warning: str | None = "",  # Using Optional for warning since it might be None
 ) -> str:
     """Generate a visually enhanced banner with dynamic width and borders."""
     # Define the text elements
