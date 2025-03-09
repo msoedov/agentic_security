@@ -1,4 +1,6 @@
+from collections.abc import Generator
 from datetime import datetime
+from typing import Any
 
 from fastapi import (
     APIRouter,
@@ -24,7 +26,7 @@ router = APIRouter()
 @router.post("/verify")
 async def verify(
     info: LLMInfo, secrets: InMemorySecrets = Depends(get_in_memory_secrets)
-):
+) -> dict[str, int | str | float]:
     spec = LLMSpec.from_string(info.spec)
     try:
         r = await spec.verify()
@@ -42,7 +44,7 @@ async def verify(
     )
 
 
-def streaming_response_generator(scan_parameters: Scan):
+def streaming_response_generator(scan_parameters: Scan) -> Generator[str, Any, None]:
     request_factory = LLMSpec.from_string(scan_parameters.llmSpec)
     set_current_run(request_factory)
 
@@ -63,7 +65,7 @@ async def scan(
     scan_parameters: Scan,
     background_tasks: BackgroundTasks,
     secrets: InMemorySecrets = Depends(get_in_memory_secrets),
-):
+) -> StreamingResponse:
     scan_parameters.with_secrets(secrets)
     return StreamingResponse(
         streaming_response_generator(scan_parameters), media_type="application/json"
@@ -71,7 +73,7 @@ async def scan(
 
 
 @router.post("/stop")
-async def stop_scan():
+async def stop_scan() -> dict[str, str]:
     get_stop_event().set()
     return {"status": "Scan stopped"}
 
@@ -85,7 +87,7 @@ async def scan_csv(
     maxBudget: int = Query(10_000),
     enableMultiStepAttack: bool = Query(False),
     secrets: InMemorySecrets = Depends(get_in_memory_secrets),
-):
+) -> StreamingResponse:
     # TODO: content dataset to fuzzer
     content = await file.read()  # noqa
     llm_spec = await llmSpec.read()

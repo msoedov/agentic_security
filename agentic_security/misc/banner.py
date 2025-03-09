@@ -1,3 +1,4 @@
+
 from pyfiglet import Figlet, FontNotFound
 from termcolor import colored
 
@@ -8,14 +9,14 @@ except ImportError:
 
 
 def generate_banner(
-    title="Agentic Security",
-    font="slant",
-    version="v2.1.0",
-    tagline="Proactive Threat Detection & Automated Security Protocols",
-    author="Developed by: [Security Team]",
-    website="Website: https://github.com/msoedov/agentic_security",
-    warning="",
-):
+    title: str = "Agentic Security",
+    font: str = "slant",
+    version: str = "v2.1.0",
+    tagline: str = "Proactive Threat Detection & Automated Security Protocols",
+    author: str = "Developed by: [Security Team]",
+    website: str = "Website: https://github.com/msoedov/agentic_security",
+    warning: str | None = "",  # Using Optional for warning since it might be None
+) -> str:
     """Generate a visually enhanced banner with dynamic width and borders."""
     # Define the text elements
 
