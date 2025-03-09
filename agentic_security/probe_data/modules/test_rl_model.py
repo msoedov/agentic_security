@@ -36,7 +36,7 @@ def mock_requests() -> Mock:
 def mock_rl_selector() -> Mock:
     return CloudRLPromptSelector(
         dataset_prompts,
-        api_url="https://edge.metaheuristic.co",
+        api_url="https://mcp.metaheuristic.co",
     )
 
 
@@ -94,7 +94,7 @@ class TestCloudRLPromptSelector:
     def test_select_next_prompt_success_service(self, dataset_prompts):
         selector = CloudRLPromptSelector(
             dataset_prompts,
-            api_url="https://edge.metaheuristic.co",
+            api_url="https://mcp.metaheuristic.co",
         )
         next_prompt = selector.select_next_prompt(
             "How does RL work?", passed_guard=True

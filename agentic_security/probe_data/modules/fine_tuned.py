@@ -66,7 +66,7 @@ class Module:
                 return {}
 
     async def fetch_prompts(self) -> list[str]:
-        api_url = "https://edge.metaheuristic.co/infer"
+        api_url = "https://mcp.metaheuristic.co/infer"
         headers = {
             "Authorization": f"Bearer {AUTH_TOKEN}",
             "Content-Type": "application/json",

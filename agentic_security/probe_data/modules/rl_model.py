@@ -121,8 +121,7 @@ class CloudRLPromptSelector(PromptSelectionInterface):
         current_prompt: str,
         reward: float,
         passed_guard: bool,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class QLearningPromptSelector(PromptSelectionInterface):
@@ -216,7 +215,7 @@ class Module:
         self.run_id = U.uuid4().hex
         self.batch_size = self.opts.get("batch_size", 500)
         self.rl_model = CloudRLPromptSelector(
-            prompt_groups, "https://edge.metaheuristic.co", run_id=self.run_id
+            prompt_groups, "https://mcp.metaheuristic.co", run_id=self.run_id
         )
 
     async def apply(self):
