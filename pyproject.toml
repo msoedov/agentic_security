@@ -54,6 +54,7 @@ pyfiglet = "^1.0.2"
 termcolor = "^2.4.0"
 
 # garak = { version = "*", optional = true }
+pytest-xdist = "3.6.1"
 
 
 [tool.poetry.group.dev.dependencies]
