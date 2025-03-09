@@ -54,6 +54,7 @@ pyfiglet = "^1.0.2"
 termcolor = "^2.4.0"
 
 # garak = { version = "*", optional = true }
+pytest-xdist = "3.6.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -86,7 +87,7 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.pytest.ini_options]
-addopts = "--durations=5 -m 'not slow'"
+addopts = "--durations=5 -m 'not slow' -n auto"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 markers = "slow: marks tests as slow"
