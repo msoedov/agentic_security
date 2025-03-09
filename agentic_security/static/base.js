@@ -101,7 +101,7 @@ Content-Type: application/json
 ]
 `,
   `POST ${SELF_URL}/v1/self-probe-file
-Authorization: Bearer $GROQ_API_KEY
+Authorization: Bearer $API_KEY
 Content-Type: multipart/form-data
 
 {
@@ -204,8 +204,9 @@ let LLM_CONFIGS = [
   { name: 'Claude', prompts: 40000, logo: '/icons/claude.png' },
   { name: 'Cohere', prompts: 40000, logo: '/icons/cohere.png' },
   { name: 'Azure OpenAI', prompts: 40000, logo: '/icons/azureai.png' },
-  { name: 'OpenRouter.ai', prompts: 40000, logo: '/icons/openrouter.png' },
   { name: 'assemblyai', prompts: 40000, logo: fallbackIcon },
+  { name: 'OpenRouter.ai', prompts: 40000, logo: '/icons/openrouter.png' },
+
 ];
 function has_image(spec) {
   return spec.includes('<<BASE64_IMAGE>>');
