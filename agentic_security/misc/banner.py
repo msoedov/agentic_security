@@ -1,4 +1,3 @@
-
 from pyfiglet import Figlet, FontNotFound
 from termcolor import colored
 
