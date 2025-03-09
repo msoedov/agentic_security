@@ -148,7 +148,8 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     """Parses an HTTP specification string into a LLMSpec object.
 
     Args:
-        http_spec (str): A string representing an HTTP specification.    Returns:
+        http_spec (str): A string representing an HTTP specification.
+    Returns:
         LLMSpec: An object representing the parsed HTTP specification, with attributes for the method, URL, headers, and body.
     """
     from agentic_security.core.app import get_secrets
