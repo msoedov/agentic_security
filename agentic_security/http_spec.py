@@ -162,8 +162,8 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
 
     # Check url validity
     valid_url= urlparse(url)
-    #
-    if valid_url.scheme not in ("http", "https") or not valid_url.netloc: # if missing the correct formatting ://, urlparse.netloc will be empty 
+    # if missing the correct formatting ://, urlparse.netloc will be empty 
+    if valid_url.scheme not in ("http", "https") or not valid_url.netloc: 
         raise InvalidHTTPSpecError(f"Invalid URL: {url}. Ensure it starts with 'http://' or 'https://'")
     
     # Initialize headers and body
