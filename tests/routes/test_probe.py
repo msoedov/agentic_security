@@ -5,10 +5,10 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-from ..app import app
-from ..primitives import Probe
-from ..probe_actor.refusal import REFUSAL_MARKS
-from ..probe_data import REGISTRY
+from agentic_security.app import app
+from agentic_security.primitives import Probe
+from agentic_security.probe_actor.refusal import REFUSAL_MARKS
+from agentic_security.probe_data import REGISTRY
 
 client = TestClient(app)
 
