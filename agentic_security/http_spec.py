@@ -44,7 +44,6 @@ class LLMSpec(BaseModel):
     has_audio: bool = False
 
     @classmethod
-
     def from_string(cls, http_spec: str):
         try:
             return parse_http_spec(http_spec)
@@ -147,6 +146,7 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
 
     Args:
         http_spec (str): A string representing an HTTP specification.
+        
     Returns:
         LLMSpec: An object representing the parsed HTTP specification, with attributes for the method, URL, headers, and body.
     """
