@@ -7,8 +7,10 @@ import pandas as pd
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import LinearSegmentedColormap, Normalize
 
+from .primitives import Table
 
-def plot_security_report(table):
+
+def plot_security_report(table: Table) -> io.BytesIO:
     # Data preprocessing
     data = pd.DataFrame(table)
 
@@ -141,7 +143,7 @@ def plot_security_report(table):
     return buf
 
 
-def generate_identifiers(data):
+def generate_identifiers(data: pd.DataFrame) -> list[str]:
     data_length = len(data)
     alphabet = string.ascii_uppercase
     num_letters = len(alphabet)
