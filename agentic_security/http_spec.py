@@ -15,7 +15,7 @@ class Modality(Enum):
     FILES = 3
     MIXED = 4
 
-# encoding the image data fro
+
 def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") -> str:
     """Encode image data to base64 from a URL"""
     response = httpx.get(url)
@@ -40,7 +40,7 @@ class LLMSpec(BaseModel):
     headers: dict
     body: str
     has_files: bool = False
-    has_image: bool = Fa
+    has_image: bool = False
     has_audio: bool = False
 
     @classmethod
