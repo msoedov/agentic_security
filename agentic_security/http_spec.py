@@ -1,6 +1,7 @@
 import base64
 from enum import Enum
 
+from urllib.parse import urlparse
 import httpx
 from pydantic import BaseModel
 
@@ -14,7 +15,7 @@ class Modality(Enum):
     FILES = 3
     MIXED = 4
 
-
+# encoding the image data fro
 def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") -> str:
     """Encode image data to base64 from a URL"""
     response = httpx.get(url)
@@ -39,10 +40,11 @@ class LLMSpec(BaseModel):
     headers: dict
     body: str
     has_files: bool = False
-    has_image: bool = False
+    has_image: bool = Fa
     has_audio: bool = False
 
     @classmethod
+    # class method6
     def from_string(cls, http_spec: str):
         try:
             return parse_http_spec(http_spec)
@@ -77,6 +79,8 @@ class LLMSpec(BaseModel):
 
         if self.has_audio and not encoded_audio:
             raise ValueError("Audio is required for this request.")
+
+    
 
     async def probe(
         self, prompt: str, encoded_image: str = "", encoded_audio: str = "", files={}
@@ -144,9 +148,7 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     """Parses an HTTP specification string into a LLMSpec object.
 
     Args:
-        http_spec (str): A string representing an HTTP specification.
-
-    Returns:
+        http_spec (str): A string representing an HTTP specification.    Returns:
         LLMSpec: An object representing the parsed HTTP specification, with attributes for the method, URL, headers, and body.
     """
     from agentic_security.core.app import get_secrets
@@ -158,6 +160,17 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
 
     # Extract the method and URL from the first line
     method, url = lines[0].split(" ")[0:2]
+
+    # Check url validity
+
+    valid_url= urlparse(url)
+    #
+    if valid_url.scheme not in ("http", "https") or not valid_url.netloc: # if missing the correct formatting ://, urlparse.netloc will be empty 
+        raise InvalidHTTPSpecError(f"Invalid URL: {url}. Ensure it starts with 'http://' or 'https://'")
+        
+   
+    
+    
 
     # Initialize headers and body
     headers = {}
