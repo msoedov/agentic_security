@@ -44,7 +44,7 @@ class LLMSpec(BaseModel):
     has_audio: bool = False
 
     @classmethod
-    # class method6
+
     def from_string(cls, http_spec: str):
         try:
             return parse_http_spec(http_spec)
@@ -79,8 +79,6 @@ class LLMSpec(BaseModel):
 
         if self.has_audio and not encoded_audio:
             raise ValueError("Audio is required for this request.")
-
-    
 
     async def probe(
         self, prompt: str, encoded_image: str = "", encoded_audio: str = "", files={}
@@ -163,16 +161,11 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     method, url = lines[0].split(" ")[0:2]
 
     # Check url validity
-
     valid_url= urlparse(url)
     #
     if valid_url.scheme not in ("http", "https") or not valid_url.netloc: # if missing the correct formatting ://, urlparse.netloc will be empty 
         raise InvalidHTTPSpecError(f"Invalid URL: {url}. Ensure it starts with 'http://' or 'https://'")
-        
-   
     
-    
-
     # Initialize headers and body
     headers = {}
     body = ""
