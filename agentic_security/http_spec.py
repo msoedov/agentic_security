@@ -1,6 +1,7 @@
 import base64
 from enum import Enum
 
+from urllib.parse import urlparse
 import httpx
 from pydantic import BaseModel
 
@@ -159,6 +160,12 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     # Extract the method and URL from the first line
     method, url = lines[0].split(" ")[0:2]
 
+    # Check url validity
+    valid_url= urlparse(url)
+    # if missing the correct formatting ://, urlparse.netloc will be empty 
+    if valid_url.scheme not in ("http", "https") or not valid_url.netloc: 
+        raise InvalidHTTPSpecError(f"Invalid URL: {url}. Ensure it starts with 'http://' or 'https://'")
+    
     # Initialize headers and body
     headers = {}
     body = ""
