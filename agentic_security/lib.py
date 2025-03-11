@@ -202,7 +202,7 @@ class SecurityScanner(SettingsMixin):
         self.load_config(self.default_path)
         logger.info("Configuration loaded successfully.")
         print(self.config)
-        datasets = list(self.get_config_value("modules").values())
+        datasets = list(self.get_config_value("modules", {}).values())
         for d in datasets:
             d["selected"] = True
         self.scan(
