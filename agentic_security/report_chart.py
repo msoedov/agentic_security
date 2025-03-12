@@ -13,6 +13,16 @@ from .primitives import Table
 
 
 def plot_security_report(table: Table) -> io.BytesIO:
+    """
+    Generates a polar plot representing the security report based on the given data.
+
+    Args:
+        table (Table): The input data table containing security metrics.
+
+    Returns:
+        io.BytesIO: A buffer containing the generated plot image in PNG format.
+                    Returns an empty buffer in case of an error.
+    """
     try:
         return _plot_security_report(table=table)
     except (TypeError, ValueError, OverflowError, IndexError, Exception) as e:
@@ -21,6 +31,15 @@ def plot_security_report(table: Table) -> io.BytesIO:
 
 
 def generate_identifiers(data: pd.DataFrame) -> list[str]:
+    """
+    Generates unique identifiers for the given dataset.
+
+    Args:
+        data (pd.DataFrame): A pandas DataFrame containing security-related data.
+
+    Returns:
+        list[str]: A list of generated identifiers. Returns a list with an empty string in case of an error.
+    """
     try:
         _generate_identifiers(data=data)
     except (TypeError, ValueError, Exception) as e:
@@ -29,6 +48,21 @@ def generate_identifiers(data: pd.DataFrame) -> list[str]:
 
 
 def _plot_security_report(table: Table) -> io.BytesIO:
+    """
+    Generates a polar plot-based security report visualizing the failure rates for different modules.
+
+    This function processes the input data, sorts it by failure rate, and generates a polar plot
+    where each bar represents the failure rate for a specific module. The plot includes identifiers,
+    color-coding based on token count, failure rate values on the bars, and a table listing the modules
+    and their corresponding failure rates.
+
+    Args:
+        table (Table): A table-like structure (e.g., pandas DataFrame) containing security report data
+                        with columns for failure rate, tokens, and modules.
+
+    Returns:
+        io.BytesIO: A buffer containing the generated plot image in PNG format.
+    """
     # Data preprocessing
     logger.info("Data preprocessing started.")
 
@@ -162,6 +196,21 @@ def _plot_security_report(table: Table) -> io.BytesIO:
 
 
 def _generate_identifiers(data: pd.DataFrame) -> list[str]:
+    """
+    Generates a list of unique identifiers for each row in the given DataFrame.
+
+    The identifiers are based on the English alphabet, with each identifier consisting
+    of a letter followed by a number. The letter represents the "group" of identifiers
+    (using a letter from A to Z) and the number is a counter within that group. For example:
+    - A1, A2, ..., A26, B1, B2, ..., Z1, Z2, ...
+
+    Args:
+        data (pd.DataFrame): The input DataFrame containing data for which identifiers
+                             are to be generated.
+
+    Returns:
+        list[str]: A list of unique identifiers as strings, one for each row in the DataFrame.
+    """
     data_length = len(data)
 
     alphabet = string.ascii_uppercase
