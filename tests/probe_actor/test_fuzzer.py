@@ -7,7 +7,7 @@ import pytest
 
 from agentic_security.primitives import Scan
 from agentic_security.probe_actor.fuzzer import (
-    _FuzzerState,
+    FuzzerState,
     generate_prompts,
     perform_many_shot_scan,
     perform_single_shot_scan,
@@ -208,7 +208,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             prompt="test prompt",
             tokens=0,
             module_name="module_a",
-            fuzzer_state=_FuzzerState(),
+            fuzzer_state=FuzzerState(),
         )
 
         self.assertEqual(tokens, 3)  # Tokens from "Valid response text"
@@ -225,7 +225,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             )
         )
 
-        fuzzer_state = _FuzzerState()
+        fuzzer_state = FuzzerState()
         tokens, refusal = await process_prompt(
             request_factory=mock_request_factory,
             prompt="test prompt",
@@ -248,7 +248,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             )
         )
 
-        fuzzer_state = _FuzzerState()
+        fuzzer_state = FuzzerState()
         await process_prompt(
             request_factory=mock_request_factory,
             prompt="test prompt",
@@ -263,7 +263,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             side_effect=httpx.RequestError("Connection error")
         )
 
-        fuzzer_state = _FuzzerState()
+        fuzzer_state = FuzzerState()
         tokens, refusal = await process_prompt(
             request_factory=mock_request_factory,
             prompt="test prompt",
