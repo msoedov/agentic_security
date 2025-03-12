@@ -84,6 +84,9 @@ async def process_prompt(
         logger.error(f"Jason error: {json_decode_error}")
         errors.append((module_name, prompt, "?", str(json_decode_error)))
         return tokens, True
+    except Exception:
+        logger.exception("Oups")
+        return tokens, False
 
 
 async def process_prompt_batch(
