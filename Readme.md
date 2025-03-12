@@ -83,8 +83,7 @@ agentic_security --port=PORT --host=HOST
 
 ## UI 🧙
 
-<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1736433557/z0bsyzhsqlgcr3w4ovwp.gif">
-<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1741775650/final-ezgif.com-speed_ywfcyn.gif">
+<img width="100%" alt="booking-screen" src="https://raw.githubusercontent.com/msoedov/agentic_security/refs/heads/main/docs/images/demo.gif">
 
 ## LLM kwargs
 
