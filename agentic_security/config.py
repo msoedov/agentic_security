@@ -143,6 +143,13 @@ use_disk_cache = false
 retry = 3
 timeout_connect = 30
 timeout_response = 90
+
+[fuzzer]
+max_prompt_lenght = 2048
+budget_multiplier = 100000000
+initial_optimizer_points = 25
+min_failure_samples = 5
+failure_rate_threshold = 0.5
 """.replace(
                     "$HOST", host
                 )
