@@ -4,7 +4,7 @@ import tomli
 
 from agentic_security.logutils import logger
 
-SETTINGS_VERSION = 1
+SETTINGS_VERSION = 2
 
 
 @lru_cache(maxsize=1)
