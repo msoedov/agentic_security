@@ -18,3 +18,4 @@ scripts/
 docx/
 agentic_security.toml
 /venv
+*.csv
