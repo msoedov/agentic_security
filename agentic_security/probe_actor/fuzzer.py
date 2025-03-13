@@ -224,6 +224,16 @@ async def scan_module(
 
     module_size = 0 if module.lazy else len(module.prompts)
     logger.info(f"Scanning {module.dataset_name} {module_size}")
+    yield ScanResult(
+        module=module.dataset_name,
+        tokens=0,
+        cost=0,
+        progress=0,
+        failureRate=0,
+        prompt="",
+        latency=0,
+        model="",
+    ).model_dump_json()
 
     async for prompt in generate_prompts(module.prompts):
         if stop_event and stop_event.is_set():
