@@ -49,7 +49,7 @@ async def generate_prompts(
             yield prompt
 
 
-def multi_modality_spec(llm_spec):
+def get_modality_adapter(llm_spec):
     """
     Returns the appropriate request adapter based on the modality of the LLM specification.
 
