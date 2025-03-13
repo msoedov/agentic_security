@@ -130,7 +130,12 @@ var app = new Vue({
         },
         acceptConsent() {
             this.showConsentModal = false; // Close the modal
-            localStorage.setItem('consentGiven', 'true'); // Save consent to local storage
+            
+            try {
+                localStorage.setItem('consentGiven', 'true'); // Save consent to local storage
+            } catch (e) {
+                this.showToast('Failed to save consent', 'error'); // Show error if saving fails
+            }
         },
 
         saveStateToLocalStorage() {
