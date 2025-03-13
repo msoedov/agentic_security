@@ -19,11 +19,12 @@ from agentic_security.probe_actor.state import FuzzerState
 from agentic_security.probe_data import audio_generator, image_generator, msj_data
 from agentic_security.probe_data.data import prepare_prompts
 
-MAX_PROMPT_LENGTH = settings_var("fuzzer.max_prompt_lenght")
-BUDGET_MULTIPLIER = settings_var("fuzzer.budget_multiplier")
-INITIAL_OPTIMIZER_POINTS = settings_var("fuzzer.initial_optimizer_points")
-MIN_FAILURE_SAMPLES = settings_var("min_failure_samples")
-FAILURE_RATE_THRESHOLD = settings_var("failure_rate_threshold")
+
+MAX_PROMPT_LENGTH = settings_var("fuzzer.max_prompt_lenght", 2048)
+BUDGET_MULTIPLIER = settings_var("fuzzer.budget_multiplier", 100000000)
+INITIAL_OPTIMIZER_POINTS = settings_var("fuzzer.initial_optimizer_points", 25)
+MIN_FAILURE_SAMPLES = settings_var("min_failure_samples", 5)
+FAILURE_RATE_THRESHOLD = settings_var("failure_rate_threshold", 0.5)
 
 
 async def generate_prompts(
