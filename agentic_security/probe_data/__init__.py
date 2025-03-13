@@ -1,4 +1,4 @@
-from .data import load_local_csv
+from .data import load_local_csv, load_local_csv_files
 
 REGISTRY_V0 = [
     {
@@ -484,3 +484,18 @@ REGISTRY = REGISTRY_V0 + [
         "modality": "text",
     },
 ]
+
+for ds in load_local_csv_files():
+    REGISTRY.append(
+        {
+            "dataset_name": ds.dataset_name,
+            "num_prompts": len(ds.prompts),
+            "tokens": ds.prompts,
+            "approx_cost": 0.0,
+            "is_active": True,
+            "source": f"Local file dataset: {ds.metadata['src']}",
+            "selected": False,
+            "url": "",
+            "modality": "text",
+        }
+    )
