@@ -49,6 +49,16 @@ LOGGING_CONFIG = {
             "handlers": ["rich"],
             "propagate": True,
         },
+        "httpx": {  # Disable httpx logging
+            "level": "WARNING",  # Suppress DEBUG and INFO messages from httpx
+            "handlers": [],
+            "propagate": False,
+        },
+        "uvicorn.access": {  # Disable uvicorn.access logging
+            "level": "WARNING",  # Suppress DEBUG and INFO messages from uvicorn.access
+            "handlers": [],
+            "propagate": False,
+        },
     },
 }
 
