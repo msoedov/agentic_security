@@ -265,7 +265,7 @@ def load_local_csv() -> ProbeDataset:
     return create_probe_dataset("Local CSV", prompts, {"src": str(csv_files)})
 
 
-@cache_to_disk()
+@cache_to_disk(1)
 def load_csv(file: str) -> ProbeDataset:
     """Load prompts from local CSV files."""
     prompts = []
@@ -281,7 +281,7 @@ def load_csv(file: str) -> ProbeDataset:
     return create_probe_dataset(f"fs://{file}", prompts, {"src": str(file)})
 
 
-@cache_to_disk()
+@cache_to_disk(1)
 def load_local_csv_files() -> list[ProbeDataset]:
     """Load prompts from local CSV files and return a list of ProbeDataset objects."""
     csv_files = [f for f in os.listdir(".") if f.endswith(".csv")]
