@@ -171,6 +171,7 @@ var app = new Vue({
             this.integrationVerified = false;
             this.showResetConfirmation = false;
             this.enableMultiStepAttack = false;
+            this.showToast('All settings have been reset to default', 'info');
         },
         confirmResetState() {
             this.showResetConfirmation = true;
@@ -257,6 +258,7 @@ var app = new Vue({
             this.errorMsg = '';
             this.okMsg = '';
             this.integrationVerified = false;
+            this.showToast(`Config ${index + 1} selected`, 'info');
         },
         toggleModules() {
             this.showModules = !this.showModules;
@@ -344,6 +346,7 @@ var app = new Vue({
                 return
             }
             console.log('New row');
+            this.showToast('New module', 'success');
             let payload = {
                 table: this.mainTable,
             };
@@ -454,6 +457,8 @@ var app = new Vue({
                     }
                 });
             }
+            this.scanRunning = false;
+            this.showToast('Scan finished successfully', 'success');
             this.saveStateToLocalStorage();
 
         }
