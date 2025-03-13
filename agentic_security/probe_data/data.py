@@ -459,7 +459,6 @@ def prepare_prompts(
         try:
             datasets.append(dataset_loaders[name]())
         except Exception as e:
-
             logger.error(f"Error loading {name}: {e}")
 
     # Load dynamic datasets and apply transformations

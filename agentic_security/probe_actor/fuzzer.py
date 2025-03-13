@@ -19,7 +19,6 @@ from agentic_security.probe_actor.state import FuzzerState
 from agentic_security.probe_data import audio_generator, image_generator, msj_data
 from agentic_security.probe_data.data import prepare_prompts
 
-
 MAX_PROMPT_LENGTH = settings_var("fuzzer.max_prompt_lenght", 2048)
 BUDGET_MULTIPLIER = settings_var("fuzzer.budget_multiplier", 100000000)
 INITIAL_OPTIMIZER_POINTS = settings_var("fuzzer.initial_optimizer_points", 25)
