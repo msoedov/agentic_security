@@ -9,6 +9,7 @@ import httpx
 from skopt import Optimizer
 from skopt.space import Real
 
+from agentic_security.config import settings_var
 from agentic_security.http_spec import Modality
 from agentic_security.logutils import logger
 from agentic_security.primitives import Scan, ScanResult
@@ -18,12 +19,11 @@ from agentic_security.probe_actor.state import FuzzerState
 from agentic_security.probe_data import audio_generator, image_generator, msj_data
 from agentic_security.probe_data.data import prepare_prompts
 
-# Constants
-MAX_PROMPT_LENGTH = 2048
-BUDGET_MULTIPLIER = 100_000_000
-INITIAL_OPTIMIZER_POINTS = 25
-MIN_FAILURE_SAMPLES = 5
-FAILURE_RATE_THRESHOLD = 0.5
+MAX_PROMPT_LENGTH = settings_var("fuzzer.max_prompt_lenght")
+BUDGET_MULTIPLIER = settings_var("fuzzer.budget_multiplier")
+INITIAL_OPTIMIZER_POINTS = settings_var("fuzzer.initial_optimizer_points")
+MIN_FAILURE_SAMPLES = settings_var("min_failure_samples")
+FAILURE_RATE_THRESHOLD = settings_var("failure_rate_threshold")
 
 
 async def generate_prompts(
