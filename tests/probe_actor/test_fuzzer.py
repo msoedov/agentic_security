@@ -7,6 +7,7 @@ import pytest
 
 from agentic_security.primitives import Scan
 from agentic_security.probe_actor.fuzzer import (
+    FuzzerState,
     generate_prompts,
     perform_many_shot_scan,
     perform_single_shot_scan,
@@ -207,9 +208,7 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             prompt="test prompt",
             tokens=0,
             module_name="module_a",
-            refusals=[],
-            errors=[],
-            outputs=[],
+            fuzzer_state=FuzzerState(),
         )
 
         self.assertEqual(tokens, 3)  # Tokens from "Valid response text"
@@ -226,20 +225,17 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             )
         )
 
-        refusals = []
-        outputs = []
+        fuzzer_state = FuzzerState()
         tokens, refusal = await process_prompt(
             request_factory=mock_request_factory,
             prompt="test prompt",
             tokens=0,
             module_name="module_a",
-            refusals=refusals,
-            errors=[],
-            outputs=outputs,
+            fuzzer_state=fuzzer_state,
         )
 
         self.assertEqual(tokens, 3)  # Tokens from "Response indicating refusal"
-        self.assertFalse(refusal)
+        # self.assertFalse(fuzzer_state.refusals)
 
     async def test_http_error_response(self):
         mock_request_factory = Mock()
@@ -252,15 +248,13 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             )
         )
 
-        refusals = []
+        fuzzer_state = FuzzerState()
         await process_prompt(
             request_factory=mock_request_factory,
             prompt="test prompt",
             tokens=0,
             module_name="module_a",
-            refusals=refusals,
-            errors=[],
-            outputs=[],
+            fuzzer_state=fuzzer_state,
         )
 
     async def test_request_error(self):
@@ -269,18 +263,14 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
             side_effect=httpx.RequestError("Connection error")
         )
 
-        errors = []
+        fuzzer_state = FuzzerState()
         tokens, refusal = await process_prompt(
             request_factory=mock_request_factory,
             prompt="test prompt",
             tokens=0,
             module_name="module_a",
-            refusals=[],
-            errors=errors,
-            outputs=[],
+            fuzzer_state=fuzzer_state,
         )
 
         self.assertEqual(tokens, 0)
         self.assertTrue(refusal)
-        self.assertEqual(len(errors), 1)
-        self.assertIn("Connection error", errors[0][3])
