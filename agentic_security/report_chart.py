@@ -26,7 +26,7 @@ def plot_security_report(table: Table) -> io.BytesIO:
     try:
         return _plot_security_report(table=table)
     except (TypeError, ValueError, OverflowError, IndexError, Exception) as e:
-        logger.error(f"Error in generating the security report: {e}")
+        logger.error(f"Error in generating the security report: {e} {table}")
     return io.BytesIO()
 
 
@@ -40,11 +40,7 @@ def generate_identifiers(data: pd.DataFrame) -> list[str]:
     Returns:
         list[str]: A list of generated identifiers. Returns a list with an empty string in case of an error.
     """
-    try:
-        _generate_identifiers(data=data)
-    except (TypeError, ValueError, Exception) as e:
-        logger.error(f"Error in generate_identifiers: {e}")
-    return [""]
+    return _generate_identifiers(data=data)
 
 
 def _plot_security_report(table: Table) -> io.BytesIO:
