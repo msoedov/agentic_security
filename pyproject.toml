@@ -69,7 +69,7 @@ pytest-mock = "^3.14.0"
 black = ">=24.10,<26.0"
 mypy = "^1.12.0"
 pre-commit = "^4.0.1"
-huggingface-hub = ">=0.25.1,<0.29.0"
+huggingface-hub = ">=0.25.1,<0.30.0"
 
 # Docs
 mkdocs = ">=1.4.2"
