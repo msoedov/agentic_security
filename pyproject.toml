@@ -91,3 +91,9 @@ addopts = "--durations=5 -m 'not slow' -n 3"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 markers = "slow: marks tests as slow"
+
+[project]
+# MCP requires the following fields to be present in the pyproject.toml file
+name = "agentic_security"
+version = "1.0.0"
+requires-python = ">=3.11"
