@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from ..primitives import FileProbeResponse, Probe
 from ..probe_actor.refusal import REFUSAL_MARKS
 from ..probe_data import REGISTRY
+from ._specs import LLM_SPECS
 
 router = APIRouter()
 
@@ -71,6 +72,12 @@ async def self_probe_image():
 @router.get("/v1/data-config")
 async def data_config():
     return [m for m in REGISTRY]
+
+
+@router.get("/v1/llm-specs", response_model=list)
+def get_llm_specs():
+    """Returns the LLM API specifications."""
+    return LLM_SPECS
 
 
 @router.get("/health")
