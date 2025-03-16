@@ -214,33 +214,39 @@ var app = new Vue({
                 spec: this.modelSpec,
             };
             let startTime = performance.now(); // Capture start time
-            const response = await fetch(`${SELF_URL}/verify`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-            console.log(response);
-            let r = await response.json();
-            let endTime = performance.now(); // Capture end time
-            let latency = endTime - startTime; // Calculate latency in milliseconds
-            latency = latency.toFixed(3) / 1000; // Round to 2 decimal places
-            this.latency = latency;
-            if (!response.ok) {
-                this.updateStatusDot(false);
-                this.errorMsg = 'Integration verification failed:' + JSON.stringify(r);
-                this.showToast('Integration verification failed', 'error');
-            } else {
-                this.errorMsg = '';
-                this.updateStatusDot(true);
-                this.okMsg = 'Integration verified';
-                this.showToast('Integration verified successfully', 'success');
-                this.integrationVerified = true;
-                // console.log('Integration verified', this.integrationVerified);
-                // this.$forceUpdate();
+            
+            try {
+                const response = await fetch(`${SELF_URL}/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                
+                let r = await response.json();
 
+                let endTime = performance.now(); // Capture end time
+                let latency = ((endTime - startTime) / 1000).toFixed(3); // Calculate latency in milliseconds
+                this.latency = latency;
+
+                if (!response.ok) {
+                    this.updateStatusDot(false);
+                    this.errorMsg = 'Integration verification failed:' + JSON.stringify(r);
+                    this.showToast('Integration verification failed', 'error');
+                } else {
+                    this.errorMsg = '';
+                    this.updateStatusDot(true);
+                    this.okMsg = 'Integration verified';
+                    this.showToast('Integration verified successfully', 'success');
+                    this.integrationVerified = true;
+                }
+            } catch (error) {
+                this.updateStatusDot(true);
+                this.errorMsg = 'Server unreachable';
+                this.showToast('Network error', 'error');
             }
+
             this.saveStateToLocalStorage();
         },
         loadConfigs: async function () {
