@@ -402,6 +402,16 @@ This setup ensures a continuous integration approach towards maintaining securit
 
 The `Module` class is designed to manage prompt processing and interaction with external AI models and tools. It supports fetching, processing, and posting prompts asynchronously for model vulnerabilities. Check out [module.md](https://github.com/msoedov/agentic_security/blob/main/docs/module.md) for details.
 
+
+## MCP server
+
+```shell
+pip install -U mcp
+
+# From cloned directory
+mcp install agentic_security/mcp/main.py
+```
+
 ## Documentation
 
 For more detailed information on how to use Agentic Security, including advanced features and customization options, please refer to the official documentation.
@@ -427,6 +437,7 @@ We’re just getting started! Here’s what’s on the horizon:
 | Local CSV Datasets      | -                                                                             | ✅          |
 
 Note: All dates are tentative and subject to change based on project progress and priorities.
+
 
 ## 👋 Contributing
 
