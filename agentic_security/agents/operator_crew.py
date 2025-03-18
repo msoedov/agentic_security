@@ -246,9 +246,9 @@ async def run_crew():
 os.environ["OPENAI_API_KEY"] = os.environ.get(
     "DEEPSEEK_API_KEY", ""
 )  # CrewAI uses OPENAI_API_KEY
-os.environ[
-    "OPENAI_MODEL_NAME"
-] = "deepseek:chat"  # Specify DeepSeek model (adjust if needed)
+os.environ["OPENAI_MODEL_NAME"] = (
+    "deepseek:chat"  # Specify DeepSeek model (adjust if needed)
+)
 
 if __name__ == "__main__":
     asyncio.run(run_crew())

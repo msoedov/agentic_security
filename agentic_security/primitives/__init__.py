@@ -1,5 +1,5 @@
-from agentic_security.primitives.models import (  # noqa
-    CompletionRequest,
+from agentic_security.primitives.models import (
+    CompletionRequest,  # noqa
     FileProbeResponse,
     LLMInfo,
     Message,
