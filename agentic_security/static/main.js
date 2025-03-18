@@ -110,19 +110,18 @@ var app = new Vue({
         },
         focusTextarea() {
             this.isFocused = true;
-            self = this.$refs;
+            // Remove 'self' assignment if not used elsewhere
             this.$nextTick(() => {
-                // Focus the textarea after rendering
-                self.textarea.focus();
-                this.adjustHeight({ target: self.textarea });
+                this.$refs.textarea.focus();
+                this.adjustHeight({ target: this.$refs.textarea });
             });
-            document.addEventListener("mousedown", this.handleClickOutside);
-
+            // Correct the event listener to use handleOutsideClick
+            document.addEventListener("mousedown", this.handleOutsideClick);
         },
         handleOutsideClick(event) {
-            if (!this.$refs.container.contains(event.target)) {
+            if (!this.$refs.textarea.contains(event.target)) {
                 this.isFocused = false;
-                document.removeEventListener("mousedown", this.handleClickOutside);
+                document.removeEventListener("mousedown", this.handleOutsideClick);
             }
         },
         unfocusTextarea() {
@@ -130,7 +129,7 @@ var app = new Vue({
         },
         acceptConsent() {
             this.showConsentModal = false; // Close the modal
-            
+
             try {
                 localStorage.setItem('consentGiven', 'true'); // Save consent to local storage
             } catch (e) {
@@ -215,7 +214,7 @@ var app = new Vue({
                 spec: this.modelSpec,
             };
             let startTime = performance.now(); // Capture start time
-            
+
             try {
                 const response = await fetch(`${SELF_URL}/verify`, {
                     method: 'POST',
@@ -224,7 +223,7 @@ var app = new Vue({
                     },
                     body: JSON.stringify(payload),
                 });
-                
+
                 let r = await response.json();
 
                 let endTime = performance.now(); // Capture end time
