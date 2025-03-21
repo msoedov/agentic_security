@@ -31,6 +31,7 @@ def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") ->
     except Exception as e:
         raise ValueError(f"Unexpected error fetching image: {str(e)}")
 
+
 def encode_audio_base64_by_url(url: str) -> str:
     """Encode audio data to base64 from a URL"""
     try:
@@ -76,16 +77,16 @@ class LLMSpec(BaseModel):
     async def _probe_with_files(self, files):
         transport = httpx.AsyncHTTPTransport(retries=settings_var("network.retry", 3))
         try:
-           async with httpx.AsyncClient(transport=transport) as client:
-            response = await client.request(
-                method=self.method,
-                url=self.url,
-                headers=self.headers,
-                files=files,
-                timeout=self.timeout(),
-            )
-            response.raise_for_status()
-            return response
+            async with httpx.AsyncClient(transport=transport) as client:
+                response = await client.request(
+                    method=self.method,
+                    url=self.url,
+                    headers=self.headers,
+                    files=files,
+                    timeout=self.timeout(),
+                )
+                response.raise_for_status()
+                return response
         except httpx.TimeoutException as e:
             raise ValueError(f"Request timed out: {str(e)}")
         except httpx.HTTPStatusError as e:
@@ -128,18 +129,18 @@ class LLMSpec(BaseModel):
         content = content.replace("<<BASE64_AUDIO>>", encoded_audio)
 
         transport = httpx.AsyncHTTPTransport(retries=settings_var("network.retry", 3))
-        try:       
-             async with httpx.AsyncClient(transport=transport) as client:
+        try:
+            async with httpx.AsyncClient(transport=transport) as client:
                 response = await client.request(
-                method=self.method,
-                url=self.url,
-                headers=self.headers,
-                content=content,
-                timeout=self.timeout(),
-            )
+                    method=self.method,
+                    url=self.url,
+                    headers=self.headers,
+                    content=content,
+                    timeout=self.timeout(),
+                )
                 response.raise_for_status()
                 return response
-        
+
         except httpx.TimeoutException as e:
             raise ValueError(f"Request timed out: {str(e)}")
         except httpx.HTTPStatusError as e:

@@ -28,7 +28,8 @@ async def verify_llm(spec: str) -> dict:
     except httpx.RequestError as e:
         return {"error": f"Request failed: {str(e)}"}
     except Exception as e:
-       return {"error": f"Unexpected error: {str(e)}"}
+        return {"error": f"Unexpected error: {str(e)}"}
+
 
 @mcp.tool()
 async def start_scan(
@@ -61,6 +62,7 @@ async def start_scan(
         return {"error": f"Request failed: {str(e)}"}
     except Exception as e:
         return {"error": f"Unexpected error: {str(e)}"}
+
 
 @mcp.tool()
 async def stop_scan() -> dict:
@@ -99,6 +101,7 @@ async def get_data_config() -> list:
     except Exception as e:
         return {"error": f"Unexpected error: {str(e)}"}
 
+
 @mcp.tool()
 async def get_spec_templates() -> list:
     """Retrieve data configuration from the FastAPI server."""
@@ -108,7 +111,7 @@ async def get_spec_templates() -> list:
             response = await client.get(url)
             response.raise_for_status()
             return response.json()
-            
+
     except httpx.TimeoutException as e:
         return {"error": f"Request timed out: {str(e)}"}
     except httpx.HTTPStatusError as e:
