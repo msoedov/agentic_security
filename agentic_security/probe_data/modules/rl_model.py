@@ -121,7 +121,8 @@ class CloudRLPromptSelector(PromptSelectionInterface):
         current_prompt: str,
         reward: float,
         passed_guard: bool,
-    ) -> None: ...
+    ) -> None:
+        ...
 
 
 class QLearningPromptSelector(PromptSelectionInterface):
