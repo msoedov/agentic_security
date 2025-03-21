@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
@@ -13,6 +13,9 @@ RUN poetry self add "poetry-plugin-export"
 
 # Copy only dependency files to leverage Docker layer caching
 COPY pyproject.toml poetry.lock ./
+
+# update lock file to avoid failure
+RUN poetry lock
 
 # Install dependencies
 RUN poetry export -f requirements.txt --without-hashes -o requirements.txt
