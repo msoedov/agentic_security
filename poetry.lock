@@ -1283,14 +1283,14 @@ files = [
 
 [[package]]
 name = "inline-snapshot"
-version = "0.20.6"
+version = "0.20.9"
 description = "golden master/snapshot/approval testing library which puts the values right into your source code"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "inline_snapshot-0.20.6-py3-none-any.whl", hash = "sha256:c479e9a07253e70dc4470bb0782228057d9bc291dbe3b4daf9c84882e28dcf4f"},
-    {file = "inline_snapshot-0.20.6.tar.gz", hash = "sha256:88a8e66fa5c6d1dfe4293f9c225fb244fc20c0c146ab119d55abff1b2bd5e926"},
+    {file = "inline_snapshot-0.20.9-py3-none-any.whl", hash = "sha256:e4bffcfb39d79bba0320a138e47217601823bbf6948760d75fa175d62a7b893d"},
+    {file = "inline_snapshot-0.20.9.tar.gz", hash = "sha256:ce41505690f0f6ca96466776bc3e015ccc7412ecb65b74f4e7e90f1a834cbac4"},
 ]
 
 [package.dependencies]
@@ -4644,4 +4644,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "04c8dc31a9c1a1b2bbb607041a31fa291ed6cdf0b060d30161786da7e8fbab4e"
+content-hash = "a3c6ad019c57d107a79b906e611934e12adf203e680ea59e47035baa9801a3ac"
