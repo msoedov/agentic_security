@@ -22,7 +22,11 @@
 # logger.add(sys.stdout, format=LOG_FORMAT, level="DEBUG", colorize=True)
 import logging
 import logging.config
+import time
+from collections.abc import Callable, Coroutine
+from functools import wraps
 from os import getenv
+from typing import Any, ParamSpec, TypeVar
 
 LOGGER_NAME = None
 
@@ -93,3 +97,50 @@ def set_log_level_to_info():
 
 # Set initial log level
 set_log_level_to_info()
+
+
+# Define generic type variables for return type and parameters
+R = TypeVar("R")
+P = ParamSpec("P")
+
+
+def time_execution_sync(
+    additional_text: str = "",
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            start_time = time.time()
+            result = func(*args, **kwargs)
+            execution_time = time.time() - start_time
+            logger.debug(
+                f"{additional_text} Execution time: {execution_time:.2f} seconds"
+            )
+            return result
+
+        return wrapper
+
+    return decorator
+
+
+def time_execution_async(
+    additional_text: str = "",
+) -> Callable[
+    [Callable[P, Coroutine[Any, Any, R]]], Callable[P, Coroutine[Any, Any, R]]
+]:
+    def decorator(
+        func: Callable[P, Coroutine[Any, Any, R]]
+    ) -> Callable[P, Coroutine[Any, Any, R]]:
+        @wraps(func)
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            start_time = time.time()
+            result = await func(*args, **kwargs)
+            execution_time = time.time() - start_time
+            logger.debug(
+                f"{additional_text} Execution time: {execution_time:.2f} seconds"
+            )
+            return result
+
+        return wrapper
+
+    return decorator
