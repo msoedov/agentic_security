@@ -17,7 +17,7 @@ from agentic_security.logutils import logger
 
 from ..core.app import get_stop_event, get_tools_inbox, set_current_run
 from ..dependencies import InMemorySecrets, get_in_memory_secrets
-from ..http_spec import LLMSpec
+from ..http_spec import InvalidHTTPSpecError, LLMSpec
 from ..primitives import LLMInfo, Scan
 from ..probe_actor import fuzzer
 
@@ -31,6 +31,8 @@ async def verify(
     spec = LLMSpec.from_string(info.spec)
     try:
         r = await spec.verify()
+    except InvalidHTTPSpecError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.exception(e)
         raise HTTPException(status_code=400, detail=str(e))
