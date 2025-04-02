@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  POETRY_VERSION: "1.7.1"
+  POETRY_VERSION: "1.8.5"
   OPENAI_API_KEY: "sk-fake"
 
 jobs:
