@@ -119,6 +119,9 @@ var app = new Vue({
             document.addEventListener("mousedown", this.handleOutsideClick);
         },
         handleOutsideClick(event) {
+            if (!this.$refs.textarea) {
+                return
+            }
             if (!this.$refs.textarea.contains(event.target)) {
                 this.isFocused = false;
                 document.removeEventListener("mousedown", this.handleOutsideClick);
