@@ -22,7 +22,7 @@ class ProbeDataset:
         }
 
 
-@cache_to_disk()
+# @cache_to_disk(n_days_to_cache=1)
 def load_dataset_generic(name, getter=lambda x: x["train"]["prompt"]):
     from datasets import load_dataset
 
