@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from cache_to_disk import cache_to_disk
+from cache_to_disk import cache_to_disk  # noqa
 
 
 # TODO: refactor this class to use from .data
