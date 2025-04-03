@@ -11,13 +11,13 @@ server_params = StdioServerParameters(
 )
 
 
-async def run()-> None:  
+async def run() -> None:
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
-            # Initialize the connection --> connection doesnt work 
+            # Initialize the connection --> connection does not work
             await session.initialize()
 
-            # List available prompts, resources, and tools --> no avalialbe tools 
+            # List available prompts, resources, and tools --> no avalialbe tools
             prompts = await session.list_prompts()
             print(f"Available prompts: {prompts}")
 
@@ -27,7 +27,7 @@ async def run()-> None:
             tools = await session.list_tools()
             print(f"Available tools: {tools}")
 
-            # Call the echo tool --> echo tool iisue 
+            # Call the echo tool --> echo tool iisue
             echo_result = await session.call_tool(
                 "echo_tool", arguments={"message": "Hello from client!"}
             )

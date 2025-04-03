@@ -17,11 +17,11 @@ async def verify_llm(spec: str) -> dict:
     """
     Verify an LLM model specification using the FastAPI server
 
-    Returns: 
-        dict: containing the verification result form the FastAPI server    
-    
+    Returns:
+        dict: containing the verification result form the FastAPI server
+
     Args: spect(str):  The specification of the LLM model to verify.
-    
+
     """
     url = f"{AGENTIC_SECURITY}/verify"
     async with httpx.AsyncClient() as client:
@@ -40,13 +40,13 @@ async def start_scan(
     Start an LLM security scan via the FastAPI server.
     Returns:
         dict: The scan initiation result from the FastAPI server.
-    
-    Args: 
+
+    Args:
         llmSpec (str): The specification of the LLM model.
         maxBudget (int): The maximum budget for the scan.
         optimize (bool, optional): Whether to enable optimization during scanning. Defaults to False.
-        enableMultiStepAttack (bool, optional): Whether to enable multi-step attack 
-    
+        enableMultiStepAttack (bool, optional): Whether to enable multi-step attack
+
     """
     url = f"{AGENTIC_SECURITY}/scan"
     payload = {
