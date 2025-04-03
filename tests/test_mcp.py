@@ -3,9 +3,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from agentic_security.mcp import ClientSession
 
-from ..agentic_security.mcp.client import run
+from agentic_security.mcp.client import run, ClientSession
 
 
 # Fixtures
@@ -44,7 +43,7 @@ async def mock_session():
 
 
 @pytest.mark.asyncio
-async def test_initialization(mock_session):
+async def test_mcp_initialization(mock_session):
     """Test initialization success and failure cases"""
     # Test initialization success case
     await run()
@@ -60,15 +59,15 @@ async def test_initialization(mock_session):
 
 
 @pytest.mark.asyncio
-async def test_list_resources(mock_session):
+async def test_mcp_list_resources(mock_session):
     """Test listing available resources"""
     await run()
     mock_session.list_resources.assert_called_once()
-    assert await mock_session.list_resources() == ["test_resource"]
+    assert await mock_session.list_resources() == ["test_mcp_resource"]
 
 
 @pytest.mark.asyncio
-async def test_list_tools(mock_session):
+async def test_mcp_list_tools(mock_session):
     """Test listing available tools"""
     await run()
     mock_session.list_tools.assert_called_once()
@@ -76,7 +75,7 @@ async def test_list_tools(mock_session):
 
 
 @pytest.mark.asyncio
-async def test_echo_tool(mock_session):
+async def test_mcp_echo_tool(mock_session):
     """Test the echo tool functionality"""
     await run()
     mock_session.call_tool.assert_called_once_with(
