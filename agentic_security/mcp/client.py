@@ -47,6 +47,7 @@ async def run() -> None:
             # print(f"Prompt result: {prompt_result}")
 
             # You can perform additional operations here as needed
+            return prompts, resources, tools
 
 
 if __name__ == "__main__":
