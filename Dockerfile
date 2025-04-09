@@ -19,6 +19,10 @@ RUN poetry lock
 
 # Install dependencies
 RUN poetry export -f requirements.txt --without-hashes -o requirements.txt
+
+# Install wheel (required to build packages like fire)
+RUN pip install --upgrade pip setuptools wheel
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage
