@@ -248,6 +248,7 @@ def load_jailbreak_v28k() -> ProbeDataset:
 @cache_to_disk()
 def load_local_csv() -> ProbeDataset:
     """Load prompts from local CSV files."""
+    os.makedirs("./datasets", exist_ok=True)
     csv_files = [f for f in os.listdir("./datasets") if f.endswith(".csv")]
     logger.info(f"Found {len(csv_files)} CSV files: {csv_files}")
 
@@ -337,7 +338,9 @@ class StenographyTransformer:
                 continue
 
             # Convert async generator (if any) to a list
-            prompts = list(dataset.prompts) if hasattr(dataset.prompts, '__iter__') else []
+            prompts = (
+                list(dataset.prompts) if hasattr(dataset.prompts, "__iter__") else []
+            )
             size = len(prompts)
 
             if size == 0:
