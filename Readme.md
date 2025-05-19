@@ -1,5 +1,3 @@
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/msoedov-agentic-security-badge.png)](https://mseep.ai/app/msoedov-agentic-security)
-
 <p align="center">
   <h1 align="center">Agentic Security</h1>
   <p align="center">
@@ -23,9 +21,7 @@
   <a href="https://pypi.org/project/agentic-security/">
     <img alt="PyPI Version" src="https://img.shields.io/pypi/v/agentic-security?style=for-the-badge&logo=pypi&labelColor=000000&color=00CCFF" />
   </a>
-  <a href="https://discord.gg/stw3DfZQ">
-    <img alt="Join Discord" src="https://img.shields.io/badge/Discord-Join%20Us-black?style=for-the-badge&logo=discord&labelColor=000000&color=DD55FF" />
-  </a>
+
 </p>
 
 
@@ -463,3 +459,6 @@ Agentic Security is released under the Apache License v2.
 Agentic Security is focused solely on AI security and has no affiliation with cryptocurrency projects, blockchain technologies, or related initiatives. Our mission is to advance the safety and reliability of AI systems—no tokens, no coins, just code.
 
 ## Contact us
+
+
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/msoedov-agentic-security-badge.png)](https://mseep.ai/app/msoedov-agentic-security)
