@@ -459,6 +459,3 @@ Agentic Security is released under the Apache License v2.
 Agentic Security is focused solely on AI security and has no affiliation with cryptocurrency projects, blockchain technologies, or related initiatives. Our mission is to advance the safety and reliability of AI systems—no tokens, no coins, just code.
 
 ## Contact us
-
-
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/msoedov-agentic-security-badge.png)](https://mseep.ai/app/msoedov-agentic-security)
