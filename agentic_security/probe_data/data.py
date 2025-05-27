@@ -245,7 +245,20 @@ def load_jailbreak_v28k() -> ProbeDataset:
         return create_probe_dataset("JailbreakV-28K/JailBreakV-28k", [])
 
 
-@cache_to_disk()
+@cache_to_disk(1)
+def file_dataset(file) -> list[str]:
+    prompts = []
+    try:
+        df = pd.read_csv(os.path.join("./datasets", file), encoding_errors="ignore")
+        if "prompt" in df.columns:
+            prompts = df["prompt"].tolist()
+        else:
+            logger.warning(f"File {file} lacks a suitable prompt column")
+    except Exception as e:
+        logger.error(f"Error reading {file}: {e}")
+    return prompts
+
+
 def load_local_csv() -> ProbeDataset:
     """Load prompts from local CSV files."""
     os.makedirs("./datasets", exist_ok=True)
@@ -254,35 +267,16 @@ def load_local_csv() -> ProbeDataset:
 
     prompts = []
     for file in csv_files:
-        try:
-            df = pd.read_csv(os.path.join("./datasets", file), encoding_errors="ignore")
-            if "prompt" in df.columns:
-                prompts.extend(df["prompt"].tolist())
-            else:
-                logger.warning(f"File {file} lacks a suitable prompt column")
-        except Exception as e:
-            logger.error(f"Error reading {file}: {e}")
-
+        prompts.extend(file_dataset(file))
     return create_probe_dataset("Local CSV", prompts, {"src": str(csv_files)})
 
 
-@cache_to_disk(1)
 def load_csv(file: str) -> ProbeDataset:
     """Load prompts from local CSV files."""
-    prompts = []
-    try:
-        df = pd.read_csv(os.path.join("./datasets", file), encoding_errors="ignore")
-        prompts = df["prompt"].tolist()
-        if "prompt" in df.columns:
-            prompts.extend(df["prompt"].tolist())
-        else:
-            logger.warning(f"File {file} lacks a suitable prompt column")
-    except Exception as e:
-        logger.error(f"Error reading {file}: {e}")
+    prompts = file_dataset(file)
     return create_probe_dataset(f"fs://{file}", prompts, {"src": str(file)})
 
 
-@cache_to_disk(1)
 def load_local_csv_files() -> list[ProbeDataset]:
     """Load prompts from local CSV files and return a list of ProbeDataset objects."""
     csv_files = [f for f in os.listdir("./datasets") if f.endswith(".csv")]
@@ -291,16 +285,7 @@ def load_local_csv_files() -> list[ProbeDataset]:
     datasets = []
 
     for file in csv_files:
-        try:
-            df = pd.read_csv(os.path.join("./datasets", file), encoding_errors="ignore")
-            if "prompt" in df.columns:
-                prompts = df["prompt"].tolist()
-                datasets.append(create_probe_dataset(file, prompts, {"src": file}))
-            else:
-                logger.warning(f"File {file} lacks a suitable prompt column")
-        except Exception as e:
-            logger.error(f"Error reading {file}: {e}")
-
+        datasets.append(create_probe_dataset(file, file_dataset(file), {"src": file}))
     return datasets
 
 
