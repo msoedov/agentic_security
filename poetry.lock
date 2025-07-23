@@ -1296,20 +1296,22 @@ files = [
 
 [[package]]
 name = "inline-snapshot"
-version = "0.20.9"
+version = "0.25.0"
 description = "golden master/snapshot/approval testing library which puts the values right into your source code"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "inline_snapshot-0.20.9-py3-none-any.whl", hash = "sha256:e4bffcfb39d79bba0320a138e47217601823bbf6948760d75fa175d62a7b893d"},
-    {file = "inline_snapshot-0.20.9.tar.gz", hash = "sha256:ce41505690f0f6ca96466776bc3e015ccc7412ecb65b74f4e7e90f1a834cbac4"},
+    {file = "inline_snapshot-0.25.0-py3-none-any.whl", hash = "sha256:65b1f22f0b04f31b379355e7fc52576f9f820c496f4a85c9711b2f9883ccf996"},
+    {file = "inline_snapshot-0.25.0.tar.gz", hash = "sha256:aee2939710abd52945db24fbc0c5337cf2dd4c186c8977ec4b74d16dbf8cf447"},
 ]
 
 [package.dependencies]
 asttokens = ">=2.0.5"
 executing = ">=2.2.0"
+pytest = ">=8.3.4"
 rich = ">=13.7.1"
+uuid7 = ">=0.1.0"
 
 [package.extras]
 black = ["black (>=23.3.0)"]
@@ -4389,6 +4391,18 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
+name = "uuid7"
+version = "0.1.0"
+description = "UUID version 7, generating time-sorted UUIDs with 200ns time resolution and 48 bits of randomness"
+optional = false
+python-versions = ">=3.7"
+groups = ["dev"]
+files = [
+    {file = "uuid7-0.1.0-py2.py3-none-any.whl", hash = "sha256:5e259bb63c8cb4aded5927ff41b444a80d0c7124e8a0ced7cf44efa1f5cccf61"},
+    {file = "uuid7-0.1.0.tar.gz", hash = "sha256:8c57aa32ee7456d3cc68c95c4530bc571646defac01895cfc73545449894a63c"},
+]
+
+[[package]]
 name = "uvicorn"
 version = "0.34.0"
 description = "The lightning-fast ASGI server."
@@ -4729,4 +4743,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "ff925fc5fa9bb5fdf0f36dc9399f0117e2ee824742373b3f2c4cf45192955853"
+content-hash = "e95b948005e7fb0f94f1bc7642ef523f46b2a7720d4fe0ce6c685b147814c1de"
