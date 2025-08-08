@@ -62,7 +62,7 @@ pytest-xdist = "3.6.1"
 # Pytest
 pytest = "^8.3.4"
 pytest-asyncio = "^0.25.2"
-inline-snapshot = ">=0.13.3,<0.21.0"
+inline-snapshot = ">=0.13.3,<0.28.0"
 pytest-httpx = "^0.35.0"
 pytest-mock = "^3.14.0"
 
