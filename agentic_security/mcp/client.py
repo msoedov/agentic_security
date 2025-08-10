@@ -1,4 +1,6 @@
+
 import asyncio
+from agentic_security.logutils import logger
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -12,42 +14,49 @@ server_params = StdioServerParameters(
 
 
 async def run() -> None:
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
-            # Initialize the connection --> connection does not work
-            await session.initialize()
+    try:
+        logger.info("Starting stdio client session with server parameters: %s", server_params)
+        async with stdio_client(server_params) as (read, write):
+            async with ClientSession(read, write) as session:
+                logger.info("Initializing client session...")
+                await session.initialize()
 
-            # List available prompts, resources, and tools --> no avalialbe tools
-            prompts = await session.list_prompts()
-            print(f"Available prompts: {prompts}")
+                logger.info("Listing available prompts...")
+                prompts = await session.list_prompts()
+                logger.info(f"Available prompts: {prompts}")
 
-            resources = await session.list_resources()
-            print(f"Available resources: {resources}")
+                logger.info("Listing available resources...")
+                resources = await session.list_resources()
+                logger.info(f"Available resources: {resources}")
 
-            tools = await session.list_tools()
-            print(f"Available tools: {tools}")
+                logger.info("Listing available tools...")
+                tools = await session.list_tools()
+                logger.info(f"Available tools: {tools}")
 
-            # Call the echo tool --> echo tool iisue
-            echo_result = await session.call_tool(
-                "echo_tool", arguments={"message": "Hello from client!"}
-            )
-            print(f"Tool result: {echo_result}")
+                logger.info("Calling echo_tool with message...")
+                echo_result = await session.call_tool(
+                    "echo_tool", arguments={"message": "Hello from client!"}
+                )
+                logger.info(f"Tool result: {echo_result}")
 
-            # # Read the echo resource
-            # echo_content, mime_type = await session.read_resource(
-            #     "echo://Hello_resource"
-            # )
-            # print(f"Resource content: {echo_content}")
-            # print(f"Resource MIME type: {mime_type}")
+                # # Read the echo resource
+                # echo_content, mime_type = await session.read_resource(
+                #     "echo://Hello_resource"
+                # )
+                # logger.info(f"Resource content: {echo_content}")
+                # logger.info(f"Resource MIME type: {mime_type}")
 
-            # # Get and use the echo prompt
-            # prompt_result = await session.get_prompt(
-            #     "echo_prompt", arguments={"message": "Hello prompt!"}
-            # )
-            # print(f"Prompt result: {prompt_result}")
+                # # Get and use the echo prompt
+                # prompt_result = await session.get_prompt(
+                #     "echo_prompt", arguments={"message": "Hello prompt!"}
+                # )
+                # logger.info(f"Prompt result: {prompt_result}")
 
-            # You can perform additional operations here as needed
-            return prompts, resources, tools
+                logger.info("Client operations completed successfully.")
+                return prompts, resources, tools
+    except Exception as e:
+        logger.error(f"An error occurred during client operations: {e}", exc_info=True)
+        raise
 
 
 if __name__ == "__main__":
