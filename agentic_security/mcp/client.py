@@ -18,9 +18,11 @@ async def run() -> None:
         logger.info("Starting stdio client session with server parameters: %s", server_params)
         async with stdio_client(server_params) as (read, write):
             async with ClientSession(read, write) as session:
+                # Initialize the connection --> connection does not work
                 logger.info("Initializing client session...")
                 await session.initialize()
-
+                
+                # List available prompts, resources, and tools --> no avalialbe tools
                 logger.info("Listing available prompts...")
                 prompts = await session.list_prompts()
                 logger.info(f"Available prompts: {prompts}")
@@ -33,6 +35,7 @@ async def run() -> None:
                 tools = await session.list_tools()
                 logger.info(f"Available tools: {tools}")
 
+                # Call the echo tool --> echo tool issue
                 logger.info("Calling echo_tool with message...")
                 echo_result = await session.call_tool(
                     "echo_tool", arguments={"message": "Hello from client!"}
