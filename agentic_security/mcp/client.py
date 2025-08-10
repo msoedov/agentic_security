@@ -1,9 +1,9 @@
-
 import asyncio
-from agentic_security.logutils import logger
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+
+from agentic_security.logutils import logger
 
 # Create server parameters for stdio connection
 server_params = StdioServerParameters(
@@ -15,13 +15,15 @@ server_params = StdioServerParameters(
 
 async def run() -> None:
     try:
-        logger.info("Starting stdio client session with server parameters: %s", server_params)
+        logger.info(
+            "Starting stdio client session with server parameters: %s", server_params
+        )
         async with stdio_client(server_params) as (read, write):
             async with ClientSession(read, write) as session:
                 # Initialize the connection --> connection does not work
                 logger.info("Initializing client session...")
                 await session.initialize()
-                
+
                 # List available prompts, resources, and tools --> no avalialbe tools
                 logger.info("Listing available prompts...")
                 prompts = await session.list_prompts()
