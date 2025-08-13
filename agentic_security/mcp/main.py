@@ -4,7 +4,6 @@ from mcp.server.fastmcp import FastMCP
 # Initialize MCP server
 mcp = FastMCP(
     name="Agentic Security MCP Server",
-    description="MCP server to interact with LLM scanning test",
     dependencies=["httpx"],
 )
 
