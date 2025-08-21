@@ -1,7 +1,7 @@
 import pytest
-from datasets import load_dataset
 
 from agentic_security.probe_data import REGISTRY
+from datasets import load_dataset
 
 
 @pytest.mark.slow
