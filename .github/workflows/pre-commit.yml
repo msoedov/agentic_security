@@ -24,4 +24,4 @@ jobs:
       - name: Install pre-commit
         run: poetry install
       - name: Run pre-commit
-        run: pre-commit run --all-files
+        run: poetry run pre-commit run --all-files
