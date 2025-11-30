@@ -14,8 +14,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install pre-commit
-        run: pip install pre-commit
+        run: pip install pre-commit==4.5.0
       - name: Run pre-commit
         run: pre-commit run --all-files
