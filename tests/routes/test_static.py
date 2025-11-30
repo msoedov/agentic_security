@@ -1,13 +1,15 @@
 from pathlib import Path
 
 import pytest
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 
 from agentic_security.primitives import Settings
 from agentic_security.routes.static import get_static_file, router
 
-client = TestClient(router)
+app = FastAPI()
+app.include_router(router)
+client = TestClient(app)
 
 
 def test_root_route():

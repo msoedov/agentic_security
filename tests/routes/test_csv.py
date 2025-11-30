@@ -1,9 +1,12 @@
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 import agentic_security.test_spec_assets as test_spec_assets
 from agentic_security.routes.scan import router
 
-client = TestClient(router)
+app = FastAPI()
+app.include_router(router)
+client = TestClient(app)
 
 
 def test_upload_csv_and_run():

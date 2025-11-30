@@ -2,11 +2,14 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from agentic_security.routes.report import router
 
-client = TestClient(router)
+app = FastAPI()
+app.include_router(router)
+client = TestClient(app)
 
 
 @pytest.fixture
