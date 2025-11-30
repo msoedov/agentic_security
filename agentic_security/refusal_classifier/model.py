@@ -4,8 +4,8 @@ import warnings
 
 import joblib
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.exceptions import InconsistentVersionWarning
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import OneClassSVM
 
@@ -91,9 +91,7 @@ class RefusalClassifier:
                     self.model = joblib.load(f)
 
                 # Load vectorizer
-                with pkg_resources.open_binary(
-                    package, "tfidf_vectorizer.joblib"
-                ) as f:
+                with pkg_resources.open_binary(package, "tfidf_vectorizer.joblib") as f:
                     self.vectorizer = joblib.load(f)
 
                 # Load scaler

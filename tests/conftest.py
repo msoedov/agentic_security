@@ -4,6 +4,7 @@ import warnings
 import pytest
 from cache_to_disk import delete_old_disk_caches
 from sklearn.exceptions import InconsistentVersionWarning
+
 from agentic_security.logutils import logger
 
 # Silence noisy third-party warnings that do not impact test behavior
