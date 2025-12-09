@@ -33,11 +33,17 @@ def mock_requests() -> Mock:
 
 
 @pytest.fixture
-def mock_rl_selector() -> Mock:
-    return CloudRLPromptSelector(
-        dataset_prompts,
-        api_url="https://mcp.metaheuristic.co",
-    )
+def mock_rl_selector(dataset_prompts) -> Mock:
+    class StubSelector:
+        def __init__(self, prompts: list[str]):
+            self.prompts = prompts
+            self.idx = 0
+
+        def select_next_prompts(self, current_prompt: str, passed_guard: bool) -> list[str]:
+            self.idx = (self.idx + 1) % len(self.prompts)
+            return [self.prompts[self.idx]]
+
+    return StubSelector(dataset_prompts)
 
 
 @pytest.fixture
@@ -91,7 +97,10 @@ class TestCloudRLPromptSelector:
         next_prompt = selector.select_next_prompt("What is AI?", passed_guard=True)
         assert next_prompt in dataset_prompts
 
-    def test_select_next_prompt_success_service(self, dataset_prompts):
+    def test_select_next_prompt_success_service(self, dataset_prompts, mock_requests):
+        mock_requests.return_value.status_code = 200
+        mock_requests.return_value.json.return_value = {"next_prompts": ["What is AI?"]}
+
         selector = CloudRLPromptSelector(
             dataset_prompts,
             api_url="https://mcp.metaheuristic.co",
@@ -99,7 +108,7 @@ class TestCloudRLPromptSelector:
         next_prompt = selector.select_next_prompt(
             "How does RL work?", passed_guard=True
         )
-        assert next_prompt
+        assert next_prompt == "What is AI?"
 
 
 # Tests for QLearningPromptSelector
@@ -188,7 +197,7 @@ class TestModule:
     async def test_apply_basic_flow(
         self, dataset_prompts, tools_inbox, mock_rl_selector
     ):
-        module = Module(dataset_prompts, tools_inbox)
+        module = Module(dataset_prompts, tools_inbox, rl_model=mock_rl_selector)
 
         count = 0
         async for prompt in module.apply():
@@ -198,7 +207,9 @@ class TestModule:
                 break
 
     @pytest.mark.asyncio
-    async def test_apply_rl_with_tools_inbox(self, dataset_prompts, tools_inbox):
+    async def test_apply_rl_with_tools_inbox(
+        self, dataset_prompts, tools_inbox, mock_rl_selector
+    ):
         # Add a test message to the tools inbox
         test_message = {
             "message": "Test message",
@@ -207,7 +218,7 @@ class TestModule:
         }
         await tools_inbox.put(test_message)
 
-        module = Module(dataset_prompts, tools_inbox)
+        module = Module(dataset_prompts, tools_inbox, rl_model=mock_rl_selector)
 
         async for output in module.apply():
             if output == "Test message":

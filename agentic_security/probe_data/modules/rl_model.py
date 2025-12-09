@@ -206,7 +206,11 @@ class QLearningPromptSelector(PromptSelectionInterface):
 
 class Module:
     def __init__(
-        self, prompt_groups: list[str], tools_inbox: asyncio.Queue, opts: dict = {}
+        self,
+        prompt_groups: list[str],
+        tools_inbox: asyncio.Queue,
+        opts: dict = {},
+        rl_model: PromptSelectionInterface | None = None,
     ):
         self.tools_inbox = tools_inbox
         self.opts = opts
@@ -214,7 +218,7 @@ class Module:
         self.max_prompts = self.opts.get("max_prompts", 10)  # Default max M prompts
         self.run_id = U.uuid4().hex
         self.batch_size = self.opts.get("batch_size", 500)
-        self.rl_model = CloudRLPromptSelector(
+        self.rl_model = rl_model or CloudRLPromptSelector(
             prompt_groups, "https://mcp.metaheuristic.co", run_id=self.run_id
         )
 
