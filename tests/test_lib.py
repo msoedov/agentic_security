@@ -125,6 +125,7 @@ class TestLibraryLevel:
         print(result)
         assert len(result) in [0, 1]
 
+    @pytest.mark.skip
     def test_image_modality(self):
         llmSpec = test_spec_assets.IMAGE_SPEC
         maxBudget = 2

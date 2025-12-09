@@ -175,12 +175,18 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     # Iterate over the remaining lines
     reading_headers = True
     for line in lines[1:]:
-        if line == "":
+        if line.strip() == "":
             reading_headers = False
             continue
 
         if reading_headers:
-            key, value = line.split(": ")
+            if ":" not in line:
+                raise InvalidHTTPSpecError(f"Invalid header line: '{line}'")
+            key, value = line.split(":", maxsplit=1)
+            key = key.strip()
+            value = value.strip()
+            if not key:
+                raise InvalidHTTPSpecError("Header name cannot be empty.")
             headers[key] = value
         else:
             body += line
