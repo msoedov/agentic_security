@@ -69,7 +69,9 @@ class LLMSpec(BaseModel):
 
         return response
 
-    def validate(self, prompt, encoded_image, encoded_audio, files) -> None:
+    def validate(
+        self, prompt: str, encoded_image: str, encoded_audio: str, files: dict | None
+    ) -> None:
         if self.has_files and not files:
             raise ValueError("Files are required for this request.")
 
@@ -80,7 +82,11 @@ class LLMSpec(BaseModel):
             raise ValueError("Audio is required for this request.")
 
     async def probe(
-        self, prompt: str, encoded_image: str = "", encoded_audio: str = "", files={}
+        self,
+        prompt: str,
+        encoded_image: str = "",
+        encoded_audio: str = "",
+        files: dict | None = None,
     ) -> httpx.Response:
         """Sends an HTTP request using the `httpx` library.
 
@@ -155,10 +161,17 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     secrets = get_secrets()
 
     # Split the spec by lines
-    lines = http_spec.strip().split("\n")
+    lines = http_spec.strip("\n").splitlines()
+    if not lines:
+        raise InvalidHTTPSpecError("HTTP spec is empty.")
 
     # Extract the method and URL from the first line
-    method, url = lines[0].split(" ")[0:2]
+    request_line_parts = lines[0].split()
+    if len(request_line_parts) < 2:
+        raise InvalidHTTPSpecError(
+            "First line of HTTP spec must include the method and URL."
+        )
+    method, url = request_line_parts[0], request_line_parts[1]
 
     # Check url validity
     valid_url = urlparse(url)
@@ -170,13 +183,16 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
 
     # Initialize headers and body
     headers = {}
-    body = ""
+    body_lines: list[str] = []
 
     # Iterate over the remaining lines
     reading_headers = True
     for line in lines[1:]:
         if line.strip() == "":
-            reading_headers = False
+            if reading_headers:
+                reading_headers = False
+                continue
+            body_lines.append("")
             continue
 
         if reading_headers:
@@ -189,7 +205,8 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
                 raise InvalidHTTPSpecError("Header name cannot be empty.")
             headers[key] = value
         else:
-            body += line
+            body_lines.append(line)
+    body = "\n".join(body_lines)
     has_files = "multipart/form-data" in headers.get("Content-Type", "")
     has_image = "<<BASE64_IMAGE>>" in body
     has_audio = "<<BASE64_AUDIO>>" in body

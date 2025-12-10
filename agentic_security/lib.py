@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import json
 from datetime import datetime
 
@@ -29,12 +30,14 @@ class SecurityScanner(SettingsMixin):
         cls,
         llmSpec: str,
         maxBudget: int,
-        datasets: list[dict],
+        datasets: list[dict] | None,
         max_th: float,
         optimize: bool = False,
         enableMultiStepAttack: bool = False,
-        probe_datasets: list[dict] = [],
+        probe_datasets: list[dict] | None = None,
     ):
+        datasets = copy.deepcopy(datasets) if datasets is not None else []
+        probe_datasets = copy.deepcopy(probe_datasets or [])
         start_time = datetime.now()
         total_modules = len(datasets)
         completed_modules = 0
@@ -170,15 +173,18 @@ class SecurityScanner(SettingsMixin):
         cls,
         llmSpec: str,
         maxBudget: int = 1_000_000,
-        datasets: list[dict] = REGISTRY,
+        datasets: list[dict] | None = None,
         max_th: float = 0.3,
         optimize: bool = False,
         enableMultiStepAttack: bool = False,
-        probe_datasets: list[dict] = [],
-        only: list[str] = [],
+        probe_datasets: list[dict] | None = None,
+        only: list[str] | None = None,
     ):
-        if only:
-            datasets = [d for d in datasets if d["dataset_name"] in only]
+        datasets = copy.deepcopy(datasets or REGISTRY)
+        probe_datasets = copy.deepcopy(probe_datasets or [])
+        only_set = set(only) if only else None
+        if only_set is not None:
+            datasets = [d for d in datasets if d.get("dataset_name") in only_set]
             for d in datasets:
                 d["selected"] = True
         return asyncio.run(

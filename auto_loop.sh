@@ -3,7 +3,7 @@
 set -euo pipefail
 
 PROMPT="Ultrathink. You're a principal engineer. Do not ask me any questions. We need to improve the quality of this codebase. Implement improvements to codebase quality."
-MAX_ITERS=200
+MAX_ITERS=5
 MAX_EMPTY_RUNS=5
 CODEX_MODEL="gpt-5.1-codex-max"
 

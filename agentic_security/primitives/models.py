@@ -18,13 +18,13 @@ class LLMInfo(BaseModel):
 class Scan(BaseModel):
     llmSpec: str
     maxBudget: int
-    datasets: list[dict] = []
+    datasets: list[dict] = Field(default_factory=list)
     optimize: bool = False
     enableMultiStepAttack: bool = False
     # MSJ only mode
-    probe_datasets: list[dict] = []
+    probe_datasets: list[dict] = Field(default_factory=list)
     # Set and managed by the backend
-    secrets: dict[str, str] = {}
+    secrets: dict[str, str] = Field(default_factory=dict)
 
     def with_secrets(self, secrets) -> "Scan":
         match secrets:
