@@ -39,7 +39,9 @@ def mock_rl_selector(dataset_prompts) -> Mock:
             self.prompts = prompts
             self.idx = 0
 
-        def select_next_prompts(self, current_prompt: str, passed_guard: bool) -> list[str]:
+        def select_next_prompts(
+            self, current_prompt: str, passed_guard: bool
+        ) -> list[str]:
             self.idx = (self.idx + 1) % len(self.prompts)
             return [self.prompts[self.idx]]
 

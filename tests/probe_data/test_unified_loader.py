@@ -1,7 +1,7 @@
 """Tests for unified dataset loader."""
 
 import pytest
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import patch
 from agentic_security.probe_data.unified_loader import (
     InputSourceConfig,
     UnifiedDatasetLoader,
@@ -85,12 +85,12 @@ class TestUnifiedDatasetLoader:
             prompts=["prompt1", "prompt2", "prompt3"],
             tokens=10,
             approx_cost=0.0,
-            metadata={}
+            metadata={},
         )
 
         with patch(
             "agentic_security.probe_data.unified_loader.load_csv",
-            return_value=mock_dataset
+            return_value=mock_dataset,
         ):
             result = await loader.load_all()
 
@@ -114,12 +114,12 @@ class TestUnifiedDatasetLoader:
             prompts=["hf_prompt1", "hf_prompt2"],
             tokens=8,
             approx_cost=0.0,
-            metadata={}
+            metadata={},
         )
 
         with patch(
             "agentic_security.probe_data.unified_loader.load_dataset_generic",
-            return_value=mock_dataset
+            return_value=mock_dataset,
         ):
             result = await loader.load_all()
 
@@ -151,19 +151,19 @@ class TestUnifiedDatasetLoader:
             prompts=["prompt1"],
             tokens=5,
             approx_cost=0.0,
-            metadata={}
+            metadata={},
         )
         mock_dataset2 = ProbeDataset(
             dataset_name="csv2",
             prompts=["prompt2", "prompt3"],
             tokens=10,
             approx_cost=0.0,
-            metadata={}
+            metadata={},
         )
 
         with patch(
             "agentic_security.probe_data.unified_loader.load_csv",
-            side_effect=[mock_dataset1, mock_dataset2]
+            side_effect=[mock_dataset1, mock_dataset2],
         ):
             result = await loader.load_all()
 
@@ -199,12 +199,12 @@ class TestUnifiedDatasetLoader:
             prompts=["prompt1"],
             tokens=5,
             approx_cost=0.0,
-            metadata={}
+            metadata={},
         )
 
         with patch(
             "agentic_security.probe_data.unified_loader.load_csv",
-            return_value=mock_dataset
+            return_value=mock_dataset,
         ) as mock_load:
             result = await loader.load_all()
 
@@ -229,12 +229,12 @@ class TestUnifiedDatasetLoader:
             prompts=["prompt1", "prompt2", "prompt3", "prompt4", "prompt5"],
             tokens=20,
             approx_cost=0.0,
-            metadata={}
+            metadata={},
         )
 
         with patch(
             "agentic_security.probe_data.unified_loader.load_csv",
-            return_value=mock_dataset
+            return_value=mock_dataset,
         ):
             result = await loader.load_all()
 
@@ -253,7 +253,7 @@ class TestUnifiedDatasetLoader:
 
         with patch(
             "agentic_security.probe_data.unified_loader.load_csv",
-            side_effect=Exception("File not found")
+            side_effect=Exception("File not found"),
         ):
             result = await loader.load_all()
 
@@ -299,19 +299,19 @@ class TestUnifiedDatasetLoader:
             prompts=["a"],
             tokens=1,
             approx_cost=0.0,
-            metadata={}
+            metadata={},
         )
         mock_dataset2 = ProbeDataset(
             dataset_name="high_weight",
             prompts=["b"],
             tokens=1,
             approx_cost=0.0,
-            metadata={}
+            metadata={},
         )
 
         with patch(
             "agentic_security.probe_data.unified_loader.load_csv",
-            side_effect=[mock_dataset1, mock_dataset2]
+            side_effect=[mock_dataset1, mock_dataset2],
         ):
             result = await loader.load_all()
 
@@ -347,12 +347,12 @@ class TestUnifiedDatasetLoader:
             prompts=["remote_prompt"],
             tokens=5,
             approx_cost=0.0,
-            metadata={"source_type": "csv", "url": "https://example.com/data.csv"}
+            metadata={"source_type": "csv", "url": "https://example.com/data.csv"},
         )
 
         with patch(
             "agentic_security.probe_data.unified_loader.load_dataset_generic",
-            return_value=mock_dataset
+            return_value=mock_dataset,
         ):
             result = await loader.load_all()
 

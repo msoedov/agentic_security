@@ -61,7 +61,11 @@ class ExecutorMetrics:
         if self.latencies:
             sorted_latencies = sorted(self.latencies)
             p95_index = int(len(sorted_latencies) * 0.95)
-            p95_latency_ms = sorted_latencies[p95_index] * 1000 if p95_index < len(sorted_latencies) else 0.0
+            p95_latency_ms = (
+                sorted_latencies[p95_index] * 1000
+                if p95_index < len(sorted_latencies)
+                else 0.0
+            )
         else:
             p95_latency_ms = 0.0
 

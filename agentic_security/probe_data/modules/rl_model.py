@@ -20,12 +20,10 @@ class PromptSelectionInterface(ABC):
     @abstractmethod
     def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> str:
         """Selects the next prompt based on current state and guard result."""
-        pass
 
     @abstractmethod
     def select_next_prompts(self, current_prompt: str, passed_guard: bool) -> list[str]:
         """Selects the next prompts based on current state and guard result."""
-        pass
 
     @abstractmethod
     def update_rewards(
@@ -36,7 +34,6 @@ class PromptSelectionInterface(ABC):
         passed_guard: bool,
     ) -> None:
         """Updates internal rewards based on the outcome of the last selected prompt."""
-        pass
 
 
 class RandomPromptSelector(PromptSelectionInterface):

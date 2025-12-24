@@ -16,8 +16,6 @@ logger = logging.getLogger(__name__)
 class AudioGenerationError(Exception):
     """Custom exception for errors during audio generation."""
 
-    pass
-
 
 def encode(content: bytes) -> str:
     encoded_content = base64.b64encode(content).decode("utf-8")

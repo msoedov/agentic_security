@@ -1,6 +1,6 @@
 """Unified dataset loader for CSV, HuggingFace, and proxy sources."""
 
-from typing import Any, Literal, Optional
+from typing import Literal
 from pydantic import BaseModel, Field
 
 from agentic_security.logutils import logger
@@ -20,28 +20,26 @@ class InputSourceConfig(BaseModel):
     )
     enabled: bool = Field(default=True, description="Whether this source is enabled")
     dataset_name: str = Field(description="Name/identifier of the dataset")
-    weight: float = Field(default=1.0, ge=0.0, description="Sampling weight for merging")
+    weight: float = Field(
+        default=1.0, ge=0.0, description="Sampling weight for merging"
+    )
 
     # CSV-specific fields
-    path: Optional[str] = Field(
-        default=None, description="File path for CSV sources"
-    )
-    prompt_column: Optional[str] = Field(
+    path: str | None = Field(default=None, description="File path for CSV sources")
+    prompt_column: str | None = Field(
         default="prompt", description="Column name containing prompts"
     )
 
     # HuggingFace-specific fields
-    split: Optional[str] = Field(
+    split: str | None = Field(
         default="train", description="Dataset split to load (train/test/validation)"
     )
-    max_samples: Optional[int] = Field(
+    max_samples: int | None = Field(
         default=None, ge=1, description="Maximum number of samples to load"
     )
 
     # URL for custom sources
-    url: Optional[str] = Field(
-        default=None, description="URL for remote CSV files"
-    )
+    url: str | None = Field(default=None, description="URL for remote CSV files")
 
 
 class UnifiedDatasetLoader:
@@ -122,15 +120,19 @@ class UnifiedDatasetLoader:
         elif config.url:
             # Remote CSV file
             logger.info(f"Loading CSV from URL: {config.url}")
-            mappings = {config.prompt_column: "prompt"} if config.prompt_column else None
+            mappings = (
+                {config.prompt_column: "prompt"} if config.prompt_column else None
+            )
             dataset = load_dataset_generic(
                 name=config.dataset_name,
                 url=config.url,
                 mappings=mappings,
-                metadata={"source_type": "csv", "url": config.url}
+                metadata={"source_type": "csv", "url": config.url},
             )
         else:
-            raise ValueError(f"CSV source {config.dataset_name} requires either path or url")
+            raise ValueError(
+                f"CSV source {config.dataset_name} requires either path or url"
+            )
 
         # Apply max_samples limit if specified
         if config.max_samples and len(dataset.prompts) > config.max_samples:
@@ -138,7 +140,7 @@ class UnifiedDatasetLoader:
                 f"Limiting {config.dataset_name} from {len(dataset.prompts)} "
                 f"to {config.max_samples} samples"
             )
-            dataset.prompts = dataset.prompts[:config.max_samples]
+            dataset.prompts = dataset.prompts[: config.max_samples]
 
         return dataset
 
@@ -167,7 +169,7 @@ class UnifiedDatasetLoader:
             metadata={
                 "source_type": "huggingface",
                 "split": config.split,
-            }
+            },
         )
 
         # Apply max_samples limit if specified
@@ -176,7 +178,7 @@ class UnifiedDatasetLoader:
                 f"Limiting {config.dataset_name} from {len(dataset.prompts)} "
                 f"to {config.max_samples} samples"
             )
-            dataset.prompts = dataset.prompts[:config.max_samples]
+            dataset.prompts = dataset.prompts[: config.max_samples]
 
         return dataset
 
@@ -195,7 +197,7 @@ class UnifiedDatasetLoader:
         return create_probe_dataset(
             config.dataset_name,
             [],
-            {"source_type": "proxy", "status": "not_implemented"}
+            {"source_type": "proxy", "status": "not_implemented"},
         )
 
     def _merge_weighted(

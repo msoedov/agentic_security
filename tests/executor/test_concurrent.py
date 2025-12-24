@@ -2,7 +2,7 @@
 
 import pytest
 import asyncio
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import Mock, patch
 from agentic_security.executor.concurrent import ConcurrentExecutor, ExecutorMetrics
 from agentic_security.probe_actor.state import FuzzerState
 
@@ -268,7 +268,10 @@ class TestConcurrentExecutor:
             # 5 requests with rate=5/s and burst=2
             # First 2 immediate, next 3 should take ~0.6s total
             await executor.execute_batch(
-                request_factory, ["p1", "p2", "p3", "p4", "p5"], "test_module", fuzzer_state
+                request_factory,
+                ["p1", "p2", "p3", "p4", "p5"],
+                "test_module",
+                fuzzer_state,
             )
             elapsed = time.monotonic() - start
 

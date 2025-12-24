@@ -1,8 +1,6 @@
 """Tests for CircuitBreaker."""
 
-import pytest
 import time
-from unittest.mock import patch
 from agentic_security.executor.circuit_breaker import CircuitBreaker
 
 

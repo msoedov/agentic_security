@@ -88,7 +88,9 @@ async def test_perform_many_shot_scan_probe_injection(
     ]
 
     msj_prepare_prompts_mock.return_value = [
-        MagicMock(dataset_name="msj_probe_module", prompts=["msj_probe_prompt"], lazy=False)
+        MagicMock(
+            dataset_name="msj_probe_module", prompts=["msj_probe_prompt"], lazy=False
+        )
     ]
 
     # Mock request_factory
