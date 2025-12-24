@@ -475,3 +475,47 @@ def prepare_prompts(
         datasets.append(load_csv(name))
 
     return datasets
+
+
+async def prepare_prompts_unified(configs: list) -> list[ProbeDataset]:
+    """Prepare datasets using unified loader configuration.
+
+    This is an alternative to prepare_prompts() that uses the UnifiedDatasetLoader
+    for streamlined configuration and merging of multiple sources.
+
+    Args:
+        configs: List of InputSourceConfig objects or dicts
+
+    Returns:
+        list[ProbeDataset]: List containing the merged dataset
+
+    Example:
+        >>> from agentic_security.probe_data.unified_loader import InputSourceConfig
+        >>> configs = [
+        ...     InputSourceConfig(
+        ...         source_type="huggingface",
+        ...         dataset_name="deepset/prompt-injections",
+        ...         enabled=True,
+        ...         weight=1.0
+        ...     )
+        ... ]
+        >>> datasets = await prepare_prompts_unified(configs)
+    """
+    from agentic_security.probe_data.unified_loader import (
+        UnifiedDatasetLoader,
+        InputSourceConfig,
+    )
+
+    # Convert dicts to InputSourceConfig if needed
+    config_objects = []
+    for config in configs:
+        if isinstance(config, dict):
+            config_objects.append(InputSourceConfig(**config))
+        else:
+            config_objects.append(config)
+
+    loader = UnifiedDatasetLoader(config_objects)
+    merged_dataset = await loader.load_all()
+
+    # Return as list for compatibility with existing code
+    return [merged_dataset] if merged_dataset.prompts else []

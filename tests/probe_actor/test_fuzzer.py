@@ -76,12 +76,21 @@ async def test_perform_single_shot_scan_success(prepare_prompts_mock):
 
 
 @pytest.mark.asyncio
+@patch("agentic_security.probe_data.msj_data.prepare_prompts")
 @patch("agentic_security.probe_data.data.prepare_prompts")
-async def test_perform_many_shot_scan_probe_injection(prepare_prompts_mock):
+async def test_perform_many_shot_scan_probe_injection(
+    prepare_prompts_mock, msj_prepare_prompts_mock
+):
     # Mock main and probe prompt modules
     prepare_prompts_mock.side_effect = [
         [MagicMock(dataset_name="main_module", prompts=["main_prompt1"], lazy=False)],
         [MagicMock(dataset_name="probe_module", prompts=["probe_prompt1"], lazy=False)],
+    ]
+
+    msj_prepare_prompts_mock.return_value = [
+        MagicMock(
+            dataset_name="msj_probe_module", prompts=["msj_probe_prompt"], lazy=False
+        )
     ]
 
     # Mock request_factory

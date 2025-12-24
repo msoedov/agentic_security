@@ -1,6 +1,10 @@
 import pytest
 
-from agentic_security.http_spec import LLMSpec, parse_http_spec
+from agentic_security.http_spec import (
+    InvalidHTTPSpecError,
+    LLMSpec,
+    parse_http_spec,
+)
 
 
 class TestParseHttpSpec:
@@ -54,6 +58,19 @@ class TestParseHttpSpec:
         assert result.url == "http://example.com"
         assert result.headers == {"Content-Type": "application/json"}
         assert result.body == ""
+
+    def test_parse_http_spec_rejects_malformed_header(self):
+        http_spec = "GET http://example.com\nHeaderWithoutColon\n\n"
+
+        with pytest.raises(InvalidHTTPSpecError, match="Invalid header line"):
+            parse_http_spec(http_spec)
+
+    def test_parse_http_spec_trims_header_whitespace(self):
+        http_spec = "GET http://example.com\nAuthorization:Bearer token\n\n"
+
+        result = parse_http_spec(http_spec)
+
+        assert result.headers == {"Authorization": "Bearer token"}
 
 
 class TestLLMSpec:

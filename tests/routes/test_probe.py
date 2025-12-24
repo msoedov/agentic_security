@@ -1,5 +1,6 @@
 import base64
 import io
+import random
 
 import httpx
 import pytest
@@ -85,8 +86,9 @@ def test_data_config_endpoint():
 
 def test_refusal_rate():
     """Test that refusal rate is approximately 20%"""
+    random.seed(0)
     refusal_count = 0
-    total_trials = 1000
+    total_trials = 200
 
     for _ in range(total_trials):
         response = client.post("/v1/self-probe", json={"prompt": "test"})

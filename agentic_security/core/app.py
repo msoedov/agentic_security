@@ -1,17 +1,22 @@
 import os
 from asyncio import Event, Queue
+from typing import TypedDict
 
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
 from agentic_security.http_spec import LLMSpec
 
+
+class CurrentRun(TypedDict):
+    id: int | None
+    spec: LLMSpec | None
+
+
 tools_inbox: Queue = Queue()
 stop_event: Event = Event()
-current_run: str = {"spec": "", "id": ""}
+current_run: CurrentRun = {"spec": None, "id": None}
 _secrets: dict[str, str] = {}
-
-current_run: dict[str, int | LLMSpec] = {"spec": "", "id": ""}
 
 
 def create_app() -> FastAPI:
@@ -30,13 +35,13 @@ def get_stop_event() -> Event:
     return stop_event
 
 
-def get_current_run() -> dict[str, int | LLMSpec]:
+def get_current_run() -> CurrentRun:
     """Get the current run id."""
     return current_run
 
 
-def set_current_run(spec: LLMSpec) -> dict[str, int | LLMSpec]:
-    """Set the current run id."""
+def set_current_run(spec: LLMSpec) -> CurrentRun:
+    """Set the current run metadata based on a spec instance."""
     current_run["id"] = hash(id(spec))
     current_run["spec"] = spec
     return current_run
@@ -56,4 +61,8 @@ def expand_secrets(secrets: dict[str, str]) -> None:
     for key in secrets:
         val = secrets[key]
         if val.startswith("$"):
-            secrets[key] = os.getenv(val.strip("$"))
+            env_value = os.getenv(val.strip("$"))
+            if env_value is not None:
+                secrets[key] = env_value
+            else:
+                secrets[key] = None

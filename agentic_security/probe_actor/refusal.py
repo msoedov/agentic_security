@@ -50,7 +50,6 @@ class RefusalClassifierPlugin(ABC):
         Returns:
             bool: True if the response contains a refusal, False otherwise.
         """
-        pass
 
 
 class DefaultRefusalClassifier(RefusalClassifierPlugin):
