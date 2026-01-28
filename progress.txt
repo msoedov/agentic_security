@@ -1,0 +1,23 @@
+## Codebase Patterns
+- Use async-first patterns for all I/O operations (httpx, asyncio)
+- Plugin architecture with abstract base classes for extensibility
+- Use table-driven tests with inline_snapshot where possible
+- Tests are organized in tests/unit/, tests/integration/, tests/system/
+- Use absolute imports, avoid relative imports except within same module
+- Minimize docstrings, use quick returns, avoid abstractions without proven need
+
+---
+
+## 2026-01-28 - Initial Setup
+- Created PRD with 5 user stories based on research from promptfoo, promptmap, and FuzzyAI
+- Key improvements identified:
+  1. Dual-LLM evaluation (from Promptmap)
+  2. YAML rule system (from Promptmap)
+  3. Composable fuzzing chains (from FuzzyAI)
+  4. Unified provider abstraction (from FuzzyAI)
+  5. Hybrid refusal detection (combining approaches)
+- **Learnings for future iterations:**
+  - Existing refusal detection is in agentic_security/probe_actor/refusal.py with RefusalClassifierPlugin system
+  - Attack data modules are in agentic_security/probe_data/modules/
+  - Security utilities are in agentic_security/core/security.py
+---
