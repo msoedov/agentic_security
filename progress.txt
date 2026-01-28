@@ -52,3 +52,19 @@
   - Use yaml.safe_load for parsing YAML files
   - Template variables can use {var} or {{ var }} style
 ---
+
+## 2026-01-28 - US-003
+- Implemented Composable Fuzzing Chain System
+- Files created:
+  - agentic_security/fuzz_chain/__init__.py
+  - agentic_security/fuzz_chain/chain.py (FuzzNode, FuzzChain, FuzzRunnable)
+  - agentic_security/fuzz_chain/provider.py (LLMProvider protocol)
+  - tests/unit/fuzz_chain/__init__.py
+  - tests/unit/fuzz_chain/test_chain.py (22 tests)
+- **Learnings for future iterations:**
+  - FuzzyAI uses reversed() execution order but we use forward order (more intuitive)
+  - Template variable substitution: use str.replace() not string.Formatter for partial substitution
+  - Pipe operator (__or__) needs isinstance() checks, not classname comparison for mypy
+  - Use Any type for LLM provider param to avoid complex Protocol type issues
+  - Chain passes output to next node via {"input": result} convention
+---

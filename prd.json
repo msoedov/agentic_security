@@ -40,7 +40,7 @@
         "Add unit tests for chain composition and execution"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-004",
