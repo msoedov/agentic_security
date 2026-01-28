@@ -14,6 +14,7 @@ def _ensure_registered() -> None:
         return
     from agentic_security.llm_providers.openai_provider import OpenAIProvider
     from agentic_security.llm_providers.anthropic_provider import AnthropicProvider
+
     _PROVIDERS["openai"] = OpenAIProvider
     _PROVIDERS["anthropic"] = AnthropicProvider
 

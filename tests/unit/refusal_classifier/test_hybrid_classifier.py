@@ -45,7 +45,9 @@ class TestDetectionResult:
 
     def test_weighted_score_cases(self):
         for is_refusal, weight, expected in detection_result_cases:
-            result = DetectionResult(method="test", is_refusal=is_refusal, weight=weight)
+            result = DetectionResult(
+                method="test", is_refusal=is_refusal, weight=weight
+            )
             assert result.weighted_score == expected
 
     def test_default_weight(self):
@@ -234,7 +236,14 @@ factory_cases = [
     ({"ml_detector": MockDetector(True)}, 1),
     ({"llm_detector": MockDetector(True)}, 1),
     ({"marker_detector": MockDetector(True), "ml_detector": MockDetector(False)}, 2),
-    ({"marker_detector": MockDetector(True), "ml_detector": MockDetector(False), "llm_detector": MockDetector(True)}, 3),
+    (
+        {
+            "marker_detector": MockDetector(True),
+            "ml_detector": MockDetector(False),
+            "llm_detector": MockDetector(True),
+        },
+        3,
+    ),
 ]
 
 

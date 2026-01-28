@@ -5,7 +5,11 @@ from unittest.mock import MagicMock, AsyncMock, patch
 from inline_snapshot import snapshot
 
 from agentic_security.llm_providers.anthropic_provider import AnthropicProvider
-from agentic_security.llm_providers.base import LLMMessage, LLMProviderError, LLMRateLimitError
+from agentic_security.llm_providers.base import (
+    LLMMessage,
+    LLMProviderError,
+    LLMRateLimitError,
+)
 
 
 class TestAnthropicProviderInit:
@@ -209,13 +213,19 @@ class TestAnthropicProviderErrors:
 
     def test_handle_rate_limit_error(self, provider):
         import anthropic
+
         with pytest.raises(LLMRateLimitError):
-            provider._handle_error(anthropic.RateLimitError("rate limited", response=MagicMock(), body={}))
+            provider._handle_error(
+                anthropic.RateLimitError("rate limited", response=MagicMock(), body={})
+            )
 
     def test_handle_api_error(self, provider):
         import anthropic
+
         with pytest.raises(LLMProviderError):
-            provider._handle_error(anthropic.APIError("api error", request=MagicMock(), body={}))
+            provider._handle_error(
+                anthropic.APIError("api error", request=MagicMock(), body={})
+            )
 
     def test_handle_generic_error(self, provider):
         with pytest.raises(LLMProviderError):

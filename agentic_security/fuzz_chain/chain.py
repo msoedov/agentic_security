@@ -8,8 +8,7 @@ logger = logging.getLogger(__name__)
 class FuzzRunnable(Protocol):
     """Protocol for objects that can be run in a fuzzing chain."""
 
-    async def run(self, **kwargs: Any) -> str:
-        ...
+    async def run(self, **kwargs: Any) -> str: ...
 
 
 class FuzzNode:

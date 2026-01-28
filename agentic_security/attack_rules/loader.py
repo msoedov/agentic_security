@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import yaml
@@ -81,9 +80,7 @@ class RuleLoader:
             return None
 
     def load_rules_from_directory(
-        self,
-        directory: str | Path | None = None,
-        recursive: bool = True
+        self, directory: str | Path | None = None, recursive: bool = True
     ) -> list[AttackRule]:
         directory = Path(directory) if directory else self.rules_dir
         if not directory or not directory.exists():
@@ -91,7 +88,7 @@ class RuleLoader:
             return []
 
         rules = []
-        pattern = "**/*.yaml" if recursive else "*.yaml"
+        # pattern = "**/*.yaml" if recursive else "*.yaml"
 
         for ext in [".yaml", ".yml"]:
             glob_pattern = f"**/*{ext}" if recursive else f"*{ext}"
@@ -105,9 +102,7 @@ class RuleLoader:
         return rules
 
     def load_multiple_directories(
-        self,
-        directories: list[str | Path],
-        recursive: bool = True
+        self, directories: list[str | Path], recursive: bool = True
     ) -> list[AttackRule]:
         all_rules = []
         for directory in directories:
@@ -133,6 +128,7 @@ class RuleLoader:
 
         if name_pattern:
             import re
+
             pattern = re.compile(name_pattern, re.IGNORECASE)
             result = [r for r in result if pattern.search(r.name)]
 
@@ -154,8 +150,7 @@ class RuleLoader:
 
 
 def load_rules_from_directory(
-    directory: str | Path,
-    recursive: bool = True
+    directory: str | Path, recursive: bool = True
 ) -> list[AttackRule]:
     loader = RuleLoader()
     return loader.load_rules_from_directory(directory, recursive)

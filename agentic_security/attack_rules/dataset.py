@@ -83,7 +83,9 @@ class YAMLRulesDatasetLoader:
 
             severity_enums = None
             if self.severities:
-                severity_enums = [AttackRuleSeverity.from_string(s) for s in self.severities]
+                severity_enums = [
+                    AttackRuleSeverity.from_string(s) for s in self.severities
+                ]
 
             filtered = self._loader.filter_rules(
                 rules, types=self.types, severities=severity_enums
@@ -113,10 +115,14 @@ class YAMLRulesDatasetLoader:
 
         severity_enums = None
         if self.severities:
-            severity_enums = [AttackRuleSeverity.from_string(s) for s in self.severities]
+            severity_enums = [
+                AttackRuleSeverity.from_string(s) for s in self.severities
+            ]
 
         filtered = self._loader.filter_rules(
             all_rules, types=self.types, severities=severity_enums
         )
 
-        return rules_to_dataset(filtered, name="YAML Rules (merged)", variables=variables)
+        return rules_to_dataset(
+            filtered, name="YAML Rules (merged)", variables=variables
+        )

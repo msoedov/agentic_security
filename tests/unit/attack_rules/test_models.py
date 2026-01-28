@@ -87,7 +87,12 @@ class TestAttackRule:
         rule = AttackRule(name="test", type="jailbreak", prompt="Test")
         result = rule.to_dict()
         assert result == snapshot(
-            {"name": "test", "type": "jailbreak", "prompt": "Test", "severity": "medium"}
+            {
+                "name": "test",
+                "type": "jailbreak",
+                "prompt": "Test",
+                "severity": "medium",
+            }
         )
 
     def test_render_prompt_no_variables(self):

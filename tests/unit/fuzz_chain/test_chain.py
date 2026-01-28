@@ -116,11 +116,13 @@ class TestFuzzChain:
 
         result = await chain.run(input="initial")
         assert result == "final result"
-        assert llm.prompts == snapshot([
-            "First: initial",
-            "Second: step1 result",
-            "Third: step2 result",
-        ])
+        assert llm.prompts == snapshot(
+            [
+                "First: initial",
+                "Second: step1 result",
+                "Third: step2 result",
+            ]
+        )
 
     @pytest.mark.asyncio
     async def test_chain_with_custom_variables(self):
@@ -131,10 +133,12 @@ class TestFuzzChain:
 
         result = await chain.run(topic="security", input="test prompt")
         assert result == "evaluated"
-        assert llm.prompts == snapshot([
-            "Analyze security: test prompt",
-            "Evaluate: analyzed",
-        ])
+        assert llm.prompts == snapshot(
+            [
+                "Analyze security: test prompt",
+                "Evaluate: analyzed",
+            ]
+        )
 
     def test_pipe_chain_to_node(self):
         llm = MockLLMProvider()
@@ -158,11 +162,13 @@ class TestFuzzChain:
 
     def test_len(self):
         llm = MockLLMProvider()
-        chain = FuzzChain([
-            FuzzNode(llm, "A"),
-            FuzzNode(llm, "B"),
-            FuzzNode(llm, "C"),
-        ])
+        chain = FuzzChain(
+            [
+                FuzzNode(llm, "A"),
+                FuzzNode(llm, "B"),
+                FuzzNode(llm, "C"),
+            ]
+        )
         assert len(chain) == 3
 
     def test_repr(self):
@@ -185,11 +191,13 @@ class TestPipeOperatorChaining:
         result = await chain.run(input="start")
 
         assert result == "c"
-        assert llm.prompts == snapshot([
-            "Step1: start",
-            "Step2: a",
-            "Step3: b",
-        ])
+        assert llm.prompts == snapshot(
+            [
+                "Step1: start",
+                "Step2: a",
+                "Step3: b",
+            ]
+        )
 
     @pytest.mark.asyncio
     async def test_chain_with_different_providers(self):

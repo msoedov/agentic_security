@@ -20,6 +20,7 @@ class LLMRateLimitError(LLMProviderError):
 @dataclass
 class LLMMessage:
     """A message in a chat conversation."""
+
     role: str  # "system", "user", or "assistant"
     content: str
 
@@ -27,6 +28,7 @@ class LLMMessage:
 @dataclass
 class LLMResponse:
     """Response from an LLM provider."""
+
     content: str
     model: str | None = None
     finish_reason: str | None = None

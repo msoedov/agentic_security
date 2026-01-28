@@ -77,15 +77,15 @@ severity: high
 
     def test_load_rule_from_file(self):
         loader = RuleLoader()
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml", delete=False
-        ) as f:
-            f.write("""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+            f.write(
+                """
 name: file_test
 type: harmful
 severity: medium
 prompt: Test prompt from file
-""")
+"""
+            )
             f.flush()
             rule = loader.load_rule_from_file(f.name)
 
@@ -96,9 +96,7 @@ prompt: Test prompt from file
 
     def test_load_rule_from_file_wrong_extension(self):
         loader = RuleLoader()
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".txt", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
             f.write("name: test\nprompt: test")
             f.flush()
             rule = loader.load_rule_from_file(f.name)
@@ -110,16 +108,20 @@ prompt: Test prompt from file
         with tempfile.TemporaryDirectory() as tmpdir:
             rule1_path = Path(tmpdir) / "rule1.yaml"
             rule2_path = Path(tmpdir) / "rule2.yml"
-            rule1_path.write_text("""
+            rule1_path.write_text(
+                """
 name: rule1
 type: jailbreak
 prompt: First rule
-""")
-            rule2_path.write_text("""
+"""
+            )
+            rule2_path.write_text(
+                """
 name: rule2
 type: harmful
 prompt: Second rule
-""")
+"""
+            )
             loader = RuleLoader()
             rules = loader.load_rules_from_directory(tmpdir)
 

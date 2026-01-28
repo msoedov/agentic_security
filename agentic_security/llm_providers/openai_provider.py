@@ -36,13 +36,17 @@ class OpenAIProvider(BaseLLMProvider):
     def _get_client(self) -> Any:
         if self._client is None:
             import openai
+
             self._client = openai.OpenAI(api_key=self.api_key, base_url=self.base_url)
         return self._client
 
     def _get_async_client(self) -> Any:
         if self._async_client is None:
             import openai
-            self._async_client = openai.AsyncOpenAI(api_key=self.api_key, base_url=self.base_url)
+
+            self._async_client = openai.AsyncOpenAI(
+                api_key=self.api_key, base_url=self.base_url
+            )
         return self._async_client
 
     @classmethod
@@ -79,6 +83,7 @@ class OpenAIProvider(BaseLLMProvider):
 
     def _handle_error(self, e: Exception) -> None:
         import openai
+
         if isinstance(e, openai.RateLimitError):
             raise LLMRateLimitError(str(e)) from e
         raise LLMProviderError(str(e)) from e

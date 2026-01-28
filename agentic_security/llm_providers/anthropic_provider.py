@@ -36,6 +36,7 @@ class AnthropicProvider(BaseLLMProvider):
     def _get_client(self) -> Any:
         if self._client is None:
             import anthropic
+
             kwargs: dict[str, Any] = {"api_key": self.api_key}
             if self.base_url:
                 kwargs["base_url"] = self.base_url
@@ -45,6 +46,7 @@ class AnthropicProvider(BaseLLMProvider):
     def _get_async_client(self) -> Any:
         if self._async_client is None:
             import anthropic
+
             kwargs: dict[str, Any] = {"api_key": self.api_key}
             if self.base_url:
                 kwargs["base_url"] = self.base_url
@@ -95,6 +97,7 @@ class AnthropicProvider(BaseLLMProvider):
 
     def _handle_error(self, e: Exception) -> None:
         import anthropic
+
         if isinstance(e, anthropic.RateLimitError):
             raise LLMRateLimitError(str(e)) from e
         if isinstance(e, anthropic.APIError):

@@ -96,11 +96,13 @@ class HybridRefusalClassifier:
             self for method chaining
         """
         detector_name = name or detector.__class__.__name__
-        self._detectors.append(DetectorConfig(
-            detector=detector,
-            weight=weight,
-            name=detector_name,
-        ))
+        self._detectors.append(
+            DetectorConfig(
+                detector=detector,
+                weight=weight,
+                name=detector_name,
+            )
+        )
         return self
 
     def classify(self, response: str) -> HybridResult:
@@ -117,11 +119,13 @@ class HybridRefusalClassifier:
                 is_refusal = config.detector.is_refusal(response)
             except Exception:
                 continue  # Skip failed detectors
-            results.append(DetectionResult(
-                method=config.name,
-                is_refusal=is_refusal,
-                weight=config.weight,
-            ))
+            results.append(
+                DetectionResult(
+                    method=config.name,
+                    is_refusal=is_refusal,
+                    weight=config.weight,
+                )
+            )
 
         if not results:
             return HybridResult(is_refusal=False, confidence=0.0)
@@ -134,7 +138,9 @@ class HybridRefusalClassifier:
 
         # Check unanimous requirement
         if self.require_unanimous:
-            all_agree = all(r.is_refusal for r in results) or all(not r.is_refusal for r in results)
+            all_agree = all(r.is_refusal for r in results) or all(
+                not r.is_refusal for r in results
+            )
             if not all_agree:
                 # Disagreement - return uncertain result
                 return HybridResult(

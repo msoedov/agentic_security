@@ -38,10 +38,20 @@ class AttackRule:
             pass_conditions=data.get("pass_conditions", []),
             fail_conditions=data.get("fail_conditions", []),
             source=data.get("source"),
-            metadata={k: v for k, v in data.items() if k not in {
-                "name", "type", "prompt", "severity",
-                "pass_conditions", "fail_conditions", "source"
-            }},
+            metadata={
+                k: v
+                for k, v in data.items()
+                if k
+                not in {
+                    "name",
+                    "type",
+                    "prompt",
+                    "severity",
+                    "pass_conditions",
+                    "fail_conditions",
+                    "source",
+                }
+            },
         )
 
     def to_dict(self) -> dict[str, Any]:

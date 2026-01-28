@@ -56,16 +56,20 @@ class TestRulesToDataset:
 class TestLoadRulesAsDataset:
     def test_basic_load(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            (Path(tmpdir) / "rule1.yaml").write_text("""
+            (Path(tmpdir) / "rule1.yaml").write_text(
+                """
 name: test1
 type: jailbreak
 prompt: Jailbreak prompt
-""")
-            (Path(tmpdir) / "rule2.yaml").write_text("""
+"""
+            )
+            (Path(tmpdir) / "rule2.yaml").write_text(
+                """
 name: test2
 type: harmful
 prompt: Harmful prompt
-""")
+"""
+            )
             dataset = load_rules_as_dataset(tmpdir)
             assert len(dataset.prompts) == 2
 

@@ -9,7 +9,11 @@ from agentic_security.llm_providers.factory import (
     list_providers,
     register_provider,
 )
-from agentic_security.llm_providers.base import BaseLLMProvider, LLMProviderError, LLMResponse
+from agentic_security.llm_providers.base import (
+    BaseLLMProvider,
+    LLMProviderError,
+    LLMResponse,
+)
 
 
 class TestListProviders:
@@ -26,11 +30,13 @@ class TestListProviders:
 class TestGetProviderClass:
     def test_get_openai(self):
         from agentic_security.llm_providers.openai_provider import OpenAIProvider
+
         cls = get_provider_class("openai")
         assert cls is OpenAIProvider
 
     def test_get_anthropic(self):
         from agentic_security.llm_providers.anthropic_provider import AnthropicProvider
+
         cls = get_provider_class("anthropic")
         assert cls is AnthropicProvider
 

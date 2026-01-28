@@ -5,7 +5,11 @@ from unittest.mock import MagicMock, AsyncMock, patch
 from inline_snapshot import snapshot
 
 from agentic_security.llm_providers.openai_provider import OpenAIProvider
-from agentic_security.llm_providers.base import LLMMessage, LLMProviderError, LLMRateLimitError
+from agentic_security.llm_providers.base import (
+    LLMMessage,
+    LLMProviderError,
+    LLMRateLimitError,
+)
 
 
 class TestOpenAIProviderInit:
@@ -111,7 +115,9 @@ class TestOpenAIProviderSync:
         mock_response.usage = None
 
         with patch.object(provider, "_get_client") as mock_client:
-            mock_client.return_value.chat.completions.create.return_value = mock_response
+            mock_client.return_value.chat.completions.create.return_value = (
+                mock_response
+            )
             result = provider.sync_generate("Hello")
             assert result.content == snapshot("Response")
 
@@ -126,7 +132,9 @@ class TestOpenAIProviderSync:
         messages = [LLMMessage(role="user", content="Hi")]
 
         with patch.object(provider, "_get_client") as mock_client:
-            mock_client.return_value.chat.completions.create.return_value = mock_response
+            mock_client.return_value.chat.completions.create.return_value = (
+                mock_response
+            )
             result = provider.sync_chat(messages)
             assert result.content == snapshot("Chat response")
 
@@ -196,8 +204,11 @@ class TestOpenAIProviderErrors:
 
     def test_handle_rate_limit_error(self, provider):
         import openai
+
         with pytest.raises(LLMRateLimitError):
-            provider._handle_error(openai.RateLimitError("rate limited", response=MagicMock(), body={}))
+            provider._handle_error(
+                openai.RateLimitError("rate limited", response=MagicMock(), body={})
+            )
 
     def test_handle_generic_error(self, provider):
         with pytest.raises(LLMProviderError):
