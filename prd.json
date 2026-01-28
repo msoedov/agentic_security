@@ -27,7 +27,7 @@
         "Add unit tests for rule loading and validation"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-003",

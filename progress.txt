@@ -34,3 +34,21 @@
   - Anthropic response.content[0] can be TextBlock or ToolUseBlock, need hasattr check
   - Pre-existing test failure in test_sanitize_password (regex doesn't match dict syntax)
 ---
+
+## 2026-01-28 - US-002
+- Implemented YAML-based Attack Rule System
+- Files created:
+  - agentic_security/attack_rules/__init__.py
+  - agentic_security/attack_rules/models.py (AttackRule, AttackRuleSeverity)
+  - agentic_security/attack_rules/loader.py (RuleLoader, validation, filtering)
+  - agentic_security/attack_rules/dataset.py (ProbeDataset integration)
+  - tests/unit/attack_rules/test_models.py
+  - tests/unit/attack_rules/test_loader.py
+  - tests/unit/attack_rules/test_dataset.py
+- **Learnings for future iterations:**
+  - Promptmap YAML schema: name, type, severity, prompt, pass_conditions, fail_conditions, source
+  - Rule types from promptmap: jailbreak, harmful, hate, distraction, prompt_stealing, social_bias
+  - ProbeDataset is the standard format for attack prompts (dataset_name, metadata, prompts, tokens, approx_cost)
+  - Use yaml.safe_load for parsing YAML files
+  - Template variables can use {var} or {{ var }} style
+---
