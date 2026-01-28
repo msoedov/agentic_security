@@ -90,3 +90,17 @@
   - Use factory pattern with lazy registration to avoid circular imports
   - Provider interface should support both sync and async for flexibility
 ---
+
+## 2026-01-28 - US-005
+- Implemented Enhanced Refusal Detection with Hybrid Approach
+- Files created/modified:
+  - agentic_security/refusal_classifier/hybrid_classifier.py (HybridRefusalClassifier, HybridResult, DetectionResult)
+  - agentic_security/refusal_classifier/__init__.py (added lazy import comments)
+  - tests/unit/refusal_classifier/test_hybrid_classifier.py (32 tests)
+- **Learnings for future iterations:**
+  - Circular imports: refusal.py imports from refusal_classifier, so can't export llm_classifier/hybrid_classifier from __init__.py
+  - Use Protocol for detector interface (is_refusal(str) -> bool) to allow duck typing
+  - Weighted voting: confidence = refusal_weight / total_weight for refusals, 1 - ratio for non-refusals
+  - Table-driven tests work well for testing weighted voting edge cases
+  - require_unanimous mode useful for high-stakes classification where all detectors must agree
+---

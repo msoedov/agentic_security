@@ -66,7 +66,7 @@
         "Add unit tests for hybrid detection"
       ],
       "priority": 5,
-      "passes": false
+      "passes": true
     }
   ]
 }
