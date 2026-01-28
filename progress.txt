@@ -68,3 +68,25 @@
   - Use Any type for LLM provider param to avoid complex Protocol type issues
   - Chain passes output to next node via {"input": result} convention
 ---
+
+## 2026-01-28 - US-004
+- Implemented Unified LLM Provider Abstraction
+- Files created:
+  - agentic_security/llm_providers/__init__.py
+  - agentic_security/llm_providers/base.py (BaseLLMProvider, LLMMessage, LLMResponse)
+  - agentic_security/llm_providers/openai_provider.py (OpenAIProvider)
+  - agentic_security/llm_providers/anthropic_provider.py (AnthropicProvider)
+  - agentic_security/llm_providers/factory.py (create_provider, get_provider_class)
+  - tests/unit/llm_providers/__init__.py
+  - tests/unit/llm_providers/test_base.py
+  - tests/unit/llm_providers/test_openai_provider.py
+  - tests/unit/llm_providers/test_anthropic_provider.py
+  - tests/unit/llm_providers/test_factory.py (60 tests total)
+- **Learnings for future iterations:**
+  - FuzzyAI provider pattern: ABC base class with generate/chat + sync variants
+  - Lazy client initialization (_get_client, _get_async_client) for deferred API key validation
+  - Anthropic requires max_tokens in all requests (default 1024)
+  - OpenAI and Anthropic have different message formats (system in messages vs separate param)
+  - Use factory pattern with lazy registration to avoid circular imports
+  - Provider interface should support both sync and async for flexibility
+---

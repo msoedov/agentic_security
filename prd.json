@@ -53,7 +53,7 @@
         "Add unit tests for provider implementations"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-005",
