@@ -21,3 +21,16 @@
   - Attack data modules are in agentic_security/probe_data/modules/
   - Security utilities are in agentic_security/core/security.py
 ---
+
+## 2026-01-28 - US-001
+- Implemented LLM-based refusal classifier (Dual-LLM evaluation)
+- Files created:
+  - agentic_security/refusal_classifier/llm_classifier.py
+  - tests/unit/refusal_classifier/test_llm_classifier.py
+- **Learnings for future iterations:**
+  - RefusalClassifierPlugin requires is_refusal(response: str) -> bool method
+  - LLMClient Protocol pattern works well for multiple provider support
+  - Use lazy initialization for API clients to avoid requiring keys at import time
+  - Anthropic response.content[0] can be TextBlock or ToolUseBlock, need hasattr check
+  - Pre-existing test failure in test_sanitize_password (regex doesn't match dict syntax)
+---
