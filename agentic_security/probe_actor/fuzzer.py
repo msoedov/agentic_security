@@ -423,6 +423,7 @@ async def perform_single_shot_scan(
 
     yield ScanResult.status_msg("Scan completed.")
     fuzzer_state.export_failures("failures.csv")
+    fuzzer_state.export_full_log("full_scan_log.csv")
 
 
 async def perform_many_shot_scan(
@@ -558,6 +559,7 @@ async def perform_many_shot_scan(
 
     yield ScanResult.status_msg("Scan completed.")
     fuzzer_state.export_failures("failures.csv")
+    fuzzer_state.export_full_log("full_scan_log.csv")
 
 
 def scan_router(
