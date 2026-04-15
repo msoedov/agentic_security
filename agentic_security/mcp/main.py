@@ -23,7 +23,7 @@ async def verify_llm(spec: str) -> dict:
 
     """
     url = f"{AGENTIC_SECURITY}/verify"
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(url, json={"spec": spec})
         return response.json()
 
@@ -40,7 +40,7 @@ async def start_scan(
     Returns:
         dict: The scan initiation result from the FastAPI server.
 
-    Args:
+    Args
         llmSpec (str): The specification of the LLM model.
         maxBudget (int): The maximum budget for the scan.
         optimize (bool, optional): Whether to enable optimization during scanning. Defaults to False.
@@ -57,7 +57,7 @@ async def start_scan(
         "probe_datasets": [],
         "secrets": {},
     }
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(url, json=payload)
         return response.json()
 
@@ -70,7 +70,7 @@ async def stop_scan() -> dict:
         dict: The confirmation from the FastAPI server that the scan has been stopped.
     """
     url = f"{AGENTIC_SECURITY}/stop"
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(url)
         return response.json()
 
@@ -84,7 +84,7 @@ async def get_data_config() -> list:
         list: The response from the FastAPI server, confirming the scan has been stopped.
     """
     url = f"{AGENTIC_SECURITY}/v1/data-config"
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.get(url)
         return response.json()
 
@@ -98,7 +98,7 @@ async def get_spec_templates() -> list:
         list: The LLM specification templates from the FastAPI server.
     """
     url = f"{AGENTIC_SECURITY}/v1/llm-specs"
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.get(url)
         return response.json()
 
