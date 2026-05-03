@@ -23,3 +23,5 @@ agentic_security/agents/operator_agno.py
 .claude/
 plan.md
 auto_loop.sh
+.venv/
+.cache/
