@@ -65,13 +65,13 @@
 
             <!-- Error and Success Messages -->
             <div v-if="errorMsg"
-              class="bg-dark-accent-red bg-opacity-20 border border-dark-accent-red text-dark-accent-red px-4 py-3 rounded-lg relative"
+              class="bg-dark-accent-red /20 border border-dark-accent-red text-dark-accent-red px-4 py-3 rounded-lg relative"
               role="alert">
               <strong class="font-bold">Oops!</strong>
               <span class="block sm:inline">{{errorMsg}}</span>
             </div>
             <div v-if="okMsg"
-              class="bg-dark-accent-green bg-opacity-20 border border-dark-accent-green text-dark-accent-green px-4 py-3 rounded-lg relative"
+              class="bg-dark-accent-green /20 border border-dark-accent-green text-dark-accent-green px-4 py-3 rounded-lg relative"
               role="alert">
               <strong class="font-bold"></strong>
               <span class="block sm:inline">{{okMsg}}</span>
@@ -81,7 +81,7 @@
             <section class="flex justify-center space-x-4 mt-10">
               <button
                 @click="verifyIntegration"
-                class="bg-dark-accent-orange text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors">
+                class="bg-dark-accent-orange text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-dark-accent-orange/80 transition-colors">
                 Verify Integration
               </button>
             </section>
@@ -128,7 +128,7 @@
             <div class="flex items-center justify-end mt-4">
               <button
                 @click="confirmResetState"
-                class="flex items-center bg-dark-accent-red text-dark-bg rounded-lg px-4 py-2 text-sm font-medium hover:bg-opacity-80 transition-colors">
+                class="flex items-center bg-dark-accent-red text-dark-bg rounded-lg px-4 py-2 text-sm font-medium hover:bg-dark-accent-red/80 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2"
                   fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round"
@@ -141,7 +141,7 @@
             <!-- Confirmation Modal -->
             <div
               v-if="showResetConfirmation"
-              class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              class="fixed inset-0 bg-black /50 flex items-center justify-center z-50">
               <div class="bg-dark-card rounded-lg p-6 max-w-sm w-full">
                 <h3 class="text-xl font-bold mb-4 text-dark-text">Confirm
                   Reset</h3>
@@ -151,12 +151,12 @@
                 <div class="flex justify-end space-x-4">
                   <button
                     @click="showResetConfirmation = false"
-                    class="bg-gray-600 text-dark-text rounded-lg px-4 py-2 hover:bg-opacity-80 transition-colors">
+                    class="bg-gray-600 text-dark-text rounded-lg px-4 py-2 hover:bg-gray-600/80 transition-colors">
                     Cancel
                   </button>
                   <button
                     @click="resetState"
-                    class="bg-dark-accent-red text-dark-bg rounded-lg px-4 py-2 hover:bg-opacity-80 transition-colors">
+                    class="bg-dark-accent-red text-dark-bg rounded-lg px-4 py-2 hover:bg-dark-accent-red/80 transition-colors">
                     Reset
                   </button>
                 </div>
@@ -325,7 +325,7 @@
                 @click="addPackage(index)"
                 class="border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md overflow-hidden"
                 :class="{
-                'border-dark-accent-green bg-dark-accent-green bg-opacity-20': pkg.selected,
+                'border-dark-accent-green bg-dark-accent-green /20': pkg.selected,
                 'border-gray-600': !pkg.selected
               }">
                 <div class="font-medium mb-1 truncate">{{ pkg.dataset_name
@@ -344,13 +344,13 @@
 
         <!-- Error and Success Messages -->
         <div v-if="errorMsg"
-          class="bg-dark-accent-red bg-opacity-20 border border-dark-accent-red text-dark-accent-red px-4 py-3 rounded-lg relative"
+          class="bg-dark-accent-red /20 border border-dark-accent-red text-dark-accent-red px-4 py-3 rounded-lg relative"
           role="alert">
           <strong class="font-bold">Oops!</strong>
           <span class="block sm:inline">{{errorMsg}}</span>
         </div>
         <div v-if="okMsg"
-          class="bg-dark-accent-green bg-opacity-20 border border-dark-accent-green text-dark-accent-green px-4 py-3 rounded-lg relative"
+          class="bg-dark-accent-green /20 border border-dark-accent-green text-dark-accent-green px-4 py-3 rounded-lg relative"
           role="alert">
           <strong class="font-bold">></strong>
           <span class="block sm:inline">{{okMsg}}</span>
@@ -360,13 +360,13 @@
         <section class="flex justify-center space-x-4">
           <button
             @click="verifyIntegration"
-            class="bg-dark-accent-orange text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors">
+            class="bg-dark-accent-orange text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-dark-accent-orange/80 transition-colors">
             Verify Integration
           </button>
           <button
             @click="startScan"
             v-if="!scanRunning"
-            class="bg-dark-accent-green text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors flex items-center">
+            class="bg-dark-accent-green text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-dark-accent-green/80 transition-colors flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
               viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -376,7 +376,7 @@
           <button
             @click="stopScan"
             v-if="scanRunning"
-            class="bg-dark-accent-red text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors flex items-center">
+            class="bg-dark-accent-red text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-dark-accent-red/80 transition-colors flex items-center">
             <!-- Stop Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
               viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -427,7 +427,7 @@
         <!-- Download Button -->
         <button
           @click="downloadFailures"
-          class="bg-dark-accent-yellow text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-opacity-80 transition-colors">
+          class="bg-dark-accent-yellow text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-dark-accent-yellow/80 transition-colors">
           Download failures
         </button>
 
@@ -455,7 +455,7 @@
                 Math.min(logs.length, maxDisplayedLogs) }} of {{ logs.length }}
                 logs</span>
               <button @click="downloadLogs"
-                class="bg-dark-accent-green text-dark-bg rounded-lg px-4 py-2 text-sm font-medium hover:bg-opacity-80 transition-colors">
+                class="bg-dark-accent-green text-dark-bg rounded-lg px-4 py-2 text-sm font-medium hover:bg-dark-accent-green/80 transition-colors">
                 Download Logs
               </button>
             </div>
