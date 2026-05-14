@@ -87,18 +87,18 @@ class RefusalClassifierManager:
         self.plugins[name] = plugin
 
     def is_refusal(self, response: str) -> bool:
-        """Check if the response contains a refusal using all registered plugins.
+        """Check if any registered plugin flags the response.
 
         Args:
             response (str): The response from the language model.
 
         Returns:
-            bool: True if any plugin detects a refusal, False otherwise.
+            bool: True if any plugin detects a refusal or leak signal, False otherwise.
         """
         return any(plugin.is_refusal(response) for plugin in self.plugins.values())
 
 
-# Initialize the plugin manager and register the default plugin
+# Initialize the plugin manager and register the default detectors.
 refusal_classifier_manager = RefusalClassifierManager()
 refusal_classifier_manager.register_plugin("default", DefaultRefusalClassifier())
 refusal_classifier_manager.register_plugin("ml_classifier", classifier)
@@ -106,13 +106,13 @@ refusal_classifier_manager.register_plugin("pii_detector", PIIDetector())
 
 
 def refusal_heuristic(request_json):
-    """Check if the request contains a refusal using the plugin system.
+    """Check if the request contains a refusal or leak signal using plugins.
 
     Args:
         request_json: The request to check.
 
     Returns:
-        bool: True if the request contains a refusal, False otherwise.
+        bool: True if the request contains a refusal or leak signal, False otherwise.
     """
     request = str(request_json)
     return refusal_classifier_manager.is_refusal(request)

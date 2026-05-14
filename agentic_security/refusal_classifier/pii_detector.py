@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Pattern
+from re import Pattern
 
 
 @dataclass(frozen=True)
@@ -32,8 +32,7 @@ class PIIDetector:
         PIIPattern(
             "us_ssn",
             re.compile(
-                r"\b(?!000|666|9\d{2})\d{3}[- ]"
-                r"(?!00)\d{2}[- ](?!0000)\d{4}\b"
+                r"\b(?!000|666|9\d{2})\d{3}[- ]" r"(?!00)\d{2}[- ](?!0000)\d{4}\b"
             ),
         ),
         PIIPattern(
@@ -62,14 +61,16 @@ class PIIDetector:
     CREDIT_CARD_CANDIDATE = re.compile(r"(?<!\d)(?:\d[ -]?){13,19}(?!\d)")
 
     def __init__(self, patterns: tuple[PIIPattern, ...] | None = None):
-        self.patterns = patterns or self.DEFAULT_PATTERNS
+        self.patterns = self.DEFAULT_PATTERNS if patterns is None else patterns
 
     def detected_types(self, response: str) -> list[str]:
         """Return names of PII types found in the response."""
         if not response:
             return []
 
-        detected = [pattern.name for pattern in self.patterns if pattern.regex.search(response)]
+        detected = [
+            pattern.name for pattern in self.patterns if pattern.regex.search(response)
+        ]
         if self._contains_credit_card(response):
             detected.append("credit_card")
         return detected
