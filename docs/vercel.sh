@@ -1,8 +1,4 @@
-#!/usr/bin/env bash
-# Vercel build command for the MkDocs site.
-# Set Vercel "Build Command" to: bash docs/vercel.sh
-# Set Vercel "Output Directory" to: site
-set -euo pipefail
+set -ex
 
 python3 --version
 
