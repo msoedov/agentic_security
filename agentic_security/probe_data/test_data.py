@@ -18,7 +18,9 @@ class TestNormalizeGoogleSheetsUrl:
     def test_edit_url_no_gid(self):
         url = "https://docs.google.com/spreadsheets/d/ABC123/edit"
         result = _normalize_google_sheets_url(url)
-        assert result == "https://docs.google.com/spreadsheets/d/ABC123/export?format=csv"
+        assert (
+            result == "https://docs.google.com/spreadsheets/d/ABC123/export?format=csv"
+        )
 
     def test_already_export_url_unchanged(self):
         url = "https://docs.google.com/spreadsheets/d/ABC123/export?format=csv"

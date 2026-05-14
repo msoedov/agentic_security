@@ -70,9 +70,7 @@ def _normalize_google_sheets_url(url: str) -> str:
     gid_match = re.search(r"gid=(\d+)", url)
     gid_suffix = f"&gid={gid_match.group(1)}" if gid_match else ""
 
-    export_url = (
-        f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv{gid_suffix}"
-    )
+    export_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv{gid_suffix}"
     logger.info(f"Converting Google Sheets URL to CSV export: {export_url}")
     return export_url
 
