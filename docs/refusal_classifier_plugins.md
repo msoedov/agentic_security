@@ -76,16 +76,31 @@ is_refusal = refusal_heuristic(request_json)
 
 ## PII Leak Detection
 
-The built-in `PIIDetector` follows the same boolean detector interface and can be registered with the manager or added to a hybrid classifier. A `True` result means the response appears to contain sensitive personal or credential material.
+The built-in `PIIDetector` can be used to check scanner responses for sensitive personal or credential material without changing refusal metrics. Use `pii_leak_heuristic` when you want a separate leak signal:
 
 ```python
-from agentic_security.probe_actor.refusal import refusal_classifier_manager
-from agentic_security.refusal_classifier import PIIDetector
+from agentic_security.probe_actor.refusal import pii_leak_heuristic
 
-refusal_classifier_manager.register_plugin("pii", PIIDetector())
+has_pii_leak = pii_leak_heuristic(request_json)
 ```
 
-`PIIDetector` currently checks for common leak signals including email addresses, US SSNs, phone numbers, private key blocks, API-token style secrets, and credit card candidates that pass Luhn validation.
+`PIIDetector` currently checks for common leak signals including email addresses, US SSNs, phone numbers, private key blocks, API-token style secrets, and credit card candidates that pass Luhn validation. Credit-card detection is controlled separately with `detect_credit_cards`:
+
+```python
+from agentic_security.refusal_classifier import PIIDetector
+
+detector = PIIDetector(patterns=(), detect_credit_cards=False)
+```
+
+If you construct your own `RefusalClassifierManager` and intentionally want leak detection to participate in the same boolean plugin result as refusals, register it manually:
+
+```python
+from agentic_security.probe_actor.refusal import RefusalClassifierManager
+from agentic_security.refusal_classifier import PIIDetector
+
+manager = RefusalClassifierManager()
+manager.register_plugin("pii", PIIDetector())
+```
 
 For reporting or debugging, use `detected_types` to see which leak categories matched:
 

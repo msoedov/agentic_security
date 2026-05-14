@@ -33,6 +33,12 @@ class TestPIIDetector:
         assert detector.detected_types("Contact me at jane@example.com") == []
         assert detector.detected_types("card: 4111 1111 1111 1111") == ["credit_card"]
 
+    def test_credit_card_detection_can_be_disabled(self):
+        detector = PIIDetector(patterns=(), detect_credit_cards=False)
+
+        assert detector.detected_types("card: 4111 1111 1111 1111") == []
+        assert not detector.is_leak("card: 4111 1111 1111 1111")
+
     def test_custom_patterns_can_be_used(self):
         detector = PIIDetector(
             patterns=(PIIPattern("employee_id", re.compile(r"EMP-\d{4}")),)
