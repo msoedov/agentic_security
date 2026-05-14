@@ -4,6 +4,7 @@ import random
 from collections.abc import Callable, Iterator
 from functools import partial
 from typing import Any, TypeVar
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import httpx
 import pandas as pd
@@ -30,8 +31,50 @@ TransformFn = Callable[[str], str]
 
 
 # Core data loading utilities
+def normalize_google_sheets_csv_url(url: str) -> str:
+    """Convert public Google Sheets links to direct CSV export URLs."""
+    parsed = urlparse(url)
+    if parsed.netloc.lower() not in {"docs.google.com", "www.docs.google.com"}:
+        return url
+
+    path_parts = [part for part in parsed.path.split("/") if part]
+    if len(path_parts) < 3 or path_parts[:2] != ["spreadsheets", "d"]:
+        return url
+
+    query = parse_qs(parsed.query)
+    fragment = parse_qs(parsed.fragment)
+    gid = query.get("gid", fragment.get("gid", [None]))[0]
+
+    # Published sheets use /spreadsheets/d/e/<published-id>/pubhtml and export
+    # as CSV from the sibling /pub endpoint with output=csv.
+    if len(path_parts) >= 4 and path_parts[2] == "e":
+        csv_query = {"output": "csv"}
+        if gid is not None:
+            csv_query["gid"] = gid
+        return urlunparse(
+            parsed._replace(
+                path=f"/spreadsheets/d/e/{path_parts[3]}/pub",
+                query=urlencode(csv_query),
+                fragment="",
+            )
+        )
+
+    csv_query = {"format": "csv"}
+    if gid is not None:
+        csv_query["gid"] = gid
+
+    return urlunparse(
+        parsed._replace(
+            path=f"/spreadsheets/d/{path_parts[2]}/export",
+            query=urlencode(csv_query),
+            fragment="",
+        )
+    )
+
+
 def fetch_csv_content(url: str) -> str:
     """Fetch CSV content from a URL."""
+    url = normalize_google_sheets_csv_url(url)
     response = httpx.get(url)
     response.raise_for_status()  # Raise exception for bad responses
     return response.content.decode("utf-8")
