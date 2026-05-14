@@ -12,5 +12,3 @@ pip3 install \
   mkdocs-material \
   mkdocs-jupyter \
   mkdocstrings-python
-
-mkdocs build --site-dir site
