@@ -9,7 +9,7 @@ on:
       - 0.*
 
 env:
-  POETRY_VERSION: "1.8.5"
+  POETRY_VERSION: "2.4.1"
 
 jobs:
   if_release:
