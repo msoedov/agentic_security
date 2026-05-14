@@ -59,6 +59,8 @@ termcolor = "^3.2.0"
 mcp = "^1.22.0"
 # garak = { version = "*", optional = true }
 pytest-xdist = "^3.8.0"
+anthropic = "^0.102.0"
+openai = "^2.36.0"
 
 [tool.poetry.group.dev.dependencies]
 # Pytest

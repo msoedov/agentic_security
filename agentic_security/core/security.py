@@ -166,10 +166,10 @@ def sanitize_log_output(data: str | dict) -> str:
         data = str(data)
 
     patterns = [
-        (r'(api[_-]?key["\s:=]+)["\']?[\w-]+', r"\1***"),
-        (r'(token["\s:=]+)["\']?[\w-]+', r"\1***"),
-        (r'(password["\s:=]+)["\']?[\w-]+', r"\1***"),
-        (r'(secret["\s:=]+)["\']?[\w-]+', r"\1***"),
+        (r'(api[_-]?key["\'\s:=]+)["\']?[\w-]+', r"\1***"),
+        (r'(token["\'\s:=]+)["\']?[\w-]+', r"\1***"),
+        (r'(password["\'\s:=]+)["\']?[\w-]+', r"\1***"),
+        (r'(secret["\'\s:=]+)["\']?[\w-]+', r"\1***"),
         (r"Bearer\s+[\w-]+", "Bearer ***"),
     ]
 
