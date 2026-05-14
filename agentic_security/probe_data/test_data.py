@@ -1,6 +1,34 @@
 from inline_snapshot import snapshot
 
-from .data import prepare_prompts
+from .data import _normalize_google_sheets_url, prepare_prompts
+
+
+class TestNormalizeGoogleSheetsUrl:
+    def test_passthrough_non_sheets_url(self):
+        url = "https://raw.githubusercontent.com/example/repo/main/data.csv"
+        assert _normalize_google_sheets_url(url) == url
+
+    def test_edit_url_converted_to_export(self):
+        url = "https://docs.google.com/spreadsheets/d/ABC123/edit#gid=0"
+        result = _normalize_google_sheets_url(url)
+        assert "export?format=csv" in result
+        assert "ABC123" in result
+        assert "gid=0" in result
+
+    def test_edit_url_no_gid(self):
+        url = "https://docs.google.com/spreadsheets/d/ABC123/edit"
+        result = _normalize_google_sheets_url(url)
+        assert (
+            result == "https://docs.google.com/spreadsheets/d/ABC123/export?format=csv"
+        )
+
+    def test_already_export_url_unchanged(self):
+        url = "https://docs.google.com/spreadsheets/d/ABC123/export?format=csv"
+        assert _normalize_google_sheets_url(url) == url
+
+    def test_pub_csv_url_unchanged(self):
+        url = "https://docs.google.com/spreadsheets/d/ABC123/pub?output=csv"
+        assert _normalize_google_sheets_url(url) == url
 
 
 class TestPreparePrompts:

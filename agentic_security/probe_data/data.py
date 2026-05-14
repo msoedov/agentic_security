@@ -1,6 +1,7 @@
 import io
 import os
 import random
+import re
 from collections.abc import Callable, Iterator
 from functools import partial
 from typing import Any, TypeVar
@@ -31,10 +32,47 @@ TransformFn = Callable[[str], str]
 
 # Core data loading utilities
 def fetch_csv_content(url: str) -> str:
-    """Fetch CSV content from a URL."""
-    response = httpx.get(url)
+    """Fetch CSV content from a URL.
+
+    Handles Google Sheets share links by converting them to the CSV export URL.
+    Accepts both the edit link format and the /pub?output=csv format.
+    """
+    url = _normalize_google_sheets_url(url)
+    response = httpx.get(url, follow_redirects=True)
     response.raise_for_status()  # Raise exception for bad responses
     return response.content.decode("utf-8")
+
+
+def _normalize_google_sheets_url(url: str) -> str:
+    """Convert a Google Sheets share/edit URL to a CSV export URL if needed.
+
+    Supports the following formats:
+    - https://docs.google.com/spreadsheets/d/<ID>/edit#gid=<GID>
+    - https://docs.google.com/spreadsheets/d/<ID>/pub?output=csv  (already correct)
+    - https://docs.google.com/spreadsheets/d/<ID>/export?format=csv  (already correct)
+
+    Returns the URL unchanged for non-Google-Sheets links.
+    """
+    match = re.match(
+        r"https://docs\.google\.com/spreadsheets/d/([^/]+)(?:/[^?#]*)?(?:[?#].*)?$",
+        url,
+    )
+    if not match:
+        return url
+
+    sheet_id = match.group(1)
+
+    # Already a direct export link — leave it alone
+    if "export?format=csv" in url or "pub?output=csv" in url:
+        return url
+
+    # Extract optional gid (sheet tab) from fragment or query string
+    gid_match = re.search(r"gid=(\d+)", url)
+    gid_suffix = f"&gid={gid_match.group(1)}" if gid_match else ""
+
+    export_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv{gid_suffix}"
+    logger.info(f"Converting Google Sheets URL to CSV export: {export_url}")
+    return export_url
 
 
 def load_df_from_source(source: str, is_url: bool = False) -> pd.DataFrame:
