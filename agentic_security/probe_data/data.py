@@ -1,6 +1,7 @@
 import io
 import os
 import random
+import re
 from collections.abc import Callable, Iterator
 from functools import partial
 from typing import Any, TypeVar
@@ -52,8 +53,6 @@ def _normalize_google_sheets_url(url: str) -> str:
 
     Returns the URL unchanged for non-Google-Sheets links.
     """
-    import re
-
     match = re.match(
         r"https://docs\.google\.com/spreadsheets/d/([^/]+)(?:/[^?#]*)?(?:[?#].*)?$",
         url,
