@@ -3,7 +3,6 @@
 import time
 from typing import Literal
 
-
 CircuitState = Literal["closed", "open", "half_open"]
 
 

@@ -52,38 +52,44 @@ class FuzzerState:
 
         # Add errors
         for module_name, prompt, status_code, error_msg in self.errors:
-            log_data.append({
-                "event_type": "error",
-                "module": module_name,
-                "prompt": prompt,
-                "status_code": status_code,
-                "content": error_msg,
-                "refused": None,
-            })
+            log_data.append(
+                {
+                    "event_type": "error",
+                    "module": module_name,
+                    "prompt": prompt,
+                    "status_code": status_code,
+                    "content": error_msg,
+                    "refused": None,
+                }
+            )
 
         # Add refusals
         for module_name, prompt, status_code, response_text in self.refusals:
-            log_data.append({
-                "event_type": "refusal",
-                "module": module_name,
-                "prompt": prompt,
-                "status_code": status_code,
-                "content": response_text,
-                "refused": True,
-            })
+            log_data.append(
+                {
+                    "event_type": "refusal",
+                    "module": module_name,
+                    "prompt": prompt,
+                    "status_code": status_code,
+                    "content": response_text,
+                    "refused": True,
+                }
+            )
 
         # Add all outputs (including successful ones)
         for module_name, prompt, response_text, refused in self.outputs:
             # Skip if already logged as refusal to avoid duplicates
             if not refused:
-                log_data.append({
-                    "event_type": "success",
-                    "module": module_name,
-                    "prompt": prompt,
-                    "status_code": 200,
-                    "content": response_text,
-                    "refused": False,
-                })
+                log_data.append(
+                    {
+                        "event_type": "success",
+                        "module": module_name,
+                        "prompt": prompt,
+                        "status_code": 200,
+                        "content": response_text,
+                        "refused": False,
+                    }
+                )
 
         df = pd.DataFrame(log_data)
         df.to_csv(filename, index=False)

@@ -1,14 +1,12 @@
-[tool.poetry]
+[project]
 name = "agentic_security"
-version = "0.7.4"
+version = "1.0.0"
 description = "Agentic LLM vulnerability scanner"
-authors = ["Alexander Miasoiedov <msoedov@gmail.com>"]
-maintainers = ["Alexander Miasoiedov <msoedov@gmail.com>"]
-repository = "https://github.com/msoedov/agentic_security"
-homepage = "https://github.com/msoedov/agentic_security"
-documentation = "https://github.com/msoedov/agentic_security/blob/main/README.md"
+authors = [{ name = "Alexander Miasoiedov", email = "msoedov@gmail.com" }]
+maintainers = [{ name = "Alexander Miasoiedov", email = "msoedov@gmail.com" }]
 license = "Apache-2.0"
 readme = "Readme.md"
+requires-python = ">=3.12,<4.0"
 keywords = [
     "LLM vulnerability scanner",
     "llm security",
@@ -20,14 +18,20 @@ keywords = [
     "llm vulnerabilities",
     "owasp-llm-top-10",
 ]
-packages = [{ include = "agentic_security", from = "." }]
+dynamic = ["dependencies"]
 
+[project.urls]
+Homepage = "https://github.com/msoedov/agentic_security"
+Repository = "https://github.com/msoedov/agentic_security"
+Documentation = "https://github.com/msoedov/agentic_security/blob/main/README.md"
 
-[tool.poetry.scripts]
+[project.scripts]
 agentic_security = "agentic_security.__main__:main"
 
+[tool.poetry]
+packages = [{ include = "agentic_security", from = "." }]
+
 [tool.poetry.dependencies]
-python = "^3.11"
 fastapi = "^0.122.0"
 uvicorn = "^0.38.0"
 fire = "0.7.1"
@@ -44,7 +48,7 @@ scikit-optimize = "^0.10.2"
 scikit-learn = "^1.7.2"
 numpy = ">=1.24.3,<3.0.0"
 jinja2 = "^3.1.4"
-python-multipart = "^0.0.20"
+python-multipart = "^0.0.27"
 tomli = "^2.3.0"
 rich = "^14.2.0"
 gTTS = "^2.5.4"
@@ -58,7 +62,7 @@ pytest-xdist = "^3.8.0"
 
 [tool.poetry.group.dev.dependencies]
 # Pytest
-pytest = "^9.0.1"
+pytest = "^9.0.3"
 pytest-asyncio = "^1.3.0"
 inline-snapshot = "^0.31.1"
 pytest-mock = "^3.15.1"
@@ -88,9 +92,3 @@ addopts = "-m 'not slow'"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 markers = "slow: marks tests as slow"
-
-[project]
-# MCP requires the following fields to be present in the pyproject.toml file
-name = "agentic_security"
-version = "1.0.0"
-requires-python = ">=3.11"

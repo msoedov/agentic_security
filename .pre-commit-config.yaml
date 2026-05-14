@@ -1,24 +1,24 @@
 default_language_version:
-        python: python3.11
+        python: python3.12
 
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+    rev: v3.21.2
     hooks:
       - id: pyupgrade
-        args: [--py311-plus]
+        args: [--py312-plus]
 
   - repo: https://github.com/psf/black
-    rev: 25.11.0
+    rev: 26.3.1
     hooks:
       - id: black
-        language_version: python3.11
+        language_version: python3.12
 
   - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+    rev: 7.3.0
     hooks:
       - id: flake8
-        language_version: python3.11
+        language_version: python3.12
         additional_dependencies: [flake8-docstrings]
         exclude: '^(tests)/'
 
@@ -29,7 +29,7 @@ repos:
   #       args: [--profile, black]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
     -   id: check-ast
         exclude: '^(third_party)/'
@@ -57,11 +57,11 @@ repos:
   #     - id: mdformat
   #       name: mdformat
   #       entry: mdformat .
-  #       language_version: python3.11
+  #       language_version: python3.12
   #       files: "docs/.*\\.md$"
 
   - repo: https://github.com/hadialqattan/pycln
-    rev: v2.5.0
+    rev: v2.6.0
     hooks:
       - id: pycln
 
@@ -71,7 +71,7 @@ repos:
       - id: teyit
 
   - repo: https://github.com/python-poetry/poetry
-    rev: '1.7.0'
+    rev: '2.4.1'
     hooks:
     -   id: poetry-check
     -   id: poetry-lock
@@ -80,7 +80,7 @@ repos:
         - --check
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.4.2
     hooks:
     -   id: codespell
         exclude: '^(third_party/)|(poetry.lock)|(ui/package-lock.json)|(agentic_security/static/.*)'

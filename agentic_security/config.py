@@ -150,9 +150,7 @@ budget_multiplier = 100000000
 initial_optimizer_points = 25
 min_failure_samples = 5
 failure_rate_threshold = 0.5
-""".replace(
-                    "$HOST", host
-                )
+""".replace("$HOST", host)
                 .replace("$PORT", str(port))
                 .replace("$SETTINGS_VERSION", str(SETTINGS_VERSION))
             )
