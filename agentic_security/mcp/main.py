@@ -1,5 +1,10 @@
+import logging
+
 import httpx
 from mcp.server.fastmcp import FastMCP
+
+# Configure module-level logger
+logger = logging.getLogger(__name__)
 
 # Initialize MCP server
 mcp = FastMCP(
@@ -23,8 +28,10 @@ async def verify_llm(spec: str) -> dict:
 
     """
     url = f"{AGENTIC_SECURITY}/verify"
+    logger.debug("Verifying LLM spec at %s", url)
     async with httpx.AsyncClient() as client:
         response = await client.post(url, json={"spec": spec})
+        logger.info("verify_llm response status: %s", response.status_code)
         return response.json()
 
 
@@ -57,8 +64,16 @@ async def start_scan(
         "probe_datasets": [],
         "secrets": {},
     }
+    logger.debug(
+        "Starting scan for spec=%r maxBudget=%d optimize=%s enableMultiStepAttack=%s",
+        llmSpec,
+        maxBudget,
+        optimize,
+        enableMultiStepAttack,
+    )
     async with httpx.AsyncClient() as client:
         response = await client.post(url, json=payload)
+        logger.info("start_scan response status: %s", response.status_code)
         return response.json()
 
 
@@ -70,8 +85,10 @@ async def stop_scan() -> dict:
         dict: The confirmation from the FastAPI server that the scan has been stopped.
     """
     url = f"{AGENTIC_SECURITY}/stop"
+    logger.debug("Stopping scan at %s", url)
     async with httpx.AsyncClient() as client:
         response = await client.post(url)
+        logger.info("stop_scan response status: %s", response.status_code)
         return response.json()
 
 
@@ -84,8 +101,10 @@ async def get_data_config() -> list:
         list: The response from the FastAPI server, confirming the scan has been stopped.
     """
     url = f"{AGENTIC_SECURITY}/v1/data-config"
+    logger.debug("Fetching data config from %s", url)
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
+        logger.info("get_data_config response status: %s", response.status_code)
         return response.json()
 
 
@@ -98,11 +117,14 @@ async def get_spec_templates() -> list:
         list: The LLM specification templates from the FastAPI server.
     """
     url = f"{AGENTIC_SECURITY}/v1/llm-specs"
+    logger.debug("Fetching spec templates from %s", url)
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
+        logger.info("get_spec_templates response status: %s", response.status_code)
         return response.json()
 
 
 # Run the MCP server
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     mcp.run()
