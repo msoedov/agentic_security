@@ -22,7 +22,7 @@ async def verify_llm(spec: str) -> dict:
     Args: spect(str):  The specification of the LLM model to verify.
 
     """
-    url = f"{AGENTIC_SECURITY}/verify"
+    url: str = f"{AGENTIC_SECURITY}/verify"
     async with httpx.AsyncClient() as client:
         response = await client.post(url, json={"spec": spec})
         return response.json()
@@ -47,8 +47,8 @@ async def start_scan(
         enableMultiStepAttack (bool, optional): Whether to enable multi-step attack
 
     """
-    url = f"{AGENTIC_SECURITY}/scan"
-    payload = {
+    url: str = f"{AGENTIC_SECURITY}/scan"
+    payload: dict = {
         "llmSpec": llmSpec,
         "maxBudget": maxBudget,
         "datasets": [],
@@ -69,7 +69,7 @@ async def stop_scan() -> dict:
     Returns:
         dict: The confirmation from the FastAPI server that the scan has been stopped.
     """
-    url = f"{AGENTIC_SECURITY}/stop"
+    url: str = f"{AGENTIC_SECURITY}/stop"
     async with httpx.AsyncClient() as client:
         response = await client.post(url)
         return response.json()
@@ -83,7 +83,7 @@ async def get_data_config() -> list:
     Returns:
         list: The response from the FastAPI server, confirming the scan has been stopped.
     """
-    url = f"{AGENTIC_SECURITY}/v1/data-config"
+    url: str = f"{AGENTIC_SECURITY}/v1/data-config"
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
         return response.json()
@@ -97,7 +97,7 @@ async def get_spec_templates() -> list:
     Returns:
         list: The LLM specification templates from the FastAPI server.
     """
-    url = f"{AGENTIC_SECURITY}/v1/llm-specs"
+    url: str = f"{AGENTIC_SECURITY}/v1/llm-specs"
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
         return response.json()
