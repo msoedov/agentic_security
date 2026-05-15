@@ -403,11 +403,64 @@ The `Module` class is designed to manage prompt processing and interaction with 
 
 ## MCP server
 
+The Agentic Security MCP server exposes the scanner's REST API as callable tools and reusable prompt templates, so any MCP-compatible client (Claude Desktop, Claude Code, custom agents) can drive security scans through natural language.
+
+### Installation
+
 ```shell
 pip install -U mcp
 
 # From cloned directory
 mcp install agentic_security/mcp/main.py
+```
+
+### Using with Claude Desktop
+
+1. Start the Agentic Security FastAPI server (default port `8718`):
+
+   ```shell
+   poetry run agentic_security
+   ```
+
+2. Install the MCP server into Claude Desktop:
+
+   ```shell
+   mcp install agentic_security/mcp/main.py --name "Agentic Security"
+   ```
+
+3. Open Claude Desktop — the following **tools** are now available:
+
+   | Tool | Description |
+   |---|---|
+   | `start_scan` | Launch a security scan against an LLM spec |
+   | `stop_scan` | Halt an in-progress scan |
+   | `verify_llm` | Check that an LLM spec is reachable |
+   | `get_data_config` | Retrieve the current dataset configuration |
+   | `get_spec_templates` | List available LLM spec templates |
+
+4. Or kick off a scan using one of the built-in **prompt templates**:
+
+   - **`security_scan_prompt`** — runs a full scan with a configurable probe budget
+   - **`verify_llm_prompt`** — confirms a spec is reachable before committing to a scan
+   - **`adversarial_probe_prompt`** — enables multi-step attacks and asks Claude to summarise the worst findings
+
+### Example conversation with Claude
+
+```
+You: Use the security_scan_prompt for spec "openai/gpt-4o" with a budget of 500 probes.
+
+Claude: I'll kick off the scan now. Starting with verify_llm to confirm the spec is
+        reachable, then launching start_scan with maxBudget=500...
+```
+
+### Using with Claude Code (CLI)
+
+```shell
+# Add to your project's MCP config
+claude mcp add agentic-security -- python agentic_security/mcp/main.py
+
+# Then interact inline
+claude "Run a quick adversarial probe against my local LLM at http://localhost:8080/v1"
 ```
 
 ## Documentation
