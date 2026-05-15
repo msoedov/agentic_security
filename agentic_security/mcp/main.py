@@ -1,3 +1,5 @@
+from typing import Any
+
 import httpx
 from mcp.server.fastmcp import FastMCP
 
@@ -12,7 +14,7 @@ AGENTIC_SECURITY = "http://0.0.0.0:8718"
 
 
 @mcp.tool()
-async def verify_llm(spec: str) -> dict:
+async def verify_llm(spec: str) -> dict[str, Any]:
     """
     Verify an LLM model specification using the FastAPI server
 
@@ -34,7 +36,7 @@ async def start_scan(
     maxBudget: int,
     optimize: bool = False,
     enableMultiStepAttack: bool = False,
-) -> dict:
+) -> dict[str, Any]:
     """
     Start an LLM security scan via the FastAPI server.
     Returns:
@@ -48,7 +50,7 @@ async def start_scan(
 
     """
     url = f"{AGENTIC_SECURITY}/scan"
-    payload = {
+    payload: dict[str, Any] = {
         "llmSpec": llmSpec,
         "maxBudget": maxBudget,
         "datasets": [],
@@ -63,7 +65,7 @@ async def start_scan(
 
 
 @mcp.tool()
-async def stop_scan() -> dict:
+async def stop_scan() -> dict[str, Any]:
     """Stop an ongoing scan via the FastAPI server.
 
     Returns:
@@ -76,7 +78,7 @@ async def stop_scan() -> dict:
 
 
 @mcp.tool()
-async def get_data_config() -> list:
+async def get_data_config() -> list[dict[str, Any]]:
     """
     Retrieve data configuration from the FastAPI server.
 
@@ -90,7 +92,7 @@ async def get_data_config() -> list:
 
 
 @mcp.tool()
-async def get_spec_templates() -> list:
+async def get_spec_templates() -> list[dict[str, Any]]:
     """
     Retrieve data configuration from the FastAPI server.
 
