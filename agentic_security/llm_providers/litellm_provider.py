@@ -2,6 +2,8 @@
 
 from typing import Any
 
+import litellm
+
 from agentic_security.llm_providers.base import (
     BaseLLMProvider,
     LLMMessage,
@@ -82,8 +84,6 @@ class LiteLLMProvider(BaseLLMProvider):
         return await self.chat(messages, **kwargs)
 
     async def chat(self, messages: list[LLMMessage], **kwargs: Any) -> LLMResponse:
-        import litellm
-
         try:
             response = await litellm.acompletion(
                 messages=self._messages_to_dicts(messages),
@@ -101,8 +101,6 @@ class LiteLLMProvider(BaseLLMProvider):
         return self.sync_chat(messages, **kwargs)
 
     def sync_chat(self, messages: list[LLMMessage], **kwargs: Any) -> LLMResponse:
-        import litellm
-
         try:
             response = litellm.completion(
                 messages=self._messages_to_dicts(messages),
