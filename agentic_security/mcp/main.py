@@ -1,3 +1,5 @@
+import os
+
 import httpx
 from mcp.server.fastmcp import FastMCP
 
@@ -8,7 +10,7 @@ mcp = FastMCP(
 )
 
 # FastAPI Server Configuration
-AGENTIC_SECURITY = "http://0.0.0.0:8718"
+AGENTIC_SECURITY = os.getenv("AGENTIC_SECURITY_URL", "http://0.0.0.0:8718")
 
 
 @mcp.tool()
