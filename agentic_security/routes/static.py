@@ -115,7 +115,7 @@ async def serve_icon(icon_name: str) -> FileResponse:
 async def proxy_tailwindcss() -> FileResponse:
     """Proxy the Tailwind CSS script."""
     return proxy_external_resource(
-        "https://cdn.tailwindcss.com",
+        "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4",
         STATIC_DIR / "tailwindcss.js",
         "application/javascript",
     )
