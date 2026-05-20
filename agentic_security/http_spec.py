@@ -18,16 +18,34 @@ class Modality(Enum):
 
 def encode_image_base64_by_url(url: str = "https://github.com/fluidicon.png") -> str:
     """Encode image data to base64 from a URL"""
-    response = httpx.get(url)
-    encoded_content = base64.b64encode(response.content).decode("utf-8")
-    return "data:image/jpeg;base64," + encoded_content
+    try:
+        response = httpx.get(url)
+        encoded_content = base64.b64encode(response.content).decode("utf-8")
+        return "data:image/jpeg;base64," + encoded_content
+    except httpx.TimeoutException as e:
+        raise ValueError(f"Image fetch timed out: {str(e)}")
+    except httpx.HTTPStatusError as e:
+        raise ValueError(f"HTTP error {e.response.status_code}: {str(e)}")
+    except httpx.RequestError as e:
+        raise ValueError(f"Image fetch failed: {str(e)}")
+    except Exception as e:
+        raise ValueError(f"Unexpected error fetching image: {str(e)}")
 
 
 def encode_audio_base64_by_url(url: str) -> str:
     """Encode audio data to base64 from a URL"""
-    response = httpx.get(url)
-    encoded_content = base64.b64encode(response.content).decode("utf-8")
-    return "data:audio/mpeg;base64," + encoded_content
+    try:
+        response = httpx.get(url)
+        encoded_content = base64.b64encode(response.content).decode("utf-8")
+        return "data:audio/mpeg;base64," + encoded_content
+    except httpx.TimeoutException as e:
+        raise ValueError(f"Audio fetch timed out: {str(e)}")
+    except httpx.HTTPStatusError as e:
+        raise ValueError(f"HTTP error {e.response.status_code}: {str(e)}")
+    except httpx.RequestError as e:
+        raise ValueError(f"Audio fetch failed: {str(e)}")
+    except Exception as e:
+        raise ValueError(f"Unexpected error fetching audio: {str(e)}")
 
 
 class InvalidHTTPSpecError(Exception):
@@ -58,16 +76,25 @@ class LLMSpec(BaseModel):
 
     async def _probe_with_files(self, files):
         transport = httpx.AsyncHTTPTransport(retries=settings_var("network.retry", 3))
-        async with httpx.AsyncClient(transport=transport) as client:
-            response = await client.request(
-                method=self.method,
-                url=self.url,
-                headers=self.headers,
-                files=files,
-                timeout=self.timeout(),
-            )
-
-        return response
+        try:
+            async with httpx.AsyncClient(transport=transport) as client:
+                response = await client.request(
+                    method=self.method,
+                    url=self.url,
+                    headers=self.headers,
+                    files=files,
+                    timeout=self.timeout(),
+                )
+                response.raise_for_status()
+                return response
+        except httpx.TimeoutException as e:
+            raise ValueError(f"Request timed out: {str(e)}")
+        except httpx.HTTPStatusError as e:
+            raise ValueError(f"HTTP error {e.response.status_code}: {str(e)}")
+        except httpx.RequestError as e:
+            raise ValueError(f"Request failed: {str(e)}")
+        except Exception as e:
+            raise ValueError(f"Unexpected error: {str(e)}")
 
     def validate(
         self, prompt: str, encoded_image: str, encoded_audio: str, files: dict | None
@@ -108,16 +135,26 @@ class LLMSpec(BaseModel):
         content = content.replace("<<BASE64_AUDIO>>", encoded_audio)
 
         transport = httpx.AsyncHTTPTransport(retries=settings_var("network.retry", 3))
-        async with httpx.AsyncClient(transport=transport) as client:
-            response = await client.request(
-                method=self.method,
-                url=self.url,
-                headers=self.headers,
-                content=content,
-                timeout=self.timeout(),
-            )
+        try:
+            async with httpx.AsyncClient(transport=transport) as client:
+                response = await client.request(
+                    method=self.method,
+                    url=self.url,
+                    headers=self.headers,
+                    content=content,
+                    timeout=self.timeout(),
+                )
+                response.raise_for_status()
+                return response
 
-        return response
+        except httpx.TimeoutException as e:
+            raise ValueError(f"Request timed out: {str(e)}")
+        except httpx.HTTPStatusError as e:
+            raise ValueError(f"HTTP error {e.response.status_code}: {str(e)}")
+        except httpx.RequestError as e:
+            raise ValueError(f"Request failed: {str(e)}")
+        except Exception as e:
+            raise ValueError(f"Unexpected error: {str(e)}")
 
     async def verify(self) -> httpx.Response:
         match self:
