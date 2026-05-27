@@ -23,3 +23,5 @@ agentic_security/agents/operator_agno.py
 .claude/
 plan.md
 auto_loop.sh
+agentic_security/static/elm-stuff/
+agentic_security/static/node_modules/
