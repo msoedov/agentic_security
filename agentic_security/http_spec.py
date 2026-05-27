@@ -69,9 +69,7 @@ class LLMSpec(BaseModel):
 
         return response
 
-    def validate(
-        self, prompt: str, encoded_image: str, encoded_audio: str, files: dict | None
-    ) -> None:
+    def validate(self, prompt: str, encoded_image: str, encoded_audio: str, files: dict | None) -> None:
         if self.has_files and not files:
             raise ValueError("Files are required for this request.")
 
@@ -107,12 +105,17 @@ class LLMSpec(BaseModel):
         content = content.replace("<<BASE64_IMAGE>>", encoded_image)
         content = content.replace("<<BASE64_AUDIO>>", encoded_audio)
 
+        # Remove Content-Length from headers to avoid mismatch when
+        # placeholder replacement changes body size. httpx will set
+        # the correct Content-Length based on the actual content.
+        clean_headers = {k: v for k, v in self.headers.items() if k.lower() != "content-length"}
+
         transport = httpx.AsyncHTTPTransport(retries=settings_var("network.retry", 3))
         async with httpx.AsyncClient(transport=transport) as client:
             response = await client.request(
                 method=self.method,
                 url=self.url,
-                headers=self.headers,
+                headers=clean_headers,
                 content=content,
                 timeout=self.timeout(),
             )
@@ -127,9 +130,7 @@ class LLMSpec(BaseModel):
                 return await self.probe(
                     "test",
                     # TODO: fix url for mp3
-                    encoded_audio=encode_audio_base64_by_url(
-                        "https://www.example.com/audio.mp3"
-                    ),
+                    encoded_audio=encode_audio_base64_by_url("https://www.example.com/audio.mp3"),
                 )
             case LLMSpec(has_files=True):
                 return await self._probe_with_files({})
@@ -168,18 +169,14 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     # Extract the method and URL from the first line
     request_line_parts = lines[0].split()
     if len(request_line_parts) < 2:
-        raise InvalidHTTPSpecError(
-            "First line of HTTP spec must include the method and URL."
-        )
+        raise InvalidHTTPSpecError("First line of HTTP spec must include the method and URL.")
     method, url = request_line_parts[0], request_line_parts[1]
 
     # Check url validity
     valid_url = urlparse(url)
     # if missing the correct formatting ://, urlparse.netloc will be empty
     if valid_url.scheme not in ("http", "https") or not valid_url.netloc:
-        raise InvalidHTTPSpecError(
-            f"Invalid URL: {url}. Ensure it starts with 'http://' or 'https://'"
-        )
+        raise InvalidHTTPSpecError(f"Invalid URL: {url}. Ensure it starts with 'http://' or 'https://'")
 
     # Initialize headers and body
     headers = {}
