@@ -1,4 +1,5 @@
 import asyncio
+from typing import Any
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -13,7 +14,7 @@ server_params = StdioServerParameters(
 )
 
 
-async def run() -> None:
+async def run() -> tuple[Any, Any, Any] | None:
     try:
         logger.info(
             "Starting stdio client session with server parameters: %s", server_params
