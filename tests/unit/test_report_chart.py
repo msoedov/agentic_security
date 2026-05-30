@@ -1,6 +1,9 @@
 import io
 
+import matplotlib
 import pytest
+
+matplotlib.use("Agg")
 
 from agentic_security.report_chart import (
     _generate_identifiers,
@@ -24,8 +27,8 @@ class TestGenerateIdentifiers:
         data = type("DF", (), {"__len__": lambda s: 27})()
         result = _generate_identifiers(data)
         assert result[0] == "A1"
-        assert result[25] == "Z1"
-        assert result[26] == "A2"
+        assert result[25] == "A26"
+        assert result[26] == "B1"
 
     def test_empty_dataframe(self):
         data = type("DF", (), {"__len__": lambda s: 0})()
