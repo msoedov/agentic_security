@@ -2,14 +2,18 @@ import io
 
 import matplotlib
 import pytest
-
-matplotlib.use("Agg")
+from inline_snapshot import snapshot
 
 from agentic_security.report_chart import (
     _generate_identifiers,
     generate_identifiers,
     plot_security_report,
 )
+
+
+@pytest.fixture(autouse=True)
+def use_agg_backend():
+    matplotlib.use("Agg")
 
 
 class TestGenerateIdentifiers:
@@ -58,7 +62,10 @@ class TestPlotSecurityReport:
             {"module": "mod_c", "failureRate": 25.0, "tokens": 500},
         ]
         result = plot_security_report(table_data)
-        assert result.getvalue() != b""
+        # A real plot was rendered: non-empty buffer carrying the PNG signature.
+        png = result.getvalue()
+        assert len(png) > 0
+        assert png[:8] == snapshot(b"\x89PNG\r\n\x1a\n")
 
     def test_handles_empty_data(self):
         result = plot_security_report([])
