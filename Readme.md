@@ -83,6 +83,25 @@ agentic_security --port=PORT --host=HOST
 
 <img width="100%" alt="booking-screen" src="https://raw.githubusercontent.com/msoedov/agentic_security/refs/heads/main/docs/images/demo.gif">
 
+## MCP client example
+
+Agentic Security includes an MCP stdio server in `agentic_security.mcp.main`.
+To list the available MCP tools from a local checkout:
+
+```shell
+python examples/mcp_client_usage.py
+```
+
+To call HTTP-backed tools, run the Agentic Security app first, then point the
+MCP server at it:
+
+```shell
+agentic_security --host 127.0.0.1 --port 8718
+python examples/mcp_client_usage.py --agentic-security-url http://127.0.0.1:8718 --call get_spec_templates
+```
+
+See `docs/mcp_client_usage.md` for the full walkthrough.
+
 ## LLM kwargs
 
 Agentic Security uses plain text HTTP spec like:
