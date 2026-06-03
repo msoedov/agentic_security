@@ -18,7 +18,6 @@ from typing import Any
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-
 NO_ARGUMENT_TOOLS = {"get_data_config", "get_spec_templates", "stop_scan"}
 
 
@@ -56,7 +55,9 @@ async def run_client(agentic_security_url: str | None, call_tool: str | None) ->
             print("Available Agentic Security MCP tools:")
             for tool in tools.tools:
                 description_lines = (tool.description or "").strip().splitlines()
-                description = description_lines[0] if description_lines else "No description"
+                description = (
+                    description_lines[0] if description_lines else "No description"
+                )
                 print(f"- {tool.name}: {description}")
 
             if not call_tool:
