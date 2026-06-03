@@ -14,9 +14,11 @@ def _ensure_registered() -> None:
         return
     from agentic_security.llm_providers.openai_provider import OpenAIProvider
     from agentic_security.llm_providers.anthropic_provider import AnthropicProvider
+    from agentic_security.llm_providers.litellm_provider import LiteLLMProvider
 
     _PROVIDERS["openai"] = OpenAIProvider
     _PROVIDERS["anthropic"] = AnthropicProvider
+    _PROVIDERS["litellm"] = LiteLLMProvider
 
 
 def register_provider(name: str, provider_class: type[BaseLLMProvider]) -> None:
