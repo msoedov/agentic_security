@@ -1,58 +1,34 @@
-def calculate_cost(tokens: int, model: str = "deepseek-chat") -> float:
-    """Calculate API cost based on token count and model.
+# API pricing, USD per token. Values are dollars per 1M tokens / 1_000_000.
+# Verified against vendor pricing pages on 2026-06-03.
+PRICING = {
+    # Anthropic Claude (current generation: Opus 4.x, Sonnet 4.x, Haiku 4.5)
+    "claude-opus": {"input": 5 / 1_000_000, "output": 25 / 1_000_000},
+    "claude-sonnet": {"input": 3 / 1_000_000, "output": 15 / 1_000_000},
+    "claude-haiku": {"input": 1 / 1_000_000, "output": 5 / 1_000_000},
+    # OpenAI
+    "gpt-4o": {"input": 2.5 / 1_000_000, "output": 10 / 1_000_000},
+    "gpt-4o-mini": {"input": 0.15 / 1_000_000, "output": 0.6 / 1_000_000},
+    "gpt-4-turbo": {"input": 10 / 1_000_000, "output": 30 / 1_000_000},
+    "gpt-4": {"input": 30 / 1_000_000, "output": 60 / 1_000_000},
+    "gpt-3.5-turbo": {"input": 0.5 / 1_000_000, "output": 1.5 / 1_000_000},
+    # DeepSeek (deepseek-chat, cache-miss input rate)
+    "deepseek-chat": {"input": 0.14 / 1_000_000, "output": 0.28 / 1_000_000},
+    # Mistral
+    "mistral-large": {"input": 0.5 / 1_000_000, "output": 1.5 / 1_000_000},
+    "mixtral-8x7b": {"input": 0.7 / 1_000_000, "output": 0.7 / 1_000_000},
+}
 
-    Args:
-        tokens (int): Number of tokens used
-        model (str): Model name to calculate cost for
+DEFAULT_MODEL = "claude-sonnet"
 
-    Returns:
-        float: Cost in USD
+
+def calculate_cost(tokens: int, model: str = DEFAULT_MODEL) -> float:
+    """Calculate API cost in USD for a total token count.
+
+    Assumes a 1:1 input/output split, since callers only track a combined total.
     """
-    # API pricing as of 2024-03-01
-    pricing = {
-        "deepseek-chat": {
-            "input": 0.0007 / 1000,  # $0.70 per million input tokens
-            "output": 0.0028 / 1000,  # $2.80 per million output tokens
-        },
-        "gpt-4-turbo": {
-            "input": 0.01 / 1000,  # $10 per million input tokens
-            "output": 0.03 / 1000,  # $30 per million output tokens
-        },
-        "gpt-4": {
-            "input": 0.03 / 1000,  # $30 per million input tokens
-            "output": 0.06 / 1000,  # $60 per million output tokens
-        },
-        "gpt-3.5-turbo": {
-            "input": 0.0015 / 1000,  # $1.50 per million input tokens
-            "output": 0.002 / 1000,  # $2.00 per million output tokens
-        },
-        "claude-3-opus": {
-            "input": 0.015 / 1000,  # $15 per million input tokens
-            "output": 0.075 / 1000,  # $75 per million output tokens
-        },
-        "claude-3-sonnet": {
-            "input": 0.003 / 1000,  # $3 per million input tokens
-            "output": 0.015 / 1000,  # $15 per million output tokens
-        },
-        "claude-3-haiku": {
-            "input": 0.00025 / 1000,  # $0.25 per million input tokens
-            "output": 0.00125 / 1000,  # $1.25 per million output tokens
-        },
-        "mistral-large": {
-            "input": 0.008 / 1000,  # $8 per million input tokens
-            "output": 0.024 / 1000,  # $24 per million output tokens
-        },
-        "mixtral-8x7b": {
-            "input": 0.002 / 1000,  # $2 per million input tokens
-            "output": 0.006 / 1000,  # $6 per million output tokens
-        },
-    }
-
-    if model not in pricing:
+    if model not in PRICING:
         raise ValueError(f"Unknown model: {model}")
 
-    # For now, assume 1:1 input/output ratio
-    input_cost = tokens * pricing[model]["input"]
-    output_cost = tokens * pricing[model]["output"]
-
-    return round(input_cost + output_cost, 4)
+    half = max(tokens, 0) / 2
+    rates = PRICING[model]
+    return round(half * rates["input"] + half * rates["output"], 6)
