@@ -297,6 +297,37 @@ def file_dataset(file) -> list[str]:
     return prompts
 
 
+def parse_csv_content(content: bytes) -> ProbeDataset:
+    """Parse uploaded CSV bytes into a ProbeDataset.
+
+    Looks for a 'prompt' column first; falls back to the first text-like column.
+    """
+    df = pd.read_csv(io.BytesIO(content), encoding_errors="ignore")
+
+    prompt_col = None
+    # Prefer an explicit 'prompt' column
+    if "prompt" in df.columns:
+        prompt_col = "prompt"
+    else:
+        # Fall back to the first string/object column
+        for col in df.columns:
+            if df[col].dtype == object:
+                prompt_col = col
+                break
+
+    if prompt_col is None or df[prompt_col].dropna().empty:
+        raise ValueError(
+            "Uploaded CSV has no suitable prompt column. "
+            "Please include a column named 'prompt'."
+        )
+
+    prompts = df[prompt_col].dropna().astype(str).tolist()
+    logger.info(
+        f"Parsed {len(prompts)} prompts from uploaded CSV (column='{prompt_col}')"
+    )
+    return create_probe_dataset("Uploaded CSV", prompts, {"src": "upload"})
+
+
 def load_local_csv() -> ProbeDataset:
     """Load prompts from local CSV files."""
     os.makedirs("./datasets", exist_ok=True)
