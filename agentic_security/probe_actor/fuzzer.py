@@ -17,7 +17,7 @@ from agentic_security.probe_actor.cost_module import calculate_cost
 from agentic_security.probe_actor.refusal import refusal_heuristic
 from agentic_security.probe_actor.state import FuzzerState
 from agentic_security.probe_data import audio_generator, image_generator, msj_data
-from agentic_security.probe_data.data import prepare_prompts
+from agentic_security.probe_data.data import prepare_prompts, create_probe_dataset
 
 MAX_PROMPT_LENGTH = settings_var("fuzzer.max_prompt_lenght", 2048)
 BUDGET_MULTIPLIER = settings_var("fuzzer.budget_multiplier", 100000000)
@@ -352,6 +352,7 @@ async def perform_single_shot_scan(
     optimize: bool = False,
     stop_event: asyncio.Event | None = None,
     secrets: dict[str, str] | None = None,
+    inline_datasets: list[dict[str, Any]] | None = None,
 ) -> AsyncGenerator[str, None]:
     """
     Perform a standard security scan using a given request factory.
@@ -378,6 +379,7 @@ async def perform_single_shot_scan(
     """
     datasets = datasets or []
     secrets = secrets or {}
+    inline_datasets = inline_datasets or []
     if stop_event and stop_event.is_set():
         stop_event.clear()
         yield ScanResult.status_msg("Loading datasets...")
@@ -395,6 +397,18 @@ async def perform_single_shot_scan(
         tools_inbox=tools_inbox,
         options=[m.get("opts", {}) for m in selected_datasets],
     )
+
+    # Append inline (uploaded CSV) datasets
+    for inline_ds in inline_datasets:
+        prompts = inline_ds.get("prompts", [])
+        if prompts:
+            ds = create_probe_dataset(
+                inline_ds.get("name", "Uploaded CSV"),
+                prompts,
+                {"src": "upload"},
+            )
+            prompt_modules.append(ds)
+
     yield ScanResult.status_msg("Datasets loaded. Starting scan...")
 
     fuzzer_state = FuzzerState()
@@ -620,5 +634,6 @@ def scan_router(
                 optimize=scan_parameters.optimize,
                 stop_event=stop_event,
                 secrets=scan_parameters.secrets,
+                inline_datasets=scan_parameters.inline_datasets,
             )
         )
