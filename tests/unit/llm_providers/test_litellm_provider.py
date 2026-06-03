@@ -4,6 +4,8 @@ import pytest
 from inline_snapshot import snapshot
 from unittest.mock import MagicMock, AsyncMock, patch
 
+pytest.importorskip("litellm")
+
 from agentic_security.llm_providers.litellm_provider import LiteLLMProvider
 from agentic_security.llm_providers.base import (
     LLMMessage,

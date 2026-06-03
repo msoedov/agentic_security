@@ -2,7 +2,10 @@
 
 from typing import Any
 
-import litellm
+try:
+    import litellm
+except ImportError:
+    litellm = None
 
 from agentic_security.llm_providers.base import (
     BaseLLMProvider,
@@ -29,6 +32,10 @@ class LiteLLMProvider(BaseLLMProvider):
         api_base: str | None = None,
         **kwargs: Any,
     ) -> None:
+        if litellm is None:
+            raise LLMProviderError(
+                "litellm is not installed. Install it with: pip install litellm"
+            )
         super().__init__(model, **kwargs)
         self._api_key = api_key
         self._api_base = api_base
