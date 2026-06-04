@@ -8,21 +8,6 @@
   </p>
 </p>
 
-<p align="center">
-  <a href="https://github.com/msoedov/agentic_security/commits/main">
-    <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/msoedov/agentic_security?style=for-the-badge&logo=git&labelColor=000000&color=6A35FF" />
-  </a>
-  <a href="https://github.com/msoedov/agentic_security">
-    <img alt="GitHub Repo Size" src="https://img.shields.io/github/repo-size/msoedov/agentic_security?style=for-the-badge&logo=database&labelColor=000000&color=yellow" />
-  </a>
-  <a href="https://github.com/msoedov/agentic_security/blob/master/LICENSE">
-    <img alt="GitHub License" src="https://img.shields.io/github/license/msoedov/agentic_security?style=for-the-badge&logo=codeigniter&labelColor=000000&color=FFCC19" />
-  </a>
-  <a href="https://pypi.org/project/agentic-security/">
-    <img alt="PyPI Version" src="https://img.shields.io/pypi/v/agentic-security?style=for-the-badge&logo=pypi&labelColor=000000&color=00CCFF" />
-  </a>
-
-</p>
 
 
 ## Features
