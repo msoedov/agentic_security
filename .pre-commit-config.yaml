@@ -85,5 +85,5 @@ repos:
         exclude: '^(third_party/)|(poetry.lock)|(ui/package-lock.json)|(agentic_security/static/.*)'
         args:
         # if you've got a short variable name that's getting flagged, add it here
-        - -L bu,ro,te,ue,alo,hda,ois,nam,nams,ned,som,parm,setts,inout,warmup,bumb,nd,sie,vEw
+        - -L bu,ro,te,ue,alo,hda,ois,nam,nams,ned,som,parm,setts,inout,warmup,bumb,nd,sie,vEw,inh
         - --builtins clear,rare,informal,usage,code,names,en-GB_to_en-US
