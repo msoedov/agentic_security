@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 from agentic_security.refusal_classifier.model import RefusalClassifier
 from agentic_security.refusal_classifier.pii_detector import PIIDetector
+from agentic_security.refusal_classifier.sandbox_escape_detector import (
+    SandboxEscapeDetector,
+)
 
 classifier = RefusalClassifier()
 classifier.load_model()
@@ -103,6 +106,7 @@ refusal_classifier_manager = RefusalClassifierManager()
 refusal_classifier_manager.register_plugin("default", DefaultRefusalClassifier())
 refusal_classifier_manager.register_plugin("ml_classifier", classifier)
 pii_detector = PIIDetector()
+sandbox_escape_detector = SandboxEscapeDetector()
 
 
 def refusal_heuristic(request_json):
@@ -130,3 +134,17 @@ def pii_leak_heuristic(request_json):
     """
     request = str(request_json)
     return pii_detector.is_leak(request)
+
+
+def sandbox_escape_heuristic(request_json):
+    """Check if the request contains Docker/K8s sandbox escape probing.
+
+    Args:
+        request_json: The request to check.
+
+    Returns:
+        bool: True if the request contains a sandbox escape probe signal,
+        False otherwise.
+    """
+    request = str(request_json)
+    return sandbox_escape_detector.is_escape_attempt(request)
