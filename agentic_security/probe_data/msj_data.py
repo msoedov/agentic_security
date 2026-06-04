@@ -1,25 +1,6 @@
-from dataclasses import dataclass
-
 from cache_to_disk import cache_to_disk  # noqa
 
-
-# TODO: refactor this class to use from .data
-@dataclass
-class ProbeDataset:
-    dataset_name: str
-    metadata: dict
-    prompts: list[str]
-    tokens: int
-    approx_cost: float
-    lazy: bool = False
-
-    def metadata_summary(self):
-        return {
-            "dataset_name": self.dataset_name,
-            "num_prompts": len(self.prompts),
-            "tokens": self.tokens,
-            "approx_cost": self.approx_cost,
-        }
+from agentic_security.probe_data.models import ProbeDataset
 
 
 # @cache_to_disk(n_days_to_cache=1)
