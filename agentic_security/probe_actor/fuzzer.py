@@ -273,7 +273,9 @@ async def scan_module(
 
         failure_rate = module_failures / max(module_prompts, 1)
         failure_rates.append(failure_rate)
-        cost = calculate_cost(tokens, model=getattr(request_factory, 'model_name', 'unknown'))
+        cost = calculate_cost(
+            tokens, model=getattr(request_factory, "model_name", "unknown")
+        )
 
         response_text = fuzzer_state.get_last_output(prompt) or ""
 
@@ -557,7 +559,9 @@ async def perform_many_shot_scan(
 
             failure_rate = module_failures / max(processed_prompts, 1)
             failure_rates.append(failure_rate)
-            cost = calculate_cost(tokens, model=getattr(request_factory, 'model_name', 'unknown'))
+            cost = calculate_cost(
+                tokens, model=getattr(request_factory, "model_name", "unknown")
+            )
 
             yield ScanResult(
                 module=module.dataset_name,
