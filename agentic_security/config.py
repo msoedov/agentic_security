@@ -87,7 +87,7 @@ class SettingsMixin:
                 return default
         return value
 
-    def generate_default_settings(self, host: str = "0.0.0.0", port: int = 8718):
+    def generate_default_settings(self, host: str = "127.0.0.1", port: int = 8718):
         # Accept host / port as parameters
         with open(self.default_path, "w") as f:
             f.write(

@@ -1,3 +1,5 @@
+import os
+
 import httpx
 from mcp.server.fastmcp import FastMCP
 
@@ -8,7 +10,64 @@ mcp = FastMCP(
 )
 
 # FastAPI Server Configuration
-AGENTIC_SECURITY = "http://0.0.0.0:8718"
+AGENTIC_SECURITY = os.getenv("AGENTIC_SECURITY_URL", "http://0.0.0.0:8718")
+
+
+# ---------------------------------------------------------------------------
+# Prompt templates
+# ---------------------------------------------------------------------------
+
+
+@mcp.prompt()
+def security_scan_prompt(llm_spec: str, max_budget: int = 1000) -> str:
+    """Generate a prompt to kick off a full LLM security scan.
+
+    Args:
+        llm_spec: The LLM specification string identifying the model endpoint.
+        max_budget: Maximum number of probes to run (defaults to 1000).
+    """
+    return (
+        f"Please run a security scan on the following LLM specification:\n\n"
+        f"  Spec: {llm_spec}\n"
+        f"  Max budget: {max_budget} probes\n\n"
+        f"Use the start_scan tool to initiate the scan, then monitor progress "
+        f"with get_data_config, and stop it with stop_scan when complete."
+    )
+
+
+@mcp.prompt()
+def verify_llm_prompt(llm_spec: str) -> str:
+    """Generate a prompt to verify that an LLM spec is reachable and well-formed.
+
+    Args:
+        llm_spec: The LLM specification string to verify.
+    """
+    return (
+        f"Verify the following LLM specification is valid and reachable:\n\n"
+        f"  Spec: {llm_spec}\n\n"
+        f"Use the verify_llm tool and report back whether the spec is accepted "
+        f"by the Agentic Security server."
+    )
+
+
+@mcp.prompt()
+def adversarial_probe_prompt(llm_spec: str) -> str:
+    """Generate a prompt for an adversarial probing session with multi-step attacks.
+
+    Args:
+        llm_spec: The LLM specification string identifying the target model.
+    """
+    return (
+        f"Run an adversarial probing session against the LLM described by:\n\n"
+        f"  Spec: {llm_spec}\n\n"
+        f"Enable multi-step attacks and optimization in the start_scan call. "
+        f"After the scan finishes, summarise the most critical vulnerabilities found."
+    )
+
+
+# ---------------------------------------------------------------------------
+# Tools
+# ---------------------------------------------------------------------------
 
 
 @mcp.tool()

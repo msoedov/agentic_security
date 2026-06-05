@@ -10,13 +10,13 @@ from agentic_security.misc.banner import init_banner
 
 
 class CLI:
-    def server(self, port: int = 8718, host: str = "0.0.0.0"):
+    def server(self, port: int = 8718, host: str = "127.0.0.1"):
         """
         Launch the Agentic Security server.
 
         Args:
             port (int): Port number for the server to listen on. Default is 8718.
-            host (str): Host address for the server. Default is "0.0.0.0".
+            host (str): Host address for the server. Default is "127.0.0.1".
         """
         sys.path.append(os.path.dirname("."))
         config = uvicorn.Config(
@@ -34,7 +34,7 @@ class CLI:
         sys.path.append(os.path.dirname("."))
         SecurityScanner().entrypoint()
 
-    def init(self, host: str = "0.0.0.0", port: int = 8718):
+    def init(self, host: str = "127.0.0.1", port: int = 8718):
         """
         Generate the default CI configuration file.
         """

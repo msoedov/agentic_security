@@ -23,6 +23,8 @@ class Scan(BaseModel):
     enableMultiStepAttack: bool = False
     # MSJ only mode
     probe_datasets: list[dict] = Field(default_factory=list)
+    # Inline prompts uploaded via CSV (not stored in registry)
+    inline_datasets: list[dict] = Field(default_factory=list)
     # Set and managed by the backend
     secrets: dict[str, str] = Field(default_factory=dict)
 

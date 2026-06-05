@@ -59,7 +59,6 @@ def _plot_security_report(table: Table) -> io.BytesIO:
     Returns:
         io.BytesIO: A buffer containing the generated plot image in PNG format.
     """
-    return io.BytesIO()
     # Data preprocessing
     logger.info("Data preprocessing started.")
 

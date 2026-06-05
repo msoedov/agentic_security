@@ -20,6 +20,7 @@ from ..dependencies import InMemorySecrets, get_in_memory_secrets
 from ..http_spec import InvalidHTTPSpecError, LLMSpec
 from ..primitives import LLMInfo, Scan
 from ..probe_actor import fuzzer
+from ..probe_data.data import parse_csv_content
 
 router = APIRouter()
 
@@ -91,15 +92,25 @@ async def scan_csv(
     enableMultiStepAttack: bool = Query(False),
     secrets: InMemorySecrets = Depends(get_in_memory_secrets),
 ) -> StreamingResponse:
-    # TODO: content dataset to fuzzer
-    content = await file.read()  # noqa
+    content = await file.read()
     llm_spec = await llmSpec.read()
+
+    # Parse the uploaded CSV into an inline dataset
+    inline_datasets = []
+    try:
+        dataset = parse_csv_content(content)
+        inline_datasets.append(
+            {"name": dataset.dataset_name, "prompts": dataset.prompts}
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     scan_parameters = Scan(
         llmSpec=llm_spec,
         optimize=optimize,
-        maxBudget=1000,
+        maxBudget=maxBudget,
         enableMultiStepAttack=enableMultiStepAttack,
+        inline_datasets=inline_datasets,
     )
     scan_parameters.with_secrets(secrets)
     return StreamingResponse(
