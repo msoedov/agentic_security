@@ -42,7 +42,7 @@ class Scan(BaseModel):
 class ScanResult(BaseModel):
     module: str
     tokens: float | int
-    cost: float
+    cost: float | None
     progress: float
     status: bool = False
     failureRate: float = 0.0

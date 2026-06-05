@@ -1,3 +1,5 @@
+from agentic_security.logutils import logger
+
 # API pricing, USD per token. Values are dollars per 1M tokens / 1_000_000.
 # Verified against vendor pricing pages on 2026-06-03.
 PRICING = {
@@ -21,13 +23,19 @@ PRICING = {
 DEFAULT_MODEL = "claude-sonnet"
 
 
-def calculate_cost(tokens: int, model: str = DEFAULT_MODEL) -> float:
+def calculate_cost(tokens: int, model: str = DEFAULT_MODEL) -> float | None:
     """Calculate API cost in USD for a total token count.
 
     Assumes a 1:1 input/output split, since callers only track a combined total.
+
+    Returns:
+        float | None: Cost in USD, or None if the model pricing is unknown.
     """
     if model not in PRICING:
-        raise ValueError(f"Unknown model: {model}")
+        logger.warning(
+            f"Unknown model '{model}': pricing not available, cost will not be estimated."
+        )
+        return None
 
     half = max(tokens, 0) / 2
     rates = PRICING[model]

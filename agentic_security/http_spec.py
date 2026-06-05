@@ -1,4 +1,5 @@
 import base64
+import json
 from enum import Enum
 from urllib.parse import urlparse
 
@@ -144,6 +145,18 @@ class LLMSpec(BaseModel):
                 return await self.probe("test prompt")
 
     fn = probe
+
+    @property
+    def model_name(self) -> str:
+        """Extract the model name from the request body (JSON).
+
+        Returns the value of the 'model' field if present, otherwise 'unknown'.
+        """
+        try:
+            body_json = json.loads(self.body)
+            return body_json.get("model", "unknown")
+        except (json.JSONDecodeError, TypeError):
+            return "unknown"
 
     @property
     def modality(self) -> Modality:
