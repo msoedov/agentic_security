@@ -1,4 +1,7 @@
-def calculate_cost(tokens: int, model: str = "deepseek-chat") -> float:
+from agentic_security.logutils import logger
+
+
+def calculate_cost(tokens: int, model: str = "deepseek-chat") -> float | None:
     """Calculate API cost based on token count and model.
 
     Args:
@@ -6,7 +9,7 @@ def calculate_cost(tokens: int, model: str = "deepseek-chat") -> float:
         model (str): Model name to calculate cost for
 
     Returns:
-        float: Cost in USD
+        float | None: Cost in USD, or None if the model pricing is unknown.
     """
     # API pricing as of 2024-03-01
     pricing = {
@@ -49,7 +52,10 @@ def calculate_cost(tokens: int, model: str = "deepseek-chat") -> float:
     }
 
     if model not in pricing:
-        raise ValueError(f"Unknown model: {model}")
+        logger.warning(
+            f"Unknown model '{model}': pricing not available, cost will not be estimated."
+        )
+        return None
 
     # For now, assume 1:1 input/output ratio
     input_cost = tokens * pricing[model]["input"]

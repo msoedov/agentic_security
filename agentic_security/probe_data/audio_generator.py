@@ -131,6 +131,10 @@ class RequestAdapter:
         if not llm_spec.has_audio:
             raise ValueError("LLMSpec must have an image")
 
+    @property
+    def model_name(self) -> str:
+        return self.llm_spec.model_name
+
     async def probe(
         self, prompt: str, encoded_image: str = "", encoded_audio: str = "", files={}
     ) -> httpx.Response:
