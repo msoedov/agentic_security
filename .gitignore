@@ -25,3 +25,5 @@ plan.md
 auto_loop.sh
 agentic_security/static/elm-stuff/
 agentic_security/static/node_modules/
+.venv/
+.cache/
