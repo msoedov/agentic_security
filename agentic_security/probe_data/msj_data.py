@@ -38,8 +38,10 @@ def load_dataset_generic(name, getter=lambda x: x["train"]["prompt"]):
 
 
 def prepare_prompts(
-    dataset_names=[], budget=-1, tools_inbox=None
+    dataset_names=None, budget=-1, tools_inbox=None
 ) -> list[ProbeDataset]:
+    if dataset_names is None:
+        dataset_names = []
     # fka/awesome-chatgpt-prompts
     # data-is-better-together/10k_prompts_ranked
     # alespalla/chatbot_instruction_prompts
@@ -51,4 +53,6 @@ def prepare_prompts(
             "fka/awesome-chatgpt-prompts"
         ),
     }
-    return [dataset_map[name] for name in dataset_map]
+    if not dataset_names:
+        return list(dataset_map.values())
+    return [dataset_map[name] for name in dataset_names if name in dataset_map]
