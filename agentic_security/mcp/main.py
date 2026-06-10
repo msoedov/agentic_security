@@ -1,7 +1,11 @@
+import logging
 import os
+from typing import Any, Dict, List, Optional
 
 import httpx
 from mcp.server.fastmcp import FastMCP
+
+logger = logging.getLogger(__name__)
 
 # Initialize MCP server
 mcp = FastMCP(
@@ -26,6 +30,7 @@ def security_scan_prompt(llm_spec: str, max_budget: int = 1000) -> str:
         llm_spec: The LLM specification string identifying the model endpoint.
         max_budget: Maximum number of probes to run (defaults to 1000).
     """
+    logger.info(f"Generating security scan prompt for spec: {llm_spec}")
     return (
         f"Please run a security scan on the following LLM specification:\n\n"
         f"  Spec: {llm_spec}\n"
@@ -42,6 +47,7 @@ def verify_llm_prompt(llm_spec: str) -> str:
     Args:
         llm_spec: The LLM specification string to verify.
     """
+    logger.info(f"Generating verify LLM prompt for spec: {llm_spec}")
     return (
         f"Verify the following LLM specification is valid and reachable:\n\n"
         f"  Spec: {llm_spec}\n\n"
@@ -57,6 +63,7 @@ def adversarial_probe_prompt(llm_spec: str) -> str:
     Args:
         llm_spec: The LLM specification string identifying the target model.
     """
+    logger.info(f"Generating adversarial probe prompt for spec: {llm_spec}")
     return (
         f"Run an adversarial probing session against the LLM described by:\n\n"
         f"  Spec: {llm_spec}\n\n"
@@ -81,10 +88,15 @@ async def verify_llm(spec: str) -> dict:
     Args: spect(str):  The specification of the LLM model to verify.
 
     """
-    url = f"{AGENTIC_SECURITY}/verify"
-    async with httpx.AsyncClient() as client:
-        response = await client.post(url, json={"spec": spec})
-        return response.json()
+    logger.info(f"Verifying LLM spec: {spec}")
+    try:
+        url = f"{AGENTIC_SECURITY}/verify"
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json={"spec": spec})
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error verifying LLM: {e}")
+        raise
 
 
 @mcp.tool()
@@ -106,19 +118,24 @@ async def start_scan(
         enableMultiStepAttack (bool, optional): Whether to enable multi-step attack
 
     """
-    url = f"{AGENTIC_SECURITY}/scan"
-    payload = {
-        "llmSpec": llmSpec,
-        "maxBudget": maxBudget,
-        "datasets": [],
-        "optimize": optimize,
-        "enableMultiStepAttack": enableMultiStepAttack,
-        "probe_datasets": [],
-        "secrets": {},
-    }
-    async with httpx.AsyncClient() as client:
-        response = await client.post(url, json=payload)
-        return response.json()
+    logger.info(f"Starting scan for spec: {llmSpec} with budget: {maxBudget}")
+    try:
+        url = f"{AGENTIC_SECURITY}/scan"
+        payload = {
+            "llmSpec": llmSpec,
+            "maxBudget": maxBudget,
+            "datasets": [],
+            "optimize": optimize,
+            "enableMultiStepAttack": enableMultiStepAttack,
+            "probe_datasets": [],
+            "secrets": {},
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=payload)
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error starting scan: {e}")
+        raise
 
 
 @mcp.tool()
@@ -128,10 +145,15 @@ async def stop_scan() -> dict:
     Returns:
         dict: The confirmation from the FastAPI server that the scan has been stopped.
     """
-    url = f"{AGENTIC_SECURITY}/stop"
-    async with httpx.AsyncClient() as client:
-        response = await client.post(url)
-        return response.json()
+    logger.info("Stopping current scan")
+    try:
+        url = f"{AGENTIC_SECURITY}/stop"
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url)
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error stopping scan: {e}")
+        raise
 
 
 @mcp.tool()
@@ -142,10 +164,15 @@ async def get_data_config() -> list:
     Returns:
         list: The response from the FastAPI server, confirming the scan has been stopped.
     """
-    url = f"{AGENTIC_SECURITY}/v1/data-config"
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        return response.json()
+    logger.info("Retrieving data configuration")
+    try:
+        url = f"{AGENTIC_SECURITY}/v1/data-config"
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error retrieving data config: {e}")
+        raise
 
 
 @mcp.tool()
@@ -156,10 +183,15 @@ async def get_spec_templates() -> list:
     Returns:
         list: The LLM specification templates from the FastAPI server.
     """
-    url = f"{AGENTIC_SECURITY}/v1/llm-specs"
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        return response.json()
+    logger.info("Retrieving spec templates")
+    try:
+        url = f"{AGENTIC_SECURITY}/v1/llm-specs"
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error retrieving spec templates: {e}")
+        raise
 
 
 # Run the MCP server
