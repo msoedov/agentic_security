@@ -26,7 +26,6 @@ nav:
     - Dataset Extension: datasets.md
     - External Modules: external_module.md
     - CI/CD Integration: ci_cd.md
-    - MCP Client Usage: mcp_client_usage.md
     - Bayesian Optimization: optimizer.md
     - Image Generation: image_generation.md
     - Stenography Functions: stenography.md
