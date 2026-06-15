@@ -39,3 +39,12 @@ def test_generate_image_dataset(mock_generate_image):
     assert isinstance(image_datasets[0], ImageProbeDataset)
     assert image_datasets[0].test_dataset.dataset_name == test_dataset_name
     assert image_datasets[0].image_prompts[0] == b"dummy_image_bytes"
+
+
+def test_generate_image_with_special_whitespace():
+    """Test that prompts with tab and other non-renderable whitespace don't raise warnings."""
+    prompt_with_tabs = "Hello\tWorld\tTest"
+    image_bytes = generate_image(prompt_with_tabs, 0)
+
+    assert isinstance(image_bytes, bytes)
+    assert len(image_bytes) > 0
