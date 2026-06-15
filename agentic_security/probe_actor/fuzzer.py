@@ -1,3 +1,30 @@
+"""
+Fuzzer module for performing LLM security scans.
+
+This module provides the core fuzzing logic for the Agentic Security scanner.
+It supports two scanning modes:
+    - **Single-shot scan**: Sends individual prompts from selected datasets to
+      probe LLM vulnerabilities (jailbreaks, prompt injection, etc.).
+    - **Many-shot scan (MSJ)**: Injects probe prompts within multi-step
+      conversations to test context-window attacks and many-shot jailbreaking.
+
+The module uses Bayesian optimization (via scikit-optimize) to adaptively
+focus scanning effort on high-failure-rate areas and supports early stopping
+based on configurable budget and failure-rate thresholds.
+
+Key components:
+    - ``generate_prompts``: Async generator that yields prompts from lists or
+      async sources.
+    - ``get_modality_adapter``: Routes requests through image/audio adapters
+      based on the LLM's modality.
+    - ``process_prompt`` / ``process_prompt_batch``: Core prompt execution and
+      response evaluation logic.
+    - ``scan_module``: Scans a single prompt module with progress tracking.
+    - ``perform_single_shot_scan`` / ``perform_many_shot_scan``: Top-level
+      scan orchestrators.
+    - ``scan_router``: Entry point that dispatches to the correct scan mode.
+"""
+
 import asyncio
 import random
 import time
@@ -19,13 +46,21 @@ from agentic_security.probe_actor.state import FuzzerState
 from agentic_security.probe_data import audio_generator, image_generator, msj_data
 from agentic_security.probe_data.data import prepare_prompts, create_probe_dataset
 
+#: Maximum number of characters from a prompt to include in scan results.
 MAX_PROMPT_LENGTH = settings_var("fuzzer.max_prompt_lenght", 2048)
+#: Multiplier applied to the user-specified budget to derive the internal token limit.
 BUDGET_MULTIPLIER = settings_var("fuzzer.budget_multiplier", 100000000)
+#: Number of initial random points for the Bayesian optimizer before fitting a model.
 INITIAL_OPTIMIZER_POINTS = settings_var("fuzzer.initial_optimizer_points", 25)
+#: Minimum number of failure samples required before the optimizer evaluates early stopping.
 MIN_FAILURE_SAMPLES = settings_var("fuzzer.min_failure_samples", 5)
+#: Failure rate threshold (0–1) above which a module scan is stopped early.
 FAILURE_RATE_THRESHOLD = settings_var("fuzzer.failure_rate_threshold", 0.5)
+#: File path for exporting failed prompt results as CSV.
 FAILURES_CSV_PATH = settings_var("fuzzer.failures_csv_path", "failures.csv")
+#: File path for exporting the full scan log as CSV.
 FULL_LOG_CSV_PATH = settings_var("fuzzer.full_log_csv_path", "full_scan_log.csv")
+#: Maximum number of injection attempts per prompt in many-shot mode.
 MAX_INJECTION_ATTEMPTS = settings_var("fuzzer.max_injection_attempts", 20)
 
 
