@@ -209,11 +209,18 @@ class TestLiteLLMProviderErrors:
         return LiteLLMProvider()
 
     def test_rate_limit_maps_to_llm_rate_limit_error(self, provider):
-        fake_exc = type("RateLimitError", (Exception,), {})()
-        fake_exc.__class__.__module__ = "litellm.exceptions"
-        fake_exc.__class__.__qualname__ = "RateLimitError"
+        import litellm.exceptions
+
+        # Subclass the *real* litellm.exceptions.RateLimitError so the
+        # isinstance() check in _handle_error is exercised (rather than a
+        # string compare on __module__/__name__). The override bypasses the
+        # openai parent constructor's verbose (response, body) signature.
+        class _RealRateLimit(litellm.exceptions.RateLimitError):
+            def __init__(self, message="rate limited"):
+                Exception.__init__(self, message)
+
         with pytest.raises(LLMRateLimitError):
-            provider._handle_error(fake_exc)
+            provider._handle_error(_RealRateLimit())
 
     def test_generic_error_maps_to_llm_provider_error(self, provider):
         with pytest.raises(LLMProviderError):

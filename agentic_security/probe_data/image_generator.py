@@ -4,13 +4,14 @@ import re
 
 import httpx
 import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
 from cache_to_disk import cache_to_disk
 from tqdm import tqdm
 
 from agentic_security.probe_data.models import ImageProbeDataset, ProbeDataset
+
+# matplotlib backend must be set before pyplot is imported.
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
 
 
 def generate_image_dataset(

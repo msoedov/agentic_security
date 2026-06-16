@@ -114,6 +114,48 @@ async def test_perform_many_shot_scan_probe_injection(
 
 
 @pytest.mark.asyncio
+@patch("agentic_security.probe_data.msj_data.prepare_prompts")
+@patch("agentic_security.probe_data.data.prepare_prompts")
+async def test_many_shot_passes_dataset_names_to_msj(
+    prepare_prompts_mock, msj_prepare_prompts_mock
+):
+    # Regression: msj_data.prepare_prompts expects dataset_names: list[str],
+    # but probe_datasets is a list[dict]. perform_many_shot_scan must extract
+    # the "dataset_name" strings and filter out unselected entries before
+    # forwarding them. Previously it passed the raw dict list, which (after
+    # msj_data.prepare_prompts was fixed) silently returned an empty result.
+    prepare_prompts_mock.return_value = []
+    msj_prepare_prompts_mock.return_value = []
+
+    request_factory = MagicMock()
+    request_factory.fn = AsyncMock(
+        return_value=AsyncMock(status_code=200, text="ok", json=lambda: {})
+    )
+
+    async_gen = perform_many_shot_scan(
+        request_factory=request_factory,
+        max_budget=100,
+        datasets=[{"dataset_name": "main", "selected": True}],
+        probe_datasets=[
+            {"dataset_name": "probe-a", "selected": True},
+            {
+                "dataset_name": "probe-b",
+                "selected": False,
+            },  # unselected -> filtered out
+        ],
+        optimize=False,
+    )
+    await assert_scan(async_gen, ["Loading", "Scan completed."])
+
+    msj_prepare_prompts_mock.assert_called_once()
+    args, kwargs = msj_prepare_prompts_mock.call_args
+    dataset_names = kwargs.get("dataset_names") or (args[0] if args else None)
+    assert dataset_names == [
+        "probe-a"
+    ], f"Expected dataset_names=['probe-a'], got {dataset_names!r}"
+
+
+@pytest.mark.asyncio
 @patch("agentic_security.probe_data.data.prepare_prompts")
 async def test_scan_router_single_shot(prepare_prompts_mock):
     prepare_prompts_mock.return_value = []
