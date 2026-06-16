@@ -536,7 +536,9 @@ async def perform_many_shot_scan(
         tools_inbox=tools_inbox,
     )
     yield ScanResult.status_msg("Loading datasets for MSJ...")
-    msj_modules = msj_data.prepare_prompts(probe_datasets)
+    msj_modules = msj_data.prepare_prompts(
+        dataset_names=[m["dataset_name"] for m in probe_datasets if m.get("selected")]
+    )
     yield ScanResult.status_msg("Datasets loaded. Starting scan...")
 
     fuzzer_state = FuzzerState()

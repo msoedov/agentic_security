@@ -79,8 +79,7 @@ class LiteLLMProvider(BaseLLMProvider):
         )
 
     def _handle_error(self, e: Exception) -> None:
-        qualname = f"{type(e).__module__}.{type(e).__name__}"
-        if qualname == "litellm.exceptions.RateLimitError":
+        if litellm is not None and isinstance(e, litellm.exceptions.RateLimitError):
             raise LLMRateLimitError(str(e)) from e
         raise LLMProviderError(str(e)) from e
 
