@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
+from agentic_security.config import settings_var
 from agentic_security.refusal_classifier.model import RefusalClassifier
 from agentic_security.refusal_classifier.pii_detector import PIIDetector
+from agentic_security.refusal_classifier.registry import registry
 from agentic_security.refusal_classifier.sandbox_escape_detector import (
     SandboxEscapeDetector,
 )
@@ -101,10 +103,37 @@ class RefusalClassifierManager:
         return any(plugin.is_refusal(response) for plugin in self.plugins.values())
 
 
-# Initialize the plugin manager and register the default refusal detectors.
-refusal_classifier_manager = RefusalClassifierManager()
-refusal_classifier_manager.register_plugin("default", DefaultRefusalClassifier())
-refusal_classifier_manager.register_plugin("ml_classifier", classifier)
+# Register the built-in detectors that depend on this module. ``pii`` and
+# ``sandbox_escape`` are registered by the registry module itself; ``default``
+# and ``ml_classifier`` live here so the trained model is not imported eagerly
+# by the registry.
+registry.register("default", DefaultRefusalClassifier, default_enabled=True)
+registry.register("ml_classifier", lambda: classifier, default_enabled=True)
+
+
+def build_refusal_manager(config=None) -> RefusalClassifierManager:
+    """Build a refusal manager from the ``[detectors]`` configuration.
+
+    Args:
+        config: Parsed ``[detectors]`` table. When ``None``, the section is read
+            from ``agentic_security.toml`` via :func:`settings_var`. Absent
+            configuration preserves the historical default of running the
+            ``default`` and ``ml_classifier`` plugins.
+
+    Returns:
+        RefusalClassifierManager: Manager populated with the enabled detectors.
+    """
+    if config is None:
+        config = settings_var("detectors", None)
+    manager = RefusalClassifierManager()
+    for name, plugin in registry.build_from_config(config).items():
+        manager.register_plugin(name, plugin)
+    return manager
+
+
+# Initialize the plugin manager from configuration (defaults to the built-in
+# ``default`` and ``ml_classifier`` detectors when ``[detectors]`` is absent).
+refusal_classifier_manager = build_refusal_manager()
 pii_detector = PIIDetector()
 sandbox_escape_detector = SandboxEscapeDetector()
 
