@@ -123,6 +123,23 @@ port = $PORT
 modules = ["encoding"]
 
 
+[detectors]
+# Refusal classifiers and leak detectors applied to each model response.
+# Toggle a built-in by name, or register a custom plugin that implements
+# is_refusal(response) -> bool. Built-ins: default, ml_classifier, pii,
+# sandbox_escape.
+default = true          # phrase-based refusal classifier
+ml_classifier = true    # ML one-class SVM refusal classifier
+pii = false             # PII / credential leak detector
+sandbox_escape = false  # Docker/K8s sandbox-escape probe detector
+
+# Register a custom detector from an importable class:
+# [detectors.infra_fingerprint]
+# class = "my_package.detectors:InfraFingerprintDetector"
+# enabled = true
+# [detectors.infra_fingerprint.options]
+# threshold = 3
+
 [thresholds]
 # Threshold settings
 low = 0.15
