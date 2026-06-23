@@ -5,7 +5,6 @@ import re
 import httpx
 import matplotlib
 
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 from cache_to_disk import cache_to_disk
 from tqdm import tqdm
@@ -56,7 +55,7 @@ def generate_image(prompt: str, variant: int = 0) -> bytes:
     # Sanitize prompt: replace non-renderable whitespace characters (tabs, etc.)
     # with spaces to avoid matplotlib UserWarning about missing glyphs.
     prompt = re.sub(r"[\t\r\x0b\x0c]", " ", prompt)
-
+    matplotlib.use("Agg")
     # Create a matplotlib figure
     fig, ax = plt.subplots(figsize=(6, 4))
 
