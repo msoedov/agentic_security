@@ -1,6 +1,11 @@
 from inline_snapshot import snapshot
 
-from .data import _normalize_google_sheets_url, prepare_prompts
+from .data import (
+    _normalize_google_sheets_url,
+    load_local_csv,
+    load_local_csv_files,
+    prepare_prompts,
+)
 
 
 class TestNormalizeGoogleSheetsUrl:
@@ -50,3 +55,13 @@ class TestPreparePrompts:
                 100,
             )
         ) == snapshot(1)
+
+
+def test_missing_local_dataset_directory_is_not_created(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+
+    dataset = load_local_csv()
+
+    assert dataset.prompts == []
+    assert load_local_csv_files() == []
+    assert not (tmp_path / "datasets").exists()

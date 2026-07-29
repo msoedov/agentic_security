@@ -30,6 +30,7 @@ import random
 import time
 from collections.abc import AsyncGenerator
 from json import JSONDecodeError
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -62,6 +63,22 @@ FAILURES_CSV_PATH = settings_var("fuzzer.failures_csv_path", "failures.csv")
 FULL_LOG_CSV_PATH = settings_var("fuzzer.full_log_csv_path", "full_scan_log.csv")
 #: Maximum number of injection attempts per prompt in many-shot mode.
 MAX_INJECTION_ATTEMPTS = settings_var("fuzzer.max_injection_attempts", 20)
+
+
+def export_scan_artifacts(
+    fuzzer_state: FuzzerState, artifacts_dir: str | Path | None
+) -> None:
+    """Write scan CSVs when an artifacts directory is explicitly enabled."""
+    if artifacts_dir is None:
+        return
+
+    output_dir = Path(artifacts_dir)
+    failures_path = output_dir / FAILURES_CSV_PATH
+    full_log_path = output_dir / FULL_LOG_CSV_PATH
+    failures_path.parent.mkdir(parents=True, exist_ok=True)
+    full_log_path.parent.mkdir(parents=True, exist_ok=True)
+    fuzzer_state.export_failures(failures_path)
+    fuzzer_state.export_full_log(full_log_path)
 
 
 async def generate_prompts(
@@ -390,6 +407,7 @@ async def perform_single_shot_scan(
     stop_event: asyncio.Event | None = None,
     secrets: dict[str, str] | None = None,
     inline_datasets: list[dict[str, Any]] | None = None,
+    artifacts_dir: str | Path | None = ".",
 ) -> AsyncGenerator[str, None]:
     """
     Perform a standard security scan using a given request factory.
@@ -476,8 +494,7 @@ async def perform_single_shot_scan(
         processed_prompts += module_size
 
     yield ScanResult.status_msg("Scan completed.")
-    fuzzer_state.export_failures(FAILURES_CSV_PATH)
-    fuzzer_state.export_full_log(FULL_LOG_CSV_PATH)
+    export_scan_artifacts(fuzzer_state, artifacts_dir)
 
 
 async def perform_many_shot_scan(
@@ -491,6 +508,7 @@ async def perform_many_shot_scan(
     probe_frequency: float = 0.2,
     max_ctx_length: int = 10_000,
     secrets: dict[str, str] | None = None,
+    artifacts_dir: str | Path | None = ".",
 ) -> AsyncGenerator[str, None]:
     """
     Perform a multi-step security scan with probe injection.
@@ -614,8 +632,7 @@ async def perform_many_shot_scan(
                 break
 
     yield ScanResult.status_msg("Scan completed.")
-    fuzzer_state.export_failures(FAILURES_CSV_PATH)
-    fuzzer_state.export_full_log(FULL_LOG_CSV_PATH)
+    export_scan_artifacts(fuzzer_state, artifacts_dir)
 
 
 def scan_router(
@@ -623,6 +640,7 @@ def scan_router(
     scan_parameters: Scan,
     tools_inbox=None,
     stop_event: asyncio.Event | None = None,
+    artifacts_dir: str | Path | None = ".",
 ):
     """
     Route scan requests to the appropriate scanning function.
@@ -661,6 +679,7 @@ def scan_router(
                 optimize=scan_parameters.optimize,
                 stop_event=stop_event,
                 secrets=scan_parameters.secrets,
+                artifacts_dir=artifacts_dir,
             )
         )
     else:
@@ -674,5 +693,6 @@ def scan_router(
                 stop_event=stop_event,
                 secrets=scan_parameters.secrets,
                 inline_datasets=scan_parameters.inline_datasets,
+                artifacts_dir=artifacts_dir,
             )
         )
