@@ -87,6 +87,23 @@ Content-Type: application/json
 
 Where `<<PROMPT>>` will be replaced with the actual attack vector during the scan, insert the `Bearer XXXXX` header value with your app credentials.
 
+### One-shot CLI scan
+
+Run a scan without starting the web server or creating a configuration file:
+
+```shell
+agentic_security scan \
+  --spec target.http \
+  --dataset deepset/prompt-injections \
+  --max-budget 1000 \
+  --max-th 0.3
+```
+
+The command emits JSON Lines on standard output. It exits with `0` when the
+scan stays within the threshold, `1` when findings exceed the threshold, and
+`2` when the input or scan fails. See the
+[CI/CD guide](docs/ci_cd.md#stateless-scans) for input and artifact options.
+
 ### Adding LLM integration templates
 
 TBD
