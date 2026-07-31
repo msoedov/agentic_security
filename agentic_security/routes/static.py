@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import requests
@@ -12,6 +13,11 @@ from ..primitives import Settings
 router = APIRouter()
 STATIC_DIR = Path(__file__).parent.parent / "static"
 ICONS_DIR = STATIC_DIR / "icons"
+
+# Strict allowlist for icon filenames: lowercase/uppercase alphanumerics, dots,
+# underscores, and hyphens, must end in .png.  Rejects path separators,
+# percent-encoded characters, and non-PNG extensions before any FS/network I/O.
+ICON_NAME_RE = re.compile(r"[A-Za-z0-9._-]+\.png")
 
 # Configure templates with custom delimiters to avoid conflicts
 templates = Jinja2Templates(directory=str(STATIC_DIR))
@@ -96,8 +102,26 @@ async def favicon() -> FileResponse:
 
 @router.get("/icons/{icon_name}")
 async def serve_icon(icon_name: str) -> FileResponse:
-    """Serve an icon from the icons directory."""
-    icon_path = ICONS_DIR / icon_name
+    r"""Serve an icon from the icons directory.
+
+    ``icon_name`` is validated against a strict allowlist before any filesystem
+    or outbound-HTTP access:
+
+    * Must match ``^[A-Za-z0-9._-]+\.png$`` — rejects path separators,
+      percent-encoded characters, non-PNG extensions, and empty names.
+    * The resolved path must stay inside ``ICONS_DIR`` — defense-in-depth
+      against any future URL-handling change that could decode ``%2F``.
+
+    Mitigates CWE-22 (path traversal) on both the local write and the
+    upstream npmmirror fetch.
+    """
+    if not ICON_NAME_RE.fullmatch(icon_name):
+        raise HTTPException(status_code=400, detail="Invalid icon name")
+
+    icon_path = (ICONS_DIR / icon_name).resolve()
+    if not icon_path.is_relative_to(ICONS_DIR.resolve()):
+        raise HTTPException(status_code=400, detail="Invalid icon name")
+
     if not icon_path.exists():
         # Fetch the icon from the external URL and cache it
         url = f"https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/{icon_name}"
