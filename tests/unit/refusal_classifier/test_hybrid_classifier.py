@@ -1,5 +1,7 @@
 """Unit tests for hybrid refusal classifier."""
 
+import logging
+
 from inline_snapshot import snapshot
 
 from agentic_security.refusal_classifier.hybrid_classifier import (
@@ -320,3 +322,53 @@ class TestConfidenceScoring:
         # 2/3 = 0.666 confidence for non-refusal
         assert round(result.confidence, 2) == snapshot(0.67)
         assert result.is_refusal is False
+
+
+class _AlwaysRaises:
+    def is_refusal(self, response: str) -> bool:
+        raise RuntimeError("detector is broken")
+
+
+class _Fixed:
+    def __init__(self, value: bool):
+        self.value = value
+
+    def is_refusal(self, response: str) -> bool:
+        return self.value
+
+
+class TestClassifyEdgeCases:
+    def test_zero_total_weight_does_not_raise(self):
+        """Weights summing to zero left nothing to divide by."""
+        classifier = HybridRefusalClassifier()
+        classifier.add_detector(_Fixed(True), weight=0.0, name="a")
+        classifier.add_detector(_Fixed(False), weight=0.0, name="b")
+
+        result = classifier.classify("I cannot help with that")
+
+        assert result.is_refusal is False
+        assert result.confidence == 0.0
+        assert len(result.method_results) == 2
+
+    def test_raising_detector_is_skipped_and_logged(self, caplog):
+        """A detector that raises drops out, so the drop should be visible."""
+        classifier = HybridRefusalClassifier()
+        classifier.add_detector(_AlwaysRaises(), name="broken")
+        classifier.add_detector(_Fixed(True), name="good")
+
+        with caplog.at_level(logging.ERROR):
+            result = classifier.classify("I cannot help with that")
+
+        assert [r.method for r in result.method_results] == ["good"]
+        assert result.is_refusal is True
+        assert any("broken" in record.message for record in caplog.records)
+
+    def test_normal_weighting_is_unchanged(self):
+        classifier = HybridRefusalClassifier()
+        classifier.add_detector(_Fixed(True), name="a")
+        classifier.add_detector(_Fixed(False), name="b")
+
+        result = classifier.classify("I cannot help with that")
+
+        assert result.is_refusal is True
+        assert result.confidence == 0.5
