@@ -51,6 +51,15 @@ class CircuitBreaker:
 
     def record_failure(self):
         """Record a failed request."""
+        if self.state == "half_open":
+            # A single failure during probation trips the circuit back open
+            # with fresh counters, so the failure is not diluted by the
+            # minimum-sample gate or forgiven by later successes.
+            self.state = "open"
+            self.last_failure_time = time.monotonic()
+            self.failures = 0
+            self.successes = 0
+            return
         self.failures += 1
         self.last_failure_time = time.monotonic()
 
