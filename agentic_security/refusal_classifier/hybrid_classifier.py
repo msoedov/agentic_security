@@ -7,6 +7,8 @@ refusal classification with reduced false positives/negatives.
 from dataclasses import dataclass, field
 from typing import Protocol
 
+from agentic_security.logutils import logger
+
 
 class RefusalDetector(Protocol):
     """Protocol for refusal detection methods."""
@@ -118,7 +120,13 @@ class HybridRefusalClassifier:
             try:
                 is_refusal = config.detector.is_refusal(response)
             except Exception:
-                continue  # Skip failed detectors
+                # Skip failed detectors, but say so. A detector that raises on
+                # every response drops out of the vote and the rest renormalise
+                # to full confidence, which reads the same as agreement.
+                logger.exception(
+                    f"Detector {config.name!r} raised and was skipped for this response."
+                )
+                continue
             results.append(
                 DetectionResult(
                     method=config.name,
@@ -132,6 +140,16 @@ class HybridRefusalClassifier:
 
         total_weight = sum(r.weight for r in results)
         refusal_weight = sum(r.weight for r in results if r.is_refusal)
+
+        # Every detector carrying weight 0 leaves nothing to divide by. Treat it
+        # the same as having no detectors rather than raising.
+        if total_weight <= 0:
+            logger.warning(
+                "All detectors have zero total weight, cannot score this response."
+            )
+            return HybridResult(
+                is_refusal=False, confidence=0.0, method_results=results
+            )
 
         # Calculate confidence as how strongly detectors agree
         raw_score = refusal_weight / total_weight  # 0.0-1.0, 1.0 = all say refusal
