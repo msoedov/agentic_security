@@ -83,6 +83,19 @@ class TestExecutorMetrics:
         assert stats["p95_latency_ms"] >= 90.0
         assert stats["p95_latency_ms"] <= 100.0
 
+    def test_get_stats_p95_latency_small_batch(self):
+        """Test that p95 is the 95th percentile, not the maximum, for small batches."""
+        metrics = ExecutorMetrics()
+
+        # 20 requests with latencies 0ms..19ms
+        for i in range(20):
+            metrics.record_success(i * 0.001)
+
+        stats = metrics.get_stats()
+
+        # The 95th percentile of 20 samples is the 19th (18ms), not the max (19ms)
+        assert stats["p95_latency_ms"] == pytest.approx(18.0)
+
 
 class TestConcurrentExecutor:
     """Test ConcurrentExecutor functionality."""
