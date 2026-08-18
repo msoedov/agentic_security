@@ -373,6 +373,7 @@ class StenographyTransformer:
         "substitute_with_ascii": stenography_fn.substitute_with_ascii,
         "remove_vowels": stenography_fn.remove_vowels,
         "zigzag_obfuscation": stenography_fn.zigzag_obfuscation,
+        "code_block": stenography_fn.code_block_encode,
     }
 
     def __init__(self, datasets: list[ProbeDataset]):
