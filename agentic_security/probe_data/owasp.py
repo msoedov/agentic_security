@@ -24,7 +24,9 @@ OWASP_LLM_TOP_10 = {
     "LLM10": "Model Theft",
 }
 
-OWASP_PROJECT_URL = "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+OWASP_PROJECT_URL = (
+    "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+)
 
 _DEFAULT_CATEGORY = "LLM01"
 
