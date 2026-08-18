@@ -70,7 +70,7 @@ def get_static_file(filepath: Path, content_type: str | None = None) -> FileResp
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request) -> Response:
     """Serve the main index.html template."""
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 
 @router.get("/main.js")

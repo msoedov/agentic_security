@@ -6,7 +6,7 @@ authors = [{ name = "Alexander Miasoiedov", email = "msoedov@gmail.com" }]
 maintainers = [{ name = "Alexander Miasoiedov", email = "msoedov@gmail.com" }]
 license = "Apache-2.0"
 readme = "Readme.md"
-requires-python = ">=3.12,<4.0"
+requires-python = ">=3.14,<4.0"
 keywords = [
     "LLM vulnerability scanner",
     "llm security",
@@ -32,7 +32,7 @@ agentic_security = "agentic_security.__main__:main"
 packages = [{ include = "agentic_security", from = "." }]
 
 [tool.poetry.dependencies]
-fastapi = "^0.122.0"
+fastapi = "^0.141.1"
 uvicorn = "^0.38.0"
 fire = "0.7.1"
 loguru = "^0.7.3"
@@ -48,7 +48,7 @@ scikit-optimize = "^0.10.2"
 scikit-learn = "^1.7.2"
 numpy = ">=1.24.3,<3.0.0"
 jinja2 = "^3.1.4"
-python-multipart = "^0.0.27"
+python-multipart = "^0.0.31"
 tomli = "^2.3.0"
 rich = "^14.2.0"
 gTTS = "^2.5.4"

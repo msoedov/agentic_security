@@ -5,8 +5,6 @@ to break out of Docker/Kubernetes container isolation (capability probing,
 mount inspection, kernel/exploit reconnaissance).
 """
 
-from __future__ import annotations
-
 import re
 from dataclasses import dataclass
 from re import Pattern
