@@ -245,7 +245,7 @@ var app = new Vue({
                     this.integrationVerified = true;
                 }
             } catch (error) {
-                this.updateStatusDot(true);
+                this.updateStatusDot(false);
                 this.errorMsg = 'Server unreachable';
                 this.showToast('Network error', 'error');
             }
