@@ -15,7 +15,7 @@ def get_cors_allow_origins() -> list[str]:
     if env_val is not None:
         origins = [origin.strip() for origin in env_val.split(",") if origin.strip()]
     else:
-        configured = settings_var("server.cors_allow_origins", [])
+        configured = settings_var("server.cors_allow_origins", None)
         origins = list(configured) if configured else []
 
     if "*" in origins:
