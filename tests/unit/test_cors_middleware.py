@@ -1,21 +1,16 @@
-"""Unit tests for CORS middleware configuration.
+"""Tests for CORS allowlist configuration (agentic_security #334)."""
 
-Verifies that the wildcard-origins + allow_credentials=True spec violation
-(CORS spec §3.2, Fetch §4.7) has been removed.  Browsers silently strip
-credentials when the response carries Access-Control-Allow-Origin: * paired
-with Access-Control-Allow-Credentials: true, so the old config was both
-broken and misleading.
-"""
+import os
+from unittest.mock import patch
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.testclient import TestClient
 
-from agentic_security.middleware.cors import setup_cors
+from agentic_security.middleware.cors import get_cors_allow_origins, setup_cors
 
 
 def _get_cors_options(app: FastAPI) -> dict:
-    """Extract CORS middleware options from the app's middleware stack."""
     for middleware in app.user_middleware:
         if middleware.cls is CORSMiddleware:
             return middleware.kwargs
@@ -23,44 +18,50 @@ def _get_cors_options(app: FastAPI) -> dict:
 
 
 class TestCorsSetup:
-    """CORS middleware is configured correctly."""
+    def test_default_allowlist_is_empty(self):
+        with patch.dict(os.environ, {}, clear=True):
+            with patch(
+                "agentic_security.middleware.cors.settings_var",
+                return_value=[],
+            ):
+                assert get_cors_allow_origins() == []
 
-    def test_cors_middleware_is_registered(self):
-        """setup_cors adds CORSMiddleware to the app."""
+    def test_env_override_parses_comma_separated_origins(self):
+        with patch.dict(
+            os.environ,
+            {"AGENTIC_SECURITY_CORS_ORIGINS": "http://localhost:3000, http://127.0.0.1:3000"},
+            clear=True,
+        ):
+            assert get_cors_allow_origins() == [
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+            ]
+
+    def test_cors_middleware_uses_allowlist_without_credentials(self):
         app = FastAPI()
-        setup_cors(app)
-        cls_names = [m.cls.__name__ for m in app.user_middleware]
-        assert "CORSMiddleware" in cls_names
-
-    def test_wildcard_origins_without_credentials(self):
-        """allow_origins=['*'] must not be paired with allow_credentials=True.
-
-        The combination is forbidden by the CORS spec and causes browsers to
-        silently drop credentials on every cross-origin request.
-        """
-        app = FastAPI()
-        setup_cors(app)
+        with patch(
+            "agentic_security.middleware.cors.get_cors_allow_origins",
+            return_value=["http://localhost:3000"],
+        ):
+            setup_cors(app)
         opts = _get_cors_options(app)
-        allow_origins = opts.get("allow_origins", [])
-        allow_credentials = opts.get("allow_credentials", False)
+        assert opts["allow_origins"] == ["http://localhost:3000"]
+        assert opts["allow_credentials"] is False
 
-        if "*" in allow_origins or allow_origins == ["*"]:
-            assert not allow_credentials, (
-                "allow_origins=['*'] with allow_credentials=True is invalid per "
-                "the CORS spec — browsers reject it and credentials are silently dropped"
-            )
-
-    def test_cors_allows_cross_origin_requests(self):
-        """Cross-origin preflight requests return a 200 with CORS headers."""
+    def test_preflight_from_allowlisted_origin_succeeds(self):
         app = FastAPI()
 
         @app.get("/probe")
         async def probe():
             return {"ok": True}
 
-        setup_cors(app)
-        client = TestClient(app, raise_server_exceptions=True)
+        with patch(
+            "agentic_security.middleware.cors.get_cors_allow_origins",
+            return_value=["http://localhost:3000"],
+        ):
+            setup_cors(app)
 
+        client = TestClient(app, raise_server_exceptions=True)
         response = client.options(
             "/probe",
             headers={
@@ -69,26 +70,27 @@ class TestCorsSetup:
             },
         )
         assert response.status_code == 200
-        assert "access-control-allow-origin" in response.headers
+        assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
 
-    def test_cors_no_credentials_header_with_wildcard(self):
-        """With wildcard origins, the response must not include
-        Access-Control-Allow-Credentials: true."""
+    def test_preflight_from_foreign_origin_is_rejected_with_empty_allowlist(self):
         app = FastAPI()
 
         @app.get("/probe")
         async def probe():
             return {"ok": True}
 
-        setup_cors(app)
-        client = TestClient(app)
-        response = client.get("/probe", headers={"Origin": "http://evil.example.com"})
+        with patch(
+            "agentic_security.middleware.cors.get_cors_allow_origins",
+            return_value=[],
+        ):
+            setup_cors(app)
 
-        acao = response.headers.get("access-control-allow-origin", "")
-        acac = response.headers.get("access-control-allow-credentials", "false")
-
-        if acao == "*":
-            assert acac.lower() != "true", (
-                "Wildcard ACAO + ACAC:true is a spec violation (RFC 6454 §7.2, "
-                "Fetch §4.7) and silently breaks credentialed cross-origin requests"
-            )
+        client = TestClient(app, raise_server_exceptions=True)
+        response = client.options(
+            "/probe",
+            headers={
+                "Origin": "http://evil.example.com",
+                "Access-Control-Request-Method": "GET",
+            },
+        )
+        assert response.status_code == 400
