@@ -29,7 +29,9 @@ class TestCorsSetup:
     def test_env_override_parses_comma_separated_origins(self):
         with patch.dict(
             os.environ,
-            {"AGENTIC_SECURITY_CORS_ORIGINS": "http://localhost:3000, http://127.0.0.1:3000"},
+            {
+                "AGENTIC_SECURITY_CORS_ORIGINS": "http://localhost:3000, http://127.0.0.1:3000"
+            },
             clear=True,
         ):
             assert get_cors_allow_origins() == [
@@ -70,7 +72,10 @@ class TestCorsSetup:
             },
         )
         assert response.status_code == 200
-        assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
+        assert (
+            response.headers.get("access-control-allow-origin")
+            == "http://localhost:3000"
+        )
 
     def test_preflight_from_foreign_origin_is_rejected_with_empty_allowlist(self):
         app = FastAPI()
