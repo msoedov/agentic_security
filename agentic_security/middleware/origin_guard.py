@@ -51,9 +51,7 @@ class OriginGuardMiddleware(BaseHTTPMiddleware):
         if _same_origin(request, origin):
             return await call_next(request)
 
-        allowed_origins = {
-            allowed.rstrip("/") for allowed in get_cors_allow_origins()
-        }
+        allowed_origins = {allowed.rstrip("/") for allowed in get_cors_allow_origins()}
         if origin.rstrip("/") in allowed_origins:
             return await call_next(request)
 
