@@ -15,7 +15,7 @@ pip install agentic_security
 After installation, you can start the application using the following command:
 
 ```shell
-agentic_security
+agentic_security server
 ```
 
 This will initialize the server and prepare it for use.
@@ -42,7 +42,7 @@ Initialize the configuration for CI checks:
 agentic_security init
 ```
 
-This will generate a default configuration file named `agesec.toml`.
+This will generate a default configuration file named `agentic_security.toml`.
 
 ## Additional Commands
 

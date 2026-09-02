@@ -4,7 +4,7 @@ This section provides information on configuring Agentic Security to suit your n
 
 ## Default Configuration
 
-The default configuration file is `agesec.toml`. It includes settings for:
+The default configuration file is `agentic_security.toml`. It includes settings for:
 
 - General settings
 - Module configurations
@@ -12,7 +12,7 @@ The default configuration file is `agesec.toml`. It includes settings for:
 
 ## Customizing Configuration
 
-1. Open the `agesec.toml` file in a text editor.
+1. Open the `agentic_security.toml` file in a text editor.
 1. Modify the settings as needed. For example, to change the port:
    ```toml
    [modules.AgenticBackend.opts]
