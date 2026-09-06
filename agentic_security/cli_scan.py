@@ -1,7 +1,5 @@
 """Stateless command-line scanning helpers."""
 
-from __future__ import annotations
-
 import asyncio
 import copy
 import json
