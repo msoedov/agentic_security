@@ -28,7 +28,7 @@ class Scan(BaseModel):
     # Set and managed by the backend
     secrets: dict[str, str] = Field(default_factory=dict)
 
-    def with_secrets(self, secrets) -> "Scan":
+    def with_secrets(self, secrets) -> Scan:
         match secrets:
             case dict():
                 self.secrets.update(secrets)

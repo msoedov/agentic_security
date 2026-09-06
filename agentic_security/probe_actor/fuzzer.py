@@ -83,7 +83,7 @@ def export_scan_artifacts(
 
 async def generate_prompts(
     prompts: list[str] | AsyncGenerator,
-) -> AsyncGenerator[str, None]:
+) -> AsyncGenerator[str]:
     """
     Asynchronously generates and yields individual prompts.
 
@@ -244,7 +244,7 @@ async def scan_module(
     optimize: bool = False,
     stop_event: asyncio.Event | None = None,
     token_counter: dict[str, int] | None = None,
-) -> AsyncGenerator[dict[str, Any], None]:
+) -> AsyncGenerator[dict[str, Any]]:
     """
     Scan a single module.
 
@@ -408,7 +408,7 @@ async def perform_single_shot_scan(
     secrets: dict[str, str] | None = None,
     inline_datasets: list[dict[str, Any]] | None = None,
     artifacts_dir: str | Path | None = ".",
-) -> AsyncGenerator[str, None]:
+) -> AsyncGenerator[str]:
     """
     Perform a standard security scan using a given request factory.
 
@@ -509,7 +509,7 @@ async def perform_many_shot_scan(
     max_ctx_length: int = 10_000,
     secrets: dict[str, str] | None = None,
     artifacts_dir: str | Path | None = ".",
-) -> AsyncGenerator[str, None]:
+) -> AsyncGenerator[str]:
     """
     Perform a multi-step security scan with probe injection.
 

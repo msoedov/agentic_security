@@ -155,7 +155,7 @@ class LLMSpec(BaseModel):
         try:
             body_json = json.loads(self.body)
             return body_json.get("model", "unknown")
-        except (json.JSONDecodeError, TypeError):
+        except json.JSONDecodeError, TypeError:
             return "unknown"
 
     @property

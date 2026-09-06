@@ -421,6 +421,12 @@
               'opacity-30 pointer-events-none cursor-not-allowed': package.is_active === false
             }">
             <div class="font-medium mb-1 truncate">{{ package.dataset_name }}</div>
+            <a v-if="package.owasp" :href="package.owasp.url" target="_blank" rel="noopener"
+              @click.stop
+              :title="package.owasp.id + ': ' + package.owasp.title + ' (OWASP Top 10 for LLM)'"
+              class="inline-block mb-1 text-xs font-semibold px-1.5 py-0.5 rounded bg-dark-accent-yellow text-dark-text hover:underline">
+              {{ package.owasp.id }} {{ package.owasp.title }}
+            </a>
             <div class="text-sm text-gray-400 truncate">
               {{ package.source || 'Local dataset' }}
             </div>

@@ -27,8 +27,6 @@ Example configuration::
     threshold = 3
 """
 
-from __future__ import annotations
-
 import importlib
 from collections import OrderedDict
 from collections.abc import Callable, Mapping

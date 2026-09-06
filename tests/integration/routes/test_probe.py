@@ -80,8 +80,10 @@ def test_data_config_endpoint():
     # Verify each item in response matches REGISTRY format
     for item in data:
         assert isinstance(item, dict)
-        # Add assertions for expected fields based on REGISTRY structure
-        # This will depend on what fields are defined in the REGISTRY items
+        # Every entry carries an OWASP LLM Top 10 tag for the UI badge
+        assert "owasp" in item
+        assert item["owasp"]["id"].startswith("LLM")
+        assert item["owasp"]["title"]
 
 
 def test_refusal_rate():

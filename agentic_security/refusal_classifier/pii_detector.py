@@ -4,8 +4,6 @@ Provides a small, dependency-free detector for responses that may contain
 sensitive personal or credential material.
 """
 
-from __future__ import annotations
-
 import re
 from dataclasses import dataclass
 from re import Pattern

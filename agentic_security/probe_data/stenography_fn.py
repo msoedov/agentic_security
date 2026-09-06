@@ -143,3 +143,24 @@ def vigenere_cipher(text, key):
         else:
             result.append(char)
     return "".join(result)
+
+
+CODE_BLOCK_TEMPLATES = [
+    "def hello_world(name):",
+    "def process_data(payload):",
+    "def run(task):",
+    "def handler(request):",
+    "def validate(value):",
+]
+
+
+def code_block_encode(text):
+    """Hides the prompt inside a Python docstring wrapped in a code block.
+
+    Some models treat code-block content as inert source rather than an
+    instruction, so tucking the prompt into a function docstring is a cheap
+    way to probe whether the guardrails still fire.
+    """
+    header = random.choice(CODE_BLOCK_TEMPLATES)
+    body = "\n".join(f"    {line}" for line in text.splitlines()) or f"    {text}"
+    return f'```python\n{header}\n    """\n{body}\n    """\n```'

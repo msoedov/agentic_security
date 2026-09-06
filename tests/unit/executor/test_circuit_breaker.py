@@ -119,6 +119,51 @@ class TestCircuitBreaker:
         # Should transition to closed
         assert breaker.state == "closed"
 
+    def test_half_open_failure_reopens_circuit(self):
+        """Test that a failure during half-open probation reopens the circuit."""
+        breaker = CircuitBreaker(failure_threshold=0.5, recovery_timeout=1)
+
+        # Open the circuit
+        for _ in range(4):
+            breaker.record_success()
+        for _ in range(6):
+            breaker.record_failure()
+        assert breaker.state == "open"
+
+        # Enter half-open after recovery timeout
+        time.sleep(1.1)
+        assert breaker.is_open() is False
+        assert breaker.state == "half_open"
+
+        # A single failure during probation trips the circuit back open
+        breaker.record_failure()
+        assert breaker.state == "open"
+        assert breaker.is_open() is True
+
+    def test_half_open_failure_not_forgotten_by_successes(self):
+        """Test that a half-open failure is not forgotten by later successes."""
+        breaker = CircuitBreaker(failure_threshold=0.5, recovery_timeout=1)
+
+        # Open the circuit
+        for _ in range(4):
+            breaker.record_success()
+        for _ in range(6):
+            breaker.record_failure()
+        assert breaker.state == "open"
+
+        # Enter half-open after recovery timeout
+        time.sleep(1.1)
+        breaker.is_open()
+        assert breaker.state == "half_open"
+
+        # One failure followed by enough successes to close a healthy circuit
+        breaker.record_failure()
+        for _ in range(3):
+            breaker.record_success()
+
+        # The failure must keep the circuit open
+        assert breaker.state == "open"
+
     def test_get_state(self):
         """Test get_state method."""
         breaker = CircuitBreaker()

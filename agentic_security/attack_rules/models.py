@@ -9,7 +9,7 @@ class AttackRuleSeverity(Enum):
     HIGH = "high"
 
     @classmethod
-    def from_string(cls, value: str) -> "AttackRuleSeverity":
+    def from_string(cls, value: str) -> AttackRuleSeverity:
         try:
             return cls(value.lower())
         except ValueError:
@@ -28,7 +28,7 @@ class AttackRule:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "AttackRule":
+    def from_dict(cls, data: dict[str, Any]) -> AttackRule:
         severity = AttackRuleSeverity.from_string(data.get("severity", "medium"))
         return cls(
             name=data["name"],

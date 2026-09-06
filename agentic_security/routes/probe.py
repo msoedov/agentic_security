@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from ..primitives import FileProbeResponse, Probe
 from ..probe_actor.refusal import REFUSAL_MARKS
 from ..probe_data import REGISTRY
+from ..probe_data.owasp import annotate as annotate_owasp
 from ._specs import LLM_SPECS
 
 router = APIRouter()
@@ -71,7 +72,7 @@ async def self_probe_image():
 
 @router.get("/v1/data-config")
 async def data_config():
-    return [m for m in REGISTRY]
+    return annotate_owasp(REGISTRY)
 
 
 @router.get("/v1/llm-specs", response_model=list)

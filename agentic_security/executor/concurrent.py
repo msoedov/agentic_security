@@ -1,6 +1,7 @@
 """Concurrent executor with rate limiting and circuit breaking."""
 
 import asyncio
+import math
 import time
 from typing import Any
 
@@ -60,12 +61,11 @@ class ExecutorMetrics:
         # Calculate p95 latency
         if self.latencies:
             sorted_latencies = sorted(self.latencies)
-            p95_index = int(len(sorted_latencies) * 0.95)
-            p95_latency_ms = (
-                sorted_latencies[p95_index] * 1000
-                if p95_index < len(sorted_latencies)
-                else 0.0
-            )
+            # ceil(n * 0.95) - 1 picks the 95th-percentile element; the
+            # previous int(n * 0.95) collapsed to the last index (the max)
+            # for any batch of 20 or fewer requests.
+            p95_index = max(0, math.ceil(len(sorted_latencies) * 0.95) - 1)
+            p95_latency_ms = sorted_latencies[p95_index] * 1000
         else:
             p95_latency_ms = 0.0
 
