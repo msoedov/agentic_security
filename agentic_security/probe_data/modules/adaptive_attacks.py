@@ -10,6 +10,23 @@ url = "https://raw.githubusercontent.com/tml-epfl/llm-adaptive-attacks/main/harm
 
 
 class Module:
+    """:class:`Module` that generates adversarial prompt templates for guard testing.
+
+    Loads the `LLM-Adaptive-Attacks <https://github.com/tml-epfl/llm-adaptive-attacks>`_
+    dataset and yields structured prompt templates targeting specific harmful
+    content categories. The prompts are intended for guard evaluation, not for
+    use in production systems.
+
+    Each prompt is wrapped in a template that instructs the target model to
+    comply with potentially harmful requests, and the module produces multiple
+    template variants (refined, one-shot, simplified) for thorough guard testing.
+
+    Attributes:
+        targets: List of harmful target topics loaded from the dataset.
+        goals: List of corresponding goals for each target topic.
+    """
+
+
     def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue, opts: dict = {}):
         r = httpx.get(url)
 
