@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import importlib.util
 import os
 
@@ -12,17 +12,34 @@ inspect_ai_task = (
 
 
 class Module:
+    """:class:`Module` that runs Inspect AI evaluations against an LLM proxy.
+
+    Launches the `Inspect AI <https://github.com/UKGovernmentBEIS/inspect_ai>`_
+    evaluation framework via ``inspect eval``, targeting a local LLM proxy.
+    The module requires ``inspect_ai`` to be installed
+    (``pip install inspect_ai``).
+
+    Configuration is passed via ``opts``:
+
+    * ``port`` (int): LLM proxy base URL port. Defaults to ``8718``.
+
+    Attributes:
+        tools_inbox: Async queue that receives evaluation results.
+        opts: Configuration dictionary.
+    """
+
     name = "Inspect AI"
 
     def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue, opts: dict = {}):
         self.tools_inbox = tools_inbox
         if not self.is_tool_installed():
             logger.error(
-                "inspect_ai module is not installed. Please install it using 'pip install inspect_ai'"
+                "inspect_ai module is not installed. Please install it using '"'"'pip install inspect_ai'"'"'"
             )
         self.opts = opts
 
     def is_tool_installed(self) -> bool:
+        """Return ``True`` if the ``inspect_ai`` package is importable."""
         inspect_ai = importlib.util.find_spec("inspect_ai")
         return inspect_ai is not None
 
@@ -38,11 +55,9 @@ class Module:
 
         logger.info(f"Started {command}")
 
-        # Read output as it becomes available
         async for line in process.stdout:
             logger.info(line.decode().strip())
 
-        # Check for errors
         err = await process.stderr.read()
         if err:
             logger.error(err.decode().strip())
@@ -52,7 +67,6 @@ class Module:
 
     async def apply(self) -> []:
         port = self.opts.get("port", 8718)
-        # Command to be executed
         command = f"inspect eval {inspect_ai_task} --model openai/gpt-4  --model-base-url=http://0.0.0.0:{port}/proxy"
         logger.info(f"Executing command: {command}")
 
