@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import os
 import uuid as U
 
@@ -10,35 +10,47 @@ AUTH_TOKEN: str = os.getenv("AS_TOKEN", "gh0-5f4a8ed2-37c6-4bd7-a0cf-7070eae8115
 
 
 class Module:
+    """:class:`Module` for fetching prompts from a remote API and submitting LLM outputs.
+
+    Retrieves batches of prompts from a configurable HTTP endpoint (default:
+    ``https://mcp.metaheuristic.co/infer``), optionally posts each prompt to an
+    LLM proxy for evaluation, and yields the raw prompts for downstream guard
+    processing.
+
+    Configuration is passed via the ``opts`` dict:
+
+    * ``port`` (int): LLM proxy port. Defaults to ``8718``.
+    * ``max_prompts`` (int): Total prompts to process. Defaults to ``2000``.
+    * ``batch_size`` (int): Prompts fetched per API call. Defaults to ``500``.
+
+    Attributes:
+        tools_inbox: Async queue that receives guard evaluation results.
+        opts: Module configuration dictionary.
+        prompt_groups: Passed through but not used directly by this module.
+    """
+
     def __init__(
         self, prompt_groups: list[str], tools_inbox: asyncio.Queue, opts: dict = {}
     ):
         self.tools_inbox = tools_inbox
         self.opts = opts
         self.prompt_groups = prompt_groups
-        self.max_prompts = self.opts.get("max_prompts", 2000)  # Default max M prompts
+        self.max_prompts = self.opts.get("max_prompts", 2000)
         self.run_id = U.uuid4().hex
         self.batch_size = self.opts.get("batch_size", 500)
 
     async def apply(self):
         for _ in range(max(self.max_prompts // self.batch_size, 1)):
-            # Fetch prompts from the API
             prompts = await self.fetch_prompts()
-
             if not prompts:
                 logger.error("No prompts retrieved from the API.")
                 return
-
             logger.info(f"Retrieved {len(prompts)} prompts.")
-
             for i, prompt in enumerate(
                 prompts[: self.max_prompts]
-            ):  # Limit to max_prompts
+            ):
                 logger.info(f"Processing prompt {i+1}/{len(prompts)}: {prompt}")
-                # response = await self.post_prompt(prompt)
-                # logger.info(f"Response: {response}")
                 yield prompt
-
                 while not self.tools_inbox.empty():
                     ref = await self.tools_inbox.get()
                     message, _, ready = ref["message"], ref["reply"], ref["ready"]
@@ -55,7 +67,6 @@ class Module:
             "max_tokens": 1050,
             "temperature": 0.7,
         }
-
         async with httpx.AsyncClient() as client:
             try:
                 response = await client.post(uri, headers=headers, json=data)
@@ -71,7 +82,6 @@ class Module:
             "Authorization": f"Bearer {AUTH_TOKEN}",
             "Content-Type": "application/json",
         }
-
         async with httpx.AsyncClient() as client:
             try:
                 response = await client.post(
