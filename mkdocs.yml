@@ -22,6 +22,7 @@ nav:
     - Installation: installation.md
     - Getting Started: getting_started.md
     - Configuration: configuration.md
+    - CLI reference: cli.md
   - Advanced Topics:
     - Dataset Extension: datasets.md
     - External Modules: external_module.md

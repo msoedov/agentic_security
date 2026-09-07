@@ -202,7 +202,7 @@ class SecurityScanner(SettingsMixin):
     def entrypoint(self):
         # Load configuration from the default path
         if not self.has_local_config():
-            print("`agesec.toml` configuration file not found.")
+            print("`agentic_security.toml` configuration file not found.")
             exit(1)
 
         self.load_config(self.default_path)
