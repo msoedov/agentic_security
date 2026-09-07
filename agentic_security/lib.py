@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import json
+import sys
 from datetime import datetime
 
 import colorama
@@ -198,6 +199,51 @@ class SecurityScanner(SettingsMixin):
                 probe_datasets=probe_datasets,
             )
         )
+
+    @classmethod
+    def scan_cli(
+        cls,
+        llm_spec: str,
+        *,
+        max_budget: int = 1_000_000,
+        max_th: float = 0.3,
+        optimize: bool = False,
+        enable_multi_step_attack: bool = False,
+    ) -> int:
+        """Run a stateless scan and stream JSON lines to stdout."""
+        datasets = copy.deepcopy(REGISTRY)
+        for dataset in datasets:
+            dataset["selected"] = True
+
+        async def _run() -> int:
+            failures = 0
+            gen = streaming_response_generator(
+                Scan(
+                    llmSpec=llm_spec,
+                    maxBudget=max_budget,
+                    datasets=datasets,
+                    optimize=optimize,
+                    enableMultiStepAttack=enable_multi_step_attack,
+                )
+            )
+            async for update in gen:
+                sys.stdout.write(update if update.endswith("\n") else f"{update}\n")
+                sys.stdout.flush()
+                try:
+                    payload = json.loads(update)
+                except json.JSONDecodeError:
+                    continue
+                if payload.get("status"):
+                    continue
+                failure_rate = payload.get("failureRate")
+                if (
+                    isinstance(failure_rate, (int, float))
+                    and failure_rate > max_th * 100
+                ):
+                    failures += 1
+            return 1 if failures else 0
+
+        return asyncio.run(_run())
 
     def entrypoint(self):
         # Load configuration from the default path
