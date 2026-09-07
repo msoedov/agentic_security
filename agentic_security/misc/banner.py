@@ -1,10 +1,7 @@
+from importlib.metadata import version
+
 from pyfiglet import Figlet, FontNotFound
 from termcolor import colored
-
-try:
-    from importlib.metadata import version
-except ImportError:
-    from importlib_metadata import version
 
 
 def generate_banner(
@@ -14,7 +11,7 @@ def generate_banner(
     tagline: str = "Proactive Threat Detection & Automated Security Protocols",
     author: str = "Developed by: [Security Team]",
     website: str = "Website: https://github.com/msoedov/agentic_security",
-    warning: str | None = "",  # Using Optional for warning since it might be None
+    warning: str = "",
 ) -> str:
     """Generate a visually enhanced banner with dynamic width and borders."""
     # Define the text elements
@@ -80,10 +77,8 @@ def generate_banner(
 
 
 def init_banner():
-    return
-    ver = version("agentic_security")
     try:
-        print(generate_banner(version=ver))
+        print(generate_banner(version=version("agentic_security")))
     except Exception:
         # UnicodeEncodeError with codec on some systems
         pass

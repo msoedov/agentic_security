@@ -47,7 +47,9 @@ from agentic_security.probe_data import audio_generator, image_generator, msj_da
 from agentic_security.probe_data.data import prepare_prompts, create_probe_dataset
 
 #: Maximum number of characters from a prompt to include in scan results.
-MAX_PROMPT_LENGTH = settings_var("fuzzer.max_prompt_lenght", 2048)
+MAX_PROMPT_LENGTH = settings_var(
+    "fuzzer.max_prompt_length", settings_var("fuzzer.max_prompt_lenght", 2048)
+)
 #: Multiplier applied to the user-specified budget to derive the internal token limit.
 BUDGET_MULTIPLIER = settings_var("fuzzer.budget_multiplier", 100000000)
 #: Number of initial random points for the Bayesian optimizer before fitting a model.
