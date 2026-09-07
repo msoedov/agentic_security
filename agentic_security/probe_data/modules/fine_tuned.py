@@ -46,9 +46,7 @@ class Module:
                 logger.error("No prompts retrieved from the API.")
                 return
             logger.info(f"Retrieved {len(prompts)} prompts.")
-            for i, prompt in enumerate(
-                prompts[: self.max_prompts]
-            ):
+            for i, prompt in enumerate(prompts[: self.max_prompts]):
                 logger.info(f"Processing prompt {i+1}/{len(prompts)}: {prompt}")
                 yield prompt
                 while not self.tools_inbox.empty():

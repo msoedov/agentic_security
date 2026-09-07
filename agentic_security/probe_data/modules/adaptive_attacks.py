@@ -26,7 +26,6 @@ class Module:
         goals: List of corresponding goals for each target topic.
     """
 
-
     def __init__(self, prompt_groups: [], tools_inbox: asyncio.Queue, opts: dict = {}):
         r = httpx.get(url)
 

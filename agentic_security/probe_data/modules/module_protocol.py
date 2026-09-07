@@ -1,4 +1,4 @@
-﻿""":mod:`module_protocol` -- Base protocol for probe data modules.
+""":mod:`module_protocol` -- Base protocol for probe data modules.
 
 Defines the abstract Protocol that all probe data modules must implement,
 providing a standardized interface for module initialization and execution.
@@ -9,9 +9,11 @@ See Also:
     :mod:`agentic_security.probe_data.modules.inspect_ai_tool`
     :mod:`agentic_security.probe_data.modules.rl_model`
     :doc:`/external_module`
-"""""
+"""
 
-from typing import Protocol, Any, AsyncGenerator, runtime_checkable
+import asyncio
+from collections.abc import AsyncGenerator
+from typing import Any, Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -37,7 +39,7 @@ class ModuleProtocol(Protocol):
     tools_inbox: asyncio.Queue
     opts: dict
 
-    async def apply(self) -> AsyncGenerator[str, None]:
+    async def apply(self) -> AsyncGenerator[str]:
         """Execute the module and yield result messages.
 
         Yields:
