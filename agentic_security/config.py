@@ -1,4 +1,6 @@
+import os
 from functools import lru_cache
+from typing import Any
 
 import tomli
 
@@ -7,20 +9,34 @@ from agentic_security.logutils import logger
 SETTINGS_VERSION = 2
 
 
-@lru_cache(maxsize=1)
 def settings_var(name: str, default=None):
-    return get_or_create_config().get_config_value(name, default)
+    stateless = os.getenv("AGENTIC_SECURITY_STATELESS") == "1"
+    return _settings_var(name, default, stateless)
 
 
-@lru_cache(maxsize=1)
+@lru_cache(maxsize=128)
+def _settings_var(name: str, default, stateless: bool):
+    return _get_or_create_config(stateless).get_config_value(name, default)
+
+
 def get_or_create_config():
+    """Return an isolated default config for stateless commands."""
+    stateless = os.getenv("AGENTIC_SECURITY_STATELESS") == "1"
+    return _get_or_create_config(stateless)
+
+
+@lru_cache(maxsize=2)
+def _get_or_create_config(stateless: bool):
     cfg = SettingsMixin()
-    cfg.get_or_create_config()
+    if stateless:
+        cfg.config = {}
+    else:
+        cfg.get_or_create_config()
     return cfg
 
 
 class SettingsMixin:
-    config = {}
+    config: dict[str, Any] = {}
     default_path = "agentic_security.toml"
 
     def get_or_create_config(self) -> bool:
