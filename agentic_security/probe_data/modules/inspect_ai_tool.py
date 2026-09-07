@@ -34,7 +34,7 @@ class Module:
         self.tools_inbox = tools_inbox
         if not self.is_tool_installed():
             logger.error(
-                "inspect_ai module is not installed. Please install it using '"'"'pip install inspect_ai'"'"'"
+                "inspect_ai module is not installed. Please install it using 'pip install inspect_ai'"
             )
         self.opts = opts
 
