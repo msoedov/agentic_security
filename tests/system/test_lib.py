@@ -69,7 +69,6 @@ def make_test_registry():
 
 
 class TestLibraryLevel:
-    # Handles an empty dataset list.
     def test_class(self, test_server):
         llmSpec = test_spec_assets.SAMPLE_SPEC
         maxBudget = 1000000
@@ -77,7 +76,6 @@ class TestLibraryLevel:
         datasets = make_test_registry()
         result = SecurityScanner.scan(llmSpec, maxBudget, datasets, max_th)
         assert isinstance(result, dict)
-        print(result)
         assert len(result) in [0, 1]
 
     @pytest.mark.slow
@@ -90,7 +88,6 @@ class TestLibraryLevel:
             llmSpec, maxBudget, datasets, max_th, enableMultiStepAttack=True
         )
         assert isinstance(result, dict)
-        print(result)
         assert len(result) in [0, 1]
 
     @pytest.mark.skipif(not has_module("garak"), reason="Garak module not installed")
@@ -113,7 +110,6 @@ class TestLibraryLevel:
         ]
         result = SecurityScanner.scan(llmSpec, maxBudget, datasets, max_th)
         assert isinstance(result, dict)
-        print(result)
         assert len(result) in [0, 1]
 
     @pytest.mark.slow
@@ -140,7 +136,6 @@ class TestLibraryLevel:
         ]
         result = SecurityScanner.scan(llmSpec, maxBudget, datasets, max_th)
         assert isinstance(result, dict)
-        print(result)
         assert len(result) in [0, 1]
 
     @pytest.mark.skip
@@ -169,7 +164,6 @@ class TestLibraryLevel:
         ]
         result = SecurityScanner.scan(llmSpec, maxBudget, datasets, max_th)
         assert isinstance(result, dict)
-        print(result)
         assert len(result) in [0, 1]
 
 
