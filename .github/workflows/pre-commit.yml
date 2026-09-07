@@ -15,12 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry==$POETRY_VERSION
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.14'
-      - name: Install poetry
-        run: pipx install poetry==$POETRY_VERSION
+          cache: "poetry"
       - name: Install pre-commit
         run: poetry install
       - name: Run pre-commit
