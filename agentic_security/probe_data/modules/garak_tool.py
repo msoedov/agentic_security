@@ -40,7 +40,7 @@ class Module:
         self.tools_inbox = tools_inbox
         if not self.is_garak_installed():
             logger.error(
-                "Garak module is not installed. Please install it using '"'"'pip install garak'"'"'"
+                "Garak module is not installed. Please install it using 'pip install garak'"
             )
         self.opts = opts
 
