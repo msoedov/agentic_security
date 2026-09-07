@@ -1,43 +1,49 @@
-## Module Interface Documentation
+﻿## Module Interface Documentation
 
-The `Module` class interface provides a standardized way to create and use modules in the `agentic_security` project.
+The ``Module`` class provides a standardized way to create and use probe data
+modules in the ``agentic_security`` project.
 
-Here is an example of a module that implements the `ModuleProtocol` interface. This example shows how to create a module that processes prompts and sends results to a queue.
+All modules in :mod:`agentic_security.probe_data.modules` share the same
+constructor signature and the same ``apply`` async generator method. See the
+concrete implementations for real-world usage:
 
-```python
-from typing import List, Dict, Any, AsyncGenerator
-import asyncio
-from .module_protocol import ModuleProtocol
+* :mod:`agentic_security.probe_data.modules.garak_tool`
+* :mod:`agentic_security.probe_data.modules.fine_tuned`
+* :mod:`agentic_security.probe_data.modules.inspect_ai_tool`
+* :mod:`agentic_security.probe_data.modules.rl_model`
 
-class ModuleProtocol(ModuleProtocol):
-    def __init__(self, prompt_groups: List[Any], tools_inbox: asyncio.Queue, opts: Dict[str, Any]):
-        self.prompt_groups = prompt_groups
-        self.tools_inbox = tools_inbox
-        self.opts = opts
+### Interface Summary
 
-    async def apply(self) -> AsyncGenerator[str, None]:
-        for group in self.prompt_groups:
-            await asyncio.sleep(1) 
-            result = f"Processed {group}"
-            await self.tools_inbox.put(result)
-            yield result
-```
+Every module class accepts three constructor arguments:
 
-#### Usage Example
+``def __init__(self, prompt_groups: list[Any], tools_inbox: asyncio.Queue, opts: dict = {}): ...``
 
-```python
-import asyncio
-import ModuleProtocol
+The ``apply`` method is an async generator that yields result strings:
 
-tools_inbox = asyncio.Queue()
-prompt_groups = ["group1", "group2"]
-opts = {"max_prompts": 1000, "batch_size": 100}
+``async def apply(self) -> AsyncGenerator[str, None]: yield "result message"``
 
-module = ModuleProtocol(prompt_groups, tools_inbox, opts)
+### Usage Example
 
-async def main():
-    async for result in module.apply():
-        print(result)
+``import asyncio``
+``from agentic_security.probe_data.modules.garak_tool import Module as GarakModule``
+``tools_inbox = asyncio.Queue()``
+``prompt_groups = ["group_a", "group_b"]``
+``opts = {"port": 8718}``
+``module = GarakModule(prompt_groups, tools_inbox, opts)``
+``async def main(): async for result in module.apply(): print(result)``
+``asyncio.run(main())``
 
-asyncio.run(main())
-```
+### Defining a Custom Module
+
+``import asyncio``
+``from typing import Any``
+``class MyModule:``
+``    def __init__(self, prompt_groups, tools_inbox, opts={}):``
+``        self.prompt_groups = prompt_groups``
+``        self.tools_inbox = tools_inbox``
+``        self.opts = opts``
+``    async def apply(self):``
+``        for group in self.prompt_groups:``
+``            result = "processed {0}".format(group)``
+``            await self.tools_inbox.put({"message": result})``
+``            yield result``
