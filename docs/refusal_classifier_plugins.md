@@ -35,7 +35,7 @@ Here is an example of a custom refusal classifier plugin that checks for specifi
 
 ```python
 class CustomRefusalClassifier(RefusalClassifierPlugin):
-    def __init__(self, custom_phrases: List[str]):
+    def __init__(self, custom_phrases: list[str]):
         self.custom_phrases = custom_phrases
 
     def is_refusal(self, response: str) -> bool:

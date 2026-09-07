@@ -1,23 +1,14 @@
 # Getting Started
 
-Welcome to Agentic Security! This guide will help you get started with using the tool.
+1. Install the package ([installation](installation.md)).
+2. Start the UI:
 
-## Quick Start
-
-1. Ensure you have completed the [installation](installation.md) steps.
-1. Run the following command to start the application:
    ```bash
-agentic_security server
+   agentic_security server
    ```
-1. Access the application at `http://localhost:8718`.
 
-## Basic Usage
+   The server listens on `http://127.0.0.1:8718` by default.
 
-- To view available commands, use:
-  ```bash
-  agentic_security --help
-  ```
-
-## Next Steps
-
-Explore the [Configuration](configuration.md) section to customize your setup.
+3. For a headless scan, create `agentic_security.toml` with `agentic_security init`,
+   edit the `llmSpec`, then run `agentic_security ci`. See the [CLI](cli.md)
+   and [configuration](configuration.md) pages.

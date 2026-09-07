@@ -1,24 +1,23 @@
 # Configuration
 
-This section provides information on configuring Agentic Security to suit your needs.
+Scan settings live in `agentic_security.toml` in the working directory.
+Create one with:
 
-## Default Configuration
+```bash
+agentic_security init
+```
 
-The default configuration file is `agentic_security.toml`. It includes settings for:
+The file is versioned (`general.version`). The current schema version is `2`.
 
-- General settings
-- Module configurations
-- Thresholds
+## Sections
 
-## Customizing Configuration
+- `[general]` — `llmSpec` (the HTTP request template), budget, failure threshold,
+  optimizer flag, multi-step attack flag
+- `[modules.*]` — datasets to run; `AgenticBackend.opts.port` is the local proxy port
+- `[detectors]` — refusal and leak classifiers
+- `[thresholds]` — low / medium / high failure-rate bands
+- `[secrets]` — API keys referenced from the HTTP spec
+- `[caching]`, `[network]`, `[fuzzer]` — runtime tuning
 
-1. Open the `agentic_security.toml` file in a text editor.
-1. Modify the settings as needed. For example, to change the port:
-   ```toml
-   [modules.AgenticBackend.opts]
-   port = 8718
-   ```
-
-## Advanced Configuration
-
-For advanced configuration options, refer to the [API Reference](api_reference.md).
+Replace the placeholder `Bearer XXXXX` in `llmSpec` with credentials for the
+target endpoint. See [HTTP spec](http_spec.md) for the request template format.

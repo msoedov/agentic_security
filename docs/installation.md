@@ -1,19 +1,18 @@
 # Installation
 
-This section will guide you through the installation process for Agentic Security.
+Requires Python 3.14 or newer.
 
-## Prerequisites
+## PyPI
 
-- Python 3.11
-- pip
+```bash
+pip install agentic_security
+```
 
-## Installation Steps
+## From source
 
-1. Install the package using pip:
-   ```bash
-   pip install agentic_security
-   ```
+```bash
+poetry install --with dev
+```
 
-## Troubleshooting
-
-If you encounter any issues during installation, please refer to the [troubleshooting guide](#) or contact support.
+Then run `agentic_security --help`. See the [CLI](cli.md) and
+[getting started](getting_started.md) pages for the next steps.

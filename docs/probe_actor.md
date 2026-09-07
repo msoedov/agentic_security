@@ -1,43 +1,42 @@
-# Probe Actor Module Documentation
+# Probe actor
 
-The `probe_actor` module is a critical component of the Agentic Security project, responsible for generating prompts, performing scans, and handling refusal checks. This documentation provides an overview of the module's structure and functionality.
+The `probe_actor` package runs scans against an LLM endpoint described by an
+HTTP spec.
 
-## Files and Key Components
+## Fuzzer
 
-### fuzzer.py
+`agentic_security.probe_actor.fuzzer` is the scan engine:
 
-- **Functions:**
-  - `async def generate_prompts(...)`: Asynchronously generates prompts for scanning.
-  - `def multi_modality_spec(llm_spec)`: Defines specifications for multi-modality.
-  - `async def process_prompt(...)`: Processes a given prompt asynchronously.
-  - `async def perform_single_shot_scan(...)`: Performs a single-shot scan asynchronously.
-  - `async def perform_many_shot_scan(...)`: Performs a many-shot scan asynchronously.
-  - `def scan_router(...)`: Routes scan requests.
+- `generate_prompts` — yield prompts from a list or async source
+- `get_modality_adapter` — wrap the spec for image or audio endpoints
+- `process_prompt` / `process_prompt_batch` — send a prompt and score the reply
+- `perform_single_shot_scan` — one prompt at a time
+- `perform_many_shot_scan` — many-shot jailbreak conversations
+- `scan_router` — pick the scan mode from configuration
 
-### refusal.py
-
-- **Functions:**
-  - `def check_refusal(response: str, refusal_phrases: list = REFUSAL_MARKS) -> bool`: Checks if a response contains refusal phrases.
-  - `def refusal_heuristic(request_json)`: Applies heuristics to determine refusal.
-
-## Usage Examples
-
-### Performing a Single-Shot Scan
+`perform_single_shot_scan` is an async generator; it needs a request factory
+(typically an `LLMSpec`) plus budget and dataset settings, not a bare prompt
+string.
 
 ```python
+from agentic_security.http_spec import LLMSpec
 from agentic_security.probe_actor.fuzzer import perform_single_shot_scan
 
-await perform_single_shot_scan(prompt="Test prompt")
+spec = LLMSpec.from_string(open("spec.http").read())
+async for event in perform_single_shot_scan(spec, max_budget=1000):
+    print(event)
 ```
 
-### Checking for Refusal
+## Refusal checks
+
+There is no `check_refusal` helper. Use `refusal_heuristic(response)` in
+`agentic_security.probe_actor.refusal`, which runs the detectors enabled under
+`[detectors]` in `agentic_security.toml`.
 
 ```python
-from agentic_security.probe_actor.refusal import check_refusal
+from agentic_security.probe_actor.refusal import refusal_heuristic
 
-is_refusal = check_refusal(response="I'm sorry, I can't do that.")
+refusal_heuristic("I'm sorry, I can't help with that.")
 ```
 
-## Conclusion
-
-The `probe_actor` module provides essential functionality for generating prompts, performing scans, and handling refusal checks within the Agentic Security project. This documentation serves as a guide to understanding and utilizing the module's capabilities.
+See [refusal classifier plugins](refusal_classifier_plugins.md) to add a custom detector.

@@ -42,11 +42,9 @@ This section provides detailed information about the Agentic Security API.
 
 ## Authentication
 
-All API requests require an API key. Include it in the `Authorization` header:
-
-```
-Authorization: Bearer YOUR_API_KEY
-```
+`/v1/self-probe` is an unauthenticated local test endpoint. File and image
+probe routes expect an `Authorization: Bearer ...` header; the mock server
+checks the header shape, not a configured API key.
 
 ## Further Reading
 
