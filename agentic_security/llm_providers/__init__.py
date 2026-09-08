@@ -7,6 +7,7 @@ from agentic_security.llm_providers.base import (
 )
 from agentic_security.llm_providers.openai_provider import OpenAIProvider
 from agentic_security.llm_providers.anthropic_provider import AnthropicProvider
+from agentic_security.llm_providers.atlascloud_provider import AtlasCloudProvider
 from agentic_security.llm_providers.litellm_provider import LiteLLMProvider
 from agentic_security.llm_providers.factory import create_provider, get_provider_class
 
@@ -18,6 +19,7 @@ __all__ = [
     "LLMRateLimitError",
     "OpenAIProvider",
     "AnthropicProvider",
+    "AtlasCloudProvider",
     "LiteLLMProvider",
     "create_provider",
     "get_provider_class",
