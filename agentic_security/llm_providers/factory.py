@@ -14,10 +14,12 @@ def _ensure_registered() -> None:
         return
     from agentic_security.llm_providers.openai_provider import OpenAIProvider
     from agentic_security.llm_providers.anthropic_provider import AnthropicProvider
+    from agentic_security.llm_providers.atlascloud_provider import AtlasCloudProvider
     from agentic_security.llm_providers.litellm_provider import LiteLLMProvider
 
     _PROVIDERS["openai"] = OpenAIProvider
     _PROVIDERS["anthropic"] = AnthropicProvider
+    _PROVIDERS["atlascloud"] = AtlasCloudProvider
     _PROVIDERS["litellm"] = LiteLLMProvider
 
 

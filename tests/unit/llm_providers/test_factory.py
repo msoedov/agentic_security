@@ -21,6 +21,7 @@ class TestListProviders:
         providers = list_providers()
         assert "openai" in providers
         assert "anthropic" in providers
+        assert "atlascloud" in providers
 
     def test_returns_sorted_list(self):
         providers = list_providers()
@@ -39,6 +40,14 @@ class TestGetProviderClass:
 
         cls = get_provider_class("anthropic")
         assert cls is AnthropicProvider
+
+    def test_get_atlascloud(self):
+        from agentic_security.llm_providers.atlascloud_provider import (
+            AtlasCloudProvider,
+        )
+
+        cls = get_provider_class("atlascloud")
+        assert cls is AtlasCloudProvider
 
     def test_case_insensitive(self):
         cls1 = get_provider_class("OpenAI")
@@ -97,6 +106,12 @@ class TestCreateProvider:
         monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
         provider = create_provider("anthropic", model="claude-3-5-sonnet-latest")
         assert provider.model == snapshot("claude-3-5-sonnet-latest")
+
+    def test_create_atlascloud_with_default_model(self, monkeypatch):
+        monkeypatch.setenv("ATLASCLOUD_API_KEY", "test-key")
+        provider = create_provider("atlascloud")
+        assert provider.model == snapshot("qwen/qwen3.5-397b-a17b")
+        assert provider.base_url == snapshot("https://api.atlascloud.ai/v1")
 
     def test_create_with_api_key(self, monkeypatch):
         monkeypatch.delenv("OPENAI_API_KEY", raising=False)
