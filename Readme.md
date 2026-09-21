@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/msoedov-agentic-security-badge.png)](https://mseep.ai/app/msoedov-agentic-security)
+
 <p align="center">
   <h1 align="center">Agentic Security</h1>
   <p align="center">
