@@ -86,7 +86,7 @@ class HybridRefusalClassifier:
         detector: RefusalDetector,
         weight: float = 1.0,
         name: str | None = None,
-    ) -> "HybridRefusalClassifier":
+    ) -> HybridRefusalClassifier:
         """Add a detection method with specified weight.
 
         Args:
