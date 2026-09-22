@@ -30,8 +30,8 @@ async def verify(
     info: LLMInfo, secrets: InMemorySecrets = Depends(get_in_memory_secrets)
 ) -> dict[str, int | str | float]:
     logger.info("verify: checking LLM spec connectivity")
-    spec = LLMSpec.from_string(info.spec)
     try:
+        spec = LLMSpec.from_string(info.spec)
         r = await spec.verify()
     except InvalidHTTPSpecError as e:
         logger.warning("verify: invalid HTTP spec: %s", e)
