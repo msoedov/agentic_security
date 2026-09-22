@@ -88,9 +88,8 @@ def generate_audio_cross_platform(prompt: str) -> bytes:
 
     tts = gTTS(text=prompt, lang="en")
     temp_mp3_path = f"temp_audio_{uuid.uuid4().hex}.mp3"
-    tts.save(temp_mp3_path)
-
     try:
+        tts.save(temp_mp3_path)
         with open(temp_mp3_path, "rb") as f:
             audio_bytes = f.read()
     finally:
