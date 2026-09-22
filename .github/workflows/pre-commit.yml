@@ -2,6 +2,7 @@ name: Pre-Commit Checks
 
 env:
   POETRY_VERSION: "2.4.1"
+  POETRY_VIRTUALENVS_CREATE: "true"
 
 
 on:
