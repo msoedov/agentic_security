@@ -330,8 +330,11 @@ def parse_csv_content(content: bytes) -> ProbeDataset:
 
 def load_local_csv() -> ProbeDataset:
     """Load prompts from local CSV files."""
-    os.makedirs("./datasets", exist_ok=True)
-    csv_files = [f for f in os.listdir("./datasets") if f.endswith(".csv")]
+    csv_files = (
+        [f for f in os.listdir("./datasets") if f.endswith(".csv")]
+        if os.path.isdir("./datasets")
+        else []
+    )
     logger.info(f"Found {len(csv_files)} CSV files: {csv_files}")
 
     prompts = []
@@ -348,7 +351,11 @@ def load_csv(file: str) -> ProbeDataset:
 
 def load_local_csv_files() -> list[ProbeDataset]:
     """Load prompts from local CSV files and return a list of ProbeDataset objects."""
-    csv_files = [f for f in os.listdir("./datasets") if f.endswith(".csv")]
+    csv_files = (
+        [f for f in os.listdir("./datasets") if f.endswith(".csv")]
+        if os.path.isdir("./datasets")
+        else []
+    )
     logger.info(f"Found {len(csv_files)} CSV files: {csv_files}")
 
     datasets = []

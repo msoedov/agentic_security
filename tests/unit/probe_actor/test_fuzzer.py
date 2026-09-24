@@ -8,12 +8,31 @@ import pytest
 from agentic_security.primitives import Scan
 from agentic_security.probe_actor.fuzzer import (
     FuzzerState,
+    export_scan_artifacts,
     generate_prompts,
     perform_many_shot_scan,
     perform_single_shot_scan,
     process_prompt,
     scan_router,
 )
+
+
+def test_export_scan_artifacts_can_be_disabled():
+    state = MagicMock()
+
+    export_scan_artifacts(state, None)
+
+    state.export_failures.assert_not_called()
+    state.export_full_log.assert_not_called()
+
+
+def test_export_scan_artifacts_uses_requested_directory(tmp_path):
+    state = MagicMock()
+
+    export_scan_artifacts(state, tmp_path)
+
+    state.export_failures.assert_called_once_with(tmp_path / "failures.csv")
+    state.export_full_log.assert_called_once_with(tmp_path / "full_scan_log.csv")
 
 
 @pytest.mark.asyncio
