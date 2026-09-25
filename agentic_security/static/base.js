@@ -187,6 +187,21 @@ Content-Type: application/json
 }
 `,
 
+  `POST https://api.orcarouter.ai/v1/chat/completions
+Authorization: Bearer $ORCAROUTER_API_KEY
+Content-Type: application/json
+
+{
+  "model": "openai/gpt-5.5",
+  "messages": [{"role": "user", "content": "<<PROMPT>>"}],
+  "temperature": 0.7,
+  "max_tokens": 150,
+  "top_p": 0.9,
+  "frequency_penalty": 0,
+  "presence_penalty": 0
+}
+`,
+
 ]
 
 let fallbackIcon = '/icons/myshell.png';
@@ -206,6 +221,7 @@ let LLM_CONFIGS = [
   { name: 'Azure OpenAI', prompts: 40000, logo: '/icons/azureai.png' },
   { name: 'assemblyai', prompts: 40000, logo: fallbackIcon },
   { name: 'OpenRouter.ai', prompts: 40000, logo: '/icons/openrouter.png' },
+  { name: 'OrcaRouter', prompts: 40000, logo: fallbackIcon },
 
 ];
 function has_image(spec) {

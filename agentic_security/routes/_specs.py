@@ -176,6 +176,20 @@ Content-Type: application/json
   "presence_penalty": 0
 }
 """,
+    """POST https://api.orcarouter.ai/v1/chat/completions
+Authorization: Bearer $ORCAROUTER_API_KEY
+Content-Type: application/json
+
+{
+  "model": "openai/gpt-5.5",
+  "messages": [{"role": "user", "content": "<<PROMPT>>"}],
+  "temperature": 0.7,
+  "max_tokens": 150,
+  "top_p": 0.9,
+  "frequency_penalty": 0,
+  "presence_penalty": 0
+}
+""",
 ]
 
 
@@ -357,6 +371,20 @@ Content-Type: application/json
   "presence_penalty": 0
 }
 """,
+    """POST https://api.orcarouter.ai/v1/chat/completions
+Authorization: Bearer $ORCAROUTER_API_KEY
+Content-Type: application/json
+
+{
+  "model": "openai/gpt-5.5",
+  "messages": [{"role": "user", "content": "<<PROMPT>>"}],
+  "temperature": 0.7,
+  "max_tokens": 150,
+  "top_p": 0.9,
+  "frequency_penalty": 0,
+  "presence_penalty": 0
+}
+""",
 ]
 
 
@@ -392,6 +420,7 @@ LLM_CONFIGS = [
     {"name": "Azure OpenAI", "prompts": 40000, "logo": "/icons/azureai.png"},
     {"name": "assemblyai", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "OpenRouter.ai", "prompts": 40000, "logo": "/icons/openrouter.png"},
+    {"name": "OrcaRouter", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
 
 LLM_SPECS = [dict(spec=spec, **d) for spec, d in zip(_SPECS, LLM_CONFIGS)]
