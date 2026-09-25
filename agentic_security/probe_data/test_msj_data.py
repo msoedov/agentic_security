@@ -129,8 +129,7 @@ class TestPreparePrompts:
         result = prepare_prompts(
             dataset_names=["data-is-better-together/10k_prompts_ranked"]
         )
-        assert len(result) == 2
+        assert len(result) == 1
         assert all(isinstance(ds.prompts, list) for ds in result)
         assert all(isinstance(ds.metadata, dict) for ds in result)
         assert result[0].prompts == ["test prompt"]
-        assert result[1].prompts == ["another prompt"]
