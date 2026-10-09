@@ -9,6 +9,7 @@ from agentic_security.refusal_classifier.llm_classifier import (
     LLMRefusalClassifier,
     build_evaluation_prompt,
     create_llm_classifier,
+    parse_verdict,
     DEFAULT_PASS_CONDITIONS,
     DEFAULT_FAIL_CONDITIONS,
 )
@@ -75,6 +76,32 @@ class TestLLMRefusalClassifier:
         classifier2 = LLMRefusalClassifier(client=client2)
         assert classifier2.is_refusal("test") is False
 
+    @pytest.mark.parametrize(
+        "judge_reply",
+        ["Pass.", "pass,", "pass!", '"pass"', "**pass**", "`pass`", "PASS"],
+    )
+    def test_is_refusal_pass_with_punctuation_or_markdown(self, judge_reply):
+        """A "pass" verdict stays a pass when the judge decorates the word."""
+        client = MockLLMClient(response=judge_reply)
+        classifier = LLMRefusalClassifier(client=client)
+        # An attack the judge rated as successful must not be reported as a refusal
+        assert classifier.is_refusal("Here's how to do that...") is False
+
+    @pytest.mark.parametrize(
+        "judge_reply",
+        ["Fail.", "fail,", '"fail"', "**fail**", "`fail`"],
+    )
+    def test_is_refusal_fail_with_punctuation_or_markdown(self, judge_reply):
+        client = MockLLMClient(response=judge_reply)
+        classifier = LLMRefusalClassifier(client=client)
+        assert classifier.is_refusal("I cannot help with that.") is True
+
+    def test_is_refusal_unrecognized_reply_defers(self):
+        """Replies without a verdict word defer instead of reporting a refusal."""
+        client = MockLLMClient(response="I am not sure how to judge this one")
+        classifier = LLMRefusalClassifier(client=client)
+        assert classifier.is_refusal("test") is False
+
     def test_no_client_returns_false(self):
         classifier = LLMRefusalClassifier(client=None)
         classifier._initialized = True  # Skip lazy init
@@ -119,6 +146,52 @@ class TestLLMRefusalClassifier:
         system_prompt, user_prompt = client.calls[0]
         assert "security evaluation controller" in system_prompt.lower()
         assert "Model says: I can help!" in user_prompt
+
+
+class TestParseVerdict:
+    """The controller verdict is a word, not a whitespace-delimited token."""
+
+    @pytest.mark.parametrize(
+        "judge_reply,expected",
+        [
+            ("pass", False),
+            ("fail", True),
+            ("Pass", False),
+            ("PASS", False),
+            ("  pass  ", False),
+            ("  fail  ", True),
+            ("Pass.", False),
+            ("pass,", False),
+            ("pass!", False),
+            ('"pass"', False),
+            ("**pass**", False),
+            ("`pass`", False),
+            ("fail.", True),
+            ("Fail!", True),
+            ('"fail"', True),
+            ("**fail**", True),
+        ],
+    )
+    def test_verdict_with_surrounding_decoration(self, judge_reply, expected):
+        assert parse_verdict(judge_reply) is expected
+
+    @pytest.mark.parametrize(
+        "judge_reply",
+        ["", "   ", ".", "n/a", "I am not sure", "no verdict"],
+    )
+    def test_no_verdict_returns_none(self, judge_reply):
+        assert parse_verdict(judge_reply) is None
+
+    @pytest.mark.parametrize(
+        "judge_reply",
+        ["bypass", "compass", "passed", "failed", "The model bypassed the filter."],
+    )
+    def test_words_containing_a_verdict_are_not_verdicts(self, judge_reply):
+        """Word boundaries keep "bypass"/"passed" from being read as "pass"."""
+        assert parse_verdict(judge_reply) is None
+
+    def test_none_input_is_handled(self):
+        assert parse_verdict(None) is None
 
 
 class TestCreateLLMClassifier:
