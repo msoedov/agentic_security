@@ -29,6 +29,7 @@ import asyncio
 import random
 import time
 from collections.abc import AsyncGenerator
+from dataclasses import dataclass
 from json import JSONDecodeError
 from typing import Any
 
@@ -37,7 +38,8 @@ from skopt import Optimizer
 from skopt.space import Real
 
 from agentic_security.config import settings_var
-from agentic_security.http_spec import Modality
+from agentic_security.core.app import get_stop_event, get_tools_inbox, set_current_run
+from agentic_security.http_spec import LLMSpec, Modality
 from agentic_security.logutils import logger
 from agentic_security.primitives import Scan, ScanResult
 from agentic_security.probe_actor.cost_module import calculate_cost
@@ -64,6 +66,53 @@ FAILURES_CSV_PATH = settings_var("fuzzer.failures_csv_path", "failures.csv")
 FULL_LOG_CSV_PATH = settings_var("fuzzer.full_log_csv_path", "full_scan_log.csv")
 #: Maximum number of injection attempts per prompt in many-shot mode.
 MAX_INJECTION_ATTEMPTS = settings_var("fuzzer.max_injection_attempts", 20)
+#: A module is aborted after this many errors in a row (dead or broken target).
+MAX_CONSECUTIVE_ERRORS = 10
+
+# Outcome of a single attack attempt.
+REFUSED = "refused"
+COMPLIED = "complied"
+ERROR = "error"
+
+
+@dataclass
+class ModuleStats:
+    refused: int = 0
+    complied: int = 0
+    errors: int = 0
+    consecutive_errors: int = 0
+
+    def add(self, outcome: str) -> None:
+        if outcome == ERROR:
+            self.errors += 1
+            self.consecutive_errors += 1
+            return
+        self.consecutive_errors = 0
+        if outcome == COMPLIED:
+            self.complied += 1
+        else:
+            self.refused += 1
+
+    @property
+    def failure_rate(self) -> float:
+        """Attack success rate: complied / answered. Errors are excluded."""
+        answered = self.refused + self.complied
+        return self.complied / answered if answered else 0.0
+
+    @property
+    def error_rate(self) -> float:
+        total = self.refused + self.complied + self.errors
+        return self.errors / total if total else 0.0
+
+    @property
+    def aborted(self) -> bool:
+        return self.consecutive_errors >= MAX_CONSECUTIVE_ERRORS
+
+    def abort_msg(self, module_name: str) -> str:
+        return ScanResult.status_msg(
+            f"Module {module_name} aborted after {self.consecutive_errors} consecutive errors.",
+            error=True,
+        )
 
 
 async def generate_prompts(
@@ -121,7 +170,7 @@ async def process_prompt(
     tokens: int,
     module_name: str,
     fuzzer_state: FuzzerState,
-) -> tuple[int, bool]:
+) -> tuple[int, str]:
     """
     Processes a single prompt using the provided request factory and updates tracking lists.
 
@@ -138,7 +187,7 @@ async def process_prompt(
         fuzzer_state: State tracking object for the fuzzer
 
     Returns:
-        tuple[int, bool]: Updated token count and a boolean indicating if the prompt was refused.
+        tuple[int, str]: Updated token count and the outcome: REFUSED, COMPLIED or ERROR.
     """
     try:
         response = await request_factory.fn(prompt=prompt)
@@ -147,14 +196,14 @@ async def process_prompt(
         if response.status_code == 422:
             logger.error(f"Invalid prompt: {prompt}, error=422")
             fuzzer_state.add_error(module_name, prompt, 422, "Invalid prompt")
-            return tokens, True
+            return tokens, ERROR
 
         if response.status_code >= 400:
             logger.error(f"HTTP {response.status_code} {response.content=}")
             fuzzer_state.add_error(
                 module_name, prompt, response.status_code, response.text
             )
-            return tokens, True
+            return tokens, ERROR
 
         # Process successful response
         response_text = response.text
@@ -168,19 +217,20 @@ async def process_prompt(
             )
 
         fuzzer_state.add_output(module_name, prompt, response_text, refused)
-        return tokens, refused
+        return tokens, REFUSED if refused else COMPLIED
 
     except httpx.RequestError as exc:
         logger.error(f"Request error: {exc}")
         fuzzer_state.add_error(module_name, prompt, "?", str(exc))
-        return tokens, True
+        return tokens, ERROR
     except JSONDecodeError as json_decode_error:
         logger.error(f"JSON error: {json_decode_error}")
         fuzzer_state.add_error(module_name, prompt, "?", str(json_decode_error))
-        return tokens, True
+        return tokens, ERROR
     except Exception as e:
         logger.exception(f"Unexpected error: {e}")
-        return tokens, False
+        fuzzer_state.add_error(module_name, prompt, "?", str(e))
+        return tokens, ERROR
 
 
 async def process_prompt_batch(
@@ -207,7 +257,7 @@ async def process_prompt_batch(
     Returns:
         tuple[int, int]:
             - Total number of tokens processed.
-            - Number of failed prompts.
+            - Number of prompts the target complied with (successful attacks).
     """
     tasks = [
         process_prompt(request_factory, p, tokens, module_name, fuzzer_state)
@@ -215,7 +265,7 @@ async def process_prompt_batch(
     ]
     results = await asyncio.gather(*tasks)
     total_tokens = sum(r[0] for r in results)
-    failures = sum(1 for r in results if r[1])
+    failures = sum(1 for r in results if r[1] == COMPLIED)
     return total_tokens, failures
 
 
@@ -249,8 +299,7 @@ async def scan_module(
     """
     tokens = 0
     token_counter = token_counter or {"total": 0}
-    module_failures = 0
-    module_prompts = 0
+    stats = ModuleStats()
     failure_rates = []
     should_stop = False
 
@@ -284,7 +333,6 @@ async def scan_module(
             return
 
         processed_prompts += 1
-        module_prompts += 1
 
         # Calculate progress based on total processed prompts
         progress = 100 * processed_prompts / total_prompts if total_prompts else 0
@@ -293,7 +341,7 @@ async def scan_module(
         start = time.time()
 
         previous_tokens = tokens
-        tokens, failed = await process_prompt(
+        tokens, outcome = await process_prompt(
             request_factory,
             prompt,
             tokens,
@@ -305,10 +353,8 @@ async def scan_module(
         token_delta = max(tokens - previous_tokens, 0)
         token_counter["total"] += token_delta
 
-        if failed:
-            module_failures += 1
-
-        failure_rate = module_failures / max(module_prompts, 1)
+        stats.add(outcome)
+        failure_rate = stats.failure_rate
         failure_rates.append(failure_rate)
         cost = calculate_cost(
             tokens, model=getattr(request_factory, "model_name", "unknown")
@@ -322,10 +368,15 @@ async def scan_module(
             cost=cost,
             progress=round(progress, 2),
             failureRate=round(failure_rate * 100, 2),
+            errorRate=round(stats.error_rate * 100, 2),
             prompt=prompt[:MAX_PROMPT_LENGTH],
             latency=end - start,
             model=response_text,
         ).model_dump_json()
+
+        if stats.aborted:
+            yield stats.abort_msg(module.dataset_name)
+            break
 
         # Optimization logic
         if optimize and optimizer and len(failure_rates) >= MIN_FAILURE_SAMPLES:
@@ -378,7 +429,7 @@ async def with_error_handling(agen):
             yield t
     except Exception as e:
         logger.exception("Scan failed")
-        yield ScanResult.status_msg(f"Scan failed: {str(e)}")
+        yield ScanResult.status_msg(f"Scan failed: {str(e)}", error=True)
     finally:
         yield ScanResult.status_msg("Scan completed.")
 
@@ -470,8 +521,11 @@ async def perform_single_shot_scan(
         try:
             async for result in module_gen:
                 yield result
-        except Exception:
-            logger.error("Module exception")
+        except Exception as e:
+            logger.exception("Module exception")
+            yield ScanResult.status_msg(
+                f"Module {module.dataset_name} failed: {e}", error=True
+            )
             continue
         # Update processed_prompts count
         module_size = 0 if module.lazy else len(module.prompts)
@@ -548,7 +602,7 @@ async def perform_many_shot_scan(
     failure_rates = []
 
     for module in prompt_modules:
-        module_failures = 0
+        stats = ModuleStats()
         module_size = 0 if module.lazy else len(module.prompts)
         logger.info(f"Scanning {module.dataset_name} {module_size}")
 
@@ -571,6 +625,7 @@ async def perform_many_shot_scan(
             tokens += prompt_tokens
 
             injected = False
+            outcome = ERROR
             for _ in range(MAX_INJECTION_ATTEMPTS):
                 if injected:
                     break
@@ -581,20 +636,20 @@ async def perform_many_shot_scan(
                     full_prompt = "\n" + prompt
                     injected = True
 
-                tokens, failed = await process_prompt(
+                tokens, outcome = await process_prompt(
                     request_factory,
                     full_prompt,
                     tokens,
                     module.dataset_name,
                     fuzzer_state=fuzzer_state,
                 )
-                if failed:
-                    module_failures += 1
+                if outcome != COMPLIED:
                     break
                 if injected:
                     break
 
-            failure_rate = module_failures / max(processed_prompts, 1)
+            stats.add(outcome)
+            failure_rate = stats.failure_rate
             failure_rates.append(failure_rate)
             cost = calculate_cost(
                 tokens, model=getattr(request_factory, "model_name", "unknown")
@@ -606,8 +661,13 @@ async def perform_many_shot_scan(
                 cost=cost,
                 progress=round(progress, 2),
                 failureRate=round(failure_rate * 100, 2),
+                errorRate=round(stats.error_rate * 100, 2),
                 prompt=prompt[:MAX_PROMPT_LENGTH],
             ).model_dump_json()
+
+            if stats.aborted:
+                yield stats.abort_msg(module.dataset_name)
+                break
 
             if optimize and len(failure_rates) >= MIN_FAILURE_SAMPLES:
                 yield ScanResult.status_msg(
@@ -678,3 +738,19 @@ def scan_router(
                 inline_datasets=scan_parameters.inline_datasets,
             )
         )
+
+
+def streaming_response_generator(scan_parameters: Scan) -> AsyncGenerator[str]:
+    request_factory = LLMSpec.from_string(scan_parameters.llmSpec)
+    set_current_run(request_factory)
+
+    async def _gen():
+        async for scan_result in scan_router(
+            request_factory=request_factory,
+            scan_parameters=scan_parameters,
+            tools_inbox=get_tools_inbox(),
+            stop_event=get_stop_event(),
+        ):
+            yield scan_result + "\n"
+
+    return _gen()

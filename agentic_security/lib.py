@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import copy
 import json
 import sys
@@ -13,8 +14,8 @@ from tabulate import tabulate
 from agentic_security.config import SettingsMixin  # Importing the configuration mixin
 from agentic_security.logutils import logger
 from agentic_security.primitives import Scan
+from agentic_security.probe_actor.fuzzer import streaming_response_generator
 from agentic_security.probe_data import REGISTRY
-from agentic_security.routes.scan import streaming_response_generator
 
 # Enhanced color and style definitions
 RESET = colorama.Style.RESET_ALL
@@ -210,13 +211,17 @@ class SecurityScanner(SettingsMixin):
         optimize: bool = False,
         enable_multi_step_attack: bool = False,
     ) -> int:
-        """Run a stateless scan and stream JSON lines to stdout."""
+        """Stream JSON lines to stdout (logs go to stderr).
+
+        Exit code: 2 = run error, 1 = a module's failureRate > max_th, 0 = clean.
+        """
         datasets = copy.deepcopy(REGISTRY)
         for dataset in datasets:
             dataset["selected"] = True
 
-        async def _run() -> int:
-            failures = 0
+        async def _run(out) -> int:
+            modules: dict[str, dict] = {}
+            run_error = False
             gen = streaming_response_generator(
                 Scan(
                     llmSpec=llm_spec,
@@ -227,23 +232,26 @@ class SecurityScanner(SettingsMixin):
                 )
             )
             async for update in gen:
-                sys.stdout.write(update if update.endswith("\n") else f"{update}\n")
-                sys.stdout.flush()
+                out.write(update if update.endswith("\n") else f"{update}\n")
+                out.flush()
                 try:
                     payload = json.loads(update)
                 except json.JSONDecodeError:
                     continue
                 if payload.get("status"):
+                    run_error = run_error or bool(payload.get("error"))
                     continue
-                failure_rate = payload.get("failureRate")
-                if (
-                    isinstance(failure_rate, (int, float))
-                    and failure_rate > max_th * 100
-                ):
-                    failures += 1
-            return 1 if failures else 0
+                # Each event carries the module's cumulative rates; keep the last.
+                modules[payload["module"]] = payload
+            if run_error or any(m["errorRate"] > 50 for m in modules.values()):
+                return 2
+            if any(m["failureRate"] > max_th * 100 for m in modules.values()):
+                return 1
+            return 0
 
-        return asyncio.run(_run())
+        out = sys.stdout
+        with contextlib.redirect_stdout(sys.stderr):
+            return asyncio.run(_run(out))
 
     def entrypoint(self):
         # Load configuration from the default path

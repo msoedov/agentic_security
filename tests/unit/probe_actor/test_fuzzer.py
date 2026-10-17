@@ -7,6 +7,8 @@ import pytest
 
 from agentic_security.primitives import Scan
 from agentic_security.probe_actor.fuzzer import (
+    ERROR,
+    REFUSED,
     FuzzerState,
     generate_prompts,
     perform_many_shot_scan,
@@ -221,7 +223,8 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
         )
 
         self.assertEqual(tokens, 3)  # Tokens from "Valid response text"
-        self.assertTrue(refusal)
+        # The real heuristic flags str({"is_refusal": False}) as a refusal.
+        self.assertEqual(refusal, REFUSED)
 
     async def test_successful_response_with_refusal(self):
         mock_request_factory = Mock()
@@ -282,4 +285,4 @@ class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
         )
 
         self.assertEqual(tokens, 0)
-        self.assertTrue(refusal)
+        self.assertEqual(refusal, ERROR)

@@ -1,6 +1,4 @@
-from collections.abc import Generator
 from datetime import datetime
-from typing import Any
 
 from fastapi import (
     APIRouter,
@@ -15,11 +13,11 @@ from fastapi.responses import StreamingResponse
 
 from agentic_security.logutils import logger
 
-from ..core.app import get_stop_event, get_tools_inbox, set_current_run
+from ..core.app import get_stop_event
 from ..dependencies import InMemorySecrets, get_in_memory_secrets
 from ..http_spec import InvalidHTTPSpecError, LLMSpec
 from ..primitives import LLMInfo, Scan
-from ..probe_actor import fuzzer
+from ..probe_actor.fuzzer import streaming_response_generator
 from ..probe_data.data import parse_csv_content
 
 router = APIRouter()
@@ -54,22 +52,6 @@ async def verify(
         elapsed=r.elapsed.total_seconds(),
         timestamp=datetime.now().isoformat(),
     )
-
-
-def streaming_response_generator(scan_parameters: Scan) -> Generator[str, Any, None]:
-    request_factory = LLMSpec.from_string(scan_parameters.llmSpec)
-    set_current_run(request_factory)
-
-    async def _gen():
-        async for scan_result in fuzzer.scan_router(
-            request_factory=request_factory,
-            scan_parameters=scan_parameters,
-            tools_inbox=get_tools_inbox(),
-            stop_event=get_stop_event(),
-        ):
-            yield scan_result + "\n"
-
-    return _gen()
 
 
 @router.post("/scan")

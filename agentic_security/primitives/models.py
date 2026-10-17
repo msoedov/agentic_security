@@ -46,13 +46,15 @@ class ScanResult(BaseModel):
     progress: float
     status: bool = False
     failureRate: float = 0.0
+    errorRate: float = 0.0
+    error: bool = False
     prompt: str = ""
     model: str = ""
     refused: bool = False
     latency: float = 0.0
 
     @classmethod
-    def status_msg(cls, msg: str) -> str:
+    def status_msg(cls, msg: str, error: bool = False) -> str:
         return cls(
             module=msg,
             tokens=0,
@@ -60,6 +62,7 @@ class ScanResult(BaseModel):
             progress=0,
             failureRate=0,
             status=True,
+            error=error,
             prompt="",
             model="",
             refused=False,

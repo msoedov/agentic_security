@@ -1,3 +1,4 @@
+import sys
 from importlib.metadata import version
 
 from pyfiglet import Figlet, FontNotFound
@@ -78,7 +79,7 @@ def generate_banner(
 
 def init_banner():
     try:
-        print(generate_banner(version=version("agentic_security")))
+        print(generate_banner(version=version("agentic_security")), file=sys.stderr)
     except Exception:
         # UnicodeEncodeError with codec on some systems
         pass

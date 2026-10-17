@@ -6,6 +6,8 @@ from functools import wraps
 from os import getenv
 from typing import Any, ParamSpec, TypeVar
 
+from rich.console import Console
+
 LOGGER_NAME = None
 
 LOGGING_CONFIG = {
@@ -17,6 +19,8 @@ LOGGING_CONFIG = {
     "handlers": {
         "rich": {
             "class": "rich.logging.RichHandler",
+            # Logs never go to stdout: CLI scan mode reserves stdout for JSON lines.
+            "console": Console(stderr=True),
             "level": "INFO",
             "formatter": "rich",
             "show_time": False,
