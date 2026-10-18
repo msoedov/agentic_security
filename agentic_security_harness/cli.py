@@ -9,6 +9,8 @@ from agentic_security_harness.deciders import Decision
 from agentic_security_harness.loop import Harness, replay
 from agentic_security_harness.runlog import ROOT, RunLog
 
+lazy import fire
+
 
 def output(data):
     print(json.dumps(data, ensure_ascii=True, allow_nan=False), flush=True)
@@ -70,8 +72,6 @@ class CLI:
 
 
 def main():
-    import fire
-
     try:
         fire.Fire(CLI())
     except (Exception, KeyboardInterrupt) as exc:
