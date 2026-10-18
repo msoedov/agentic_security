@@ -1,0 +1,5 @@
+{
+  "name": "agentic-security",
+  "version": "1.0.0",
+  "description": "Drive the agesec security harness through a policy-constrained CLI loop."
+}

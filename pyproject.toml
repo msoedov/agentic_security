@@ -20,6 +20,9 @@ keywords = [
 ]
 dynamic = ["dependencies"]
 
+[project.optional-dependencies]
+harness = []  # Reuses core dependencies; stable opt-in installation name.
+
 [project.urls]
 Homepage = "https://github.com/msoedov/agentic_security"
 Repository = "https://github.com/msoedov/agentic_security"
@@ -27,9 +30,11 @@ Documentation = "https://github.com/msoedov/agentic_security/blob/main/README.md
 
 [project.scripts]
 agentic_security = "agentic_security.__main__:main"
+agesec = "agentic_security_harness.cli:main"
 
 [tool.poetry]
-packages = [{ include = "agentic_security", from = "." }]
+packages = [{ include = "agentic_security", from = "." }, { include = "agentic_security_harness", from = "." }]
+include = [{ path = "integrations", format = ["sdist", "wheel"] }]
 
 [tool.poetry.dependencies]
 fastapi = "^0.141.1"
@@ -45,7 +50,7 @@ colorama = "^0.4.4"
 matplotlib = "^3.10.7"
 pydantic = "^2.12.5"
 scikit-optimize = "^0.10.2"
-scikit-learn = "^1.7.2"
+scikit-learn = ">=1.7.2,<1.9"  # 1.9 cannot load the bundled refusal_classifier joblib models
 numpy = ">=1.24.3,<3.0.0"
 jinja2 = "^3.1.4"
 python-multipart = "^0.0.31"

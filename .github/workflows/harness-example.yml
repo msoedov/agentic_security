@@ -1,0 +1,37 @@
+name: Harness example
+on:
+  workflow_dispatch:
+    inputs:
+      spec:
+        description: Repository-relative HTTP spec for an authorized target
+        required: true
+        default: integrations/claude/skills/pentest/examples/target.http
+permissions:
+  contents: read
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: pip install '.[harness]'
+      - name: Run policy checks
+        env:
+          TARGET_SPEC: ${{ inputs.spec }}
+          TARGET_API_KEY: ${{ secrets.TARGET_API_KEY }}
+        run: agesec run --spec "$TARGET_SPEC" --policy ci --decider rules > events.jsonl
+      - name: Render report even when findings fail the job
+        if: always()
+        shell: bash
+        run: |
+          if [ -s events.jsonl ]; then
+            RUN_ID=$(python -c 'import json; print(json.loads(open("events.jsonl").readline())["data"]["run_id"])')
+            agesec report "$RUN_ID" -o artifacts/report.json
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report
+          path: artifacts/

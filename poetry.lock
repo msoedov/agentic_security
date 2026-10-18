@@ -5392,7 +5392,10 @@ idna = ">=2.0"
 multidict = ">=4.0"
 propcache = ">=0.2.1"
 
+[extras]
+harness = []
+
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.14,<4.0"
-content-hash = "c49467950cab4b9cc0f103ef570770421926fa223ecc155620d9863a9677407b"
+content-hash = "ee4dcfafd8512175529487cdf79087ab7620dd44049a6847bcd9c6afc5829c33"

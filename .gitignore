@@ -27,3 +27,6 @@ agentic_security/static/elm-stuff/
 agentic_security/static/node_modules/
 .cache/
 COMMIT_MSG.txt
+
+.agesec/
+!agentic_security_harness/data/*.csv
