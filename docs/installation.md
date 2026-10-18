@@ -1,6 +1,6 @@
 # Installation
 
-Requires Python 3.14 or newer.
+Requires Python 3.15 or newer.
 
 ## PyPI
 

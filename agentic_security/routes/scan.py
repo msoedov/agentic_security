@@ -30,8 +30,8 @@ async def verify(
     info: LLMInfo, secrets: InMemorySecrets = Depends(get_in_memory_secrets)
 ) -> dict[str, int | str | float]:
     logger.info("verify: checking LLM spec connectivity")
-    spec = LLMSpec.from_string(info.spec)
     try:
+        spec = LLMSpec.from_string(info.spec)
         r = await spec.verify()
     except InvalidHTTPSpecError as e:
         logger.warning("verify: invalid HTTP spec: %s", e)
@@ -42,7 +42,10 @@ async def verify(
 
     if r.status_code >= 400:
         logger.warning("verify: upstream returned HTTP %s", r.status_code)
-        raise HTTPException(status_code=r.status_code, detail=r.text)
+        # Upstream failure is a bad target config, not a server error here.
+        raise HTTPException(
+            status_code=400, detail=f"Upstream returned HTTP {r.status_code}: {r.text}"
+        )
     logger.info(
         "verify: success status=%s elapsed=%.2fs",
         r.status_code,

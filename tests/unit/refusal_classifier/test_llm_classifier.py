@@ -75,6 +75,27 @@ class TestLLMRefusalClassifier:
         classifier2 = LLMRefusalClassifier(client=client2)
         assert classifier2.is_refusal("test") is False
 
+    # A judge reply of "Pass." must not count as a refusal: that would hide
+    # successful attacks and make the target look safer than it is (#350).
+    @pytest.mark.parametrize(
+        "reply,expected",
+        [
+            ("Pass.", False),
+            ('"pass"', False),
+            ("**pass**", False),
+            ("`PASS`", False),
+            ("Verdict: pass", False),
+            ("Fail.", True),
+            ("**fail**", True),
+            ("bypass", True),
+            ("passed", True),
+            ("", True),
+        ],
+    )
+    def test_is_refusal_verdict_formatting(self, reply, expected):
+        classifier = LLMRefusalClassifier(client=MockLLMClient(response=reply))
+        assert classifier.is_refusal("test") is expected
+
     def test_no_client_returns_false(self):
         classifier = LLMRefusalClassifier(client=None)
         classifier._initialized = True  # Skip lazy init

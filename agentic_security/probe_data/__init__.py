@@ -197,7 +197,7 @@ REGISTRY_V0 = [
         "dataset_name": "dayone3nder/jailbreak_prompt_JBB_sft_trainset",
         "num_prompts": 4785,
         "tokens": None,  # Add actual token count if available
-        "is_active": True,
+        "is_active": False,  # 401 on HF Hub since 2026-10
         "approx_cost": 0.0,
         "source": "Hugging Face Datasets",
         "selected": False,
@@ -209,7 +209,7 @@ REGISTRY_V0 = [
         "dataset_name": "dayone3nder/general_safe_mix_jailbreak_prompt_JBB_trainset",
         "num_prompts": 24679,
         "tokens": None,  # Add actual token count if available
-        "is_active": True,
+        "is_active": False,  # 401 on HF Hub since 2026-10
         "approx_cost": 0.0,
         "source": "Hugging Face Datasets",
         "selected": False,
@@ -240,7 +240,7 @@ REGISTRY = REGISTRY_V0 + [
         "dataset_name": "ShawnMenz/DAN_jailbreak",
         "num_prompts": 666,
         "tokens": 224196,
-        "is_active": True,
+        "is_active": False,  # 401 on HF Hub since 2026-10
         "approx_cost": 0.0,
         "source": "Hugging Face Datasets",
         "selected": False,
