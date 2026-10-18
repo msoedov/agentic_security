@@ -1,6 +1,6 @@
 # Agentic Security harness
 
-Install `pip install 'agentic_security[harness]'` (Python 3.14+). The new package
+Install `pip install 'agentic_security[harness]'` (Python 3.15+). The new package
 and `agesec` Fire CLI coexist with the legacy scanner. The extra currently adds
 no dependencies; it reuses core dependencies.
 
