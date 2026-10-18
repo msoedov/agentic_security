@@ -38,7 +38,6 @@ nav:
   # - Project:
   #     - Setup: setup.md
   #     - Version control: version_control.md
-  #     - Docker: docker.md
   #     - Variables: variables.md
   #     - Custom libraries: custom_libraries.md
   #     - Database: database.md
