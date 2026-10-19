@@ -1,78 +1,43 @@
-# Bayesian Optimization in Security Fuzzing
+# Early stop (optimizer)
 
-The fuzzer implements an optimization system using scikit-optimize (skopt) to minimize failure rates during security scans. This document explains the optimizer's implementation and behavior.
+When `optimize` is `true`, the scanner can stop a module before it sends all prompts. Use this option to save budget on a target that fails many prompts.
 
-## Overview
+Set the option in `agentic_security.toml`:
 
-The optimizer is used in both single-shot and many-shot scanning modes when the `optimize` parameter is True. It dynamically adjusts scan parameters to minimize failure rates while staying within budget constraints.
-
-## Implementation Details
-
-### Initialization
-
-The optimizer is initialized with:
-
-```python
-Optimizer(
-    [Real(0, 1)],  # Single parameter space (0 to 1)
-    base_estimator="GP",  # Gaussian Process estimator
-    n_initial_points=25  # Initial exploration points
-)
+```toml
+[general]
+optimize = true
 ```
 
-### Optimization Process
+Or use `--optimize` with the `scan` command.
 
-1. **Parameter Space**: A single real-valued parameter between 0 and 1
-1. **Objective**: Minimize the failure rate (negative failure rate is maximized)
-1. **Update Mechanism**:
-   ```python
-   next_point = optimizer.ask()
-   optimizer.tell(next_point, -failure_rate)
-   ```
-1. **Early Stopping**: If best failure rate exceeds 50%:
-   ```python
-   if best_failure_rate > 0.5:
-       yield ScanResult.status_msg(
-           f"High failure rate detected ({best_failure_rate:.2%}). Stopping this module..."
-       )
-       break
-   ```
+## Single-shot scan
 
-## Usage in Scanning
+`perform_single_shot_scan` uses a scikit-optimize `Optimizer` with a Gaussian process:
 
-The optimizer is integrated into both scan types:
+```python
+Optimizer([Real(0, 1)], base_estimator="GP", n_initial_points=INITIAL_OPTIMIZER_POINTS)
+```
 
-### Single-shot Scan
+After each prompt, the scanner does these steps:
 
-- Used in `perform_single_shot_scan()`
-- Optimizes failure rates across prompt modules
-- Considers token budget constraints
+1. If there are fewer than `min_failure_samples` results, it continues to the next prompt.
+2. It gives the negative failure rate to the optimizer (`ask()`, then `tell()`).
+3. It reads the best failure rate from the optimizer.
+4. If the best failure rate is more than `failure_rate_threshold`, it stops the module. It sends the status message "High failure rate detected".
 
-### Many-shot Scan
+> **NOTE:** The optimizer point does not change the prompts or the order of the prompts. The result of the optimizer is only an early stop.
 
-- Used in `perform_many_shot_scan()`
-- Handles more complex multi-step attacks
-- Maintains separate failure rate tracking
+## Many-shot scan
 
-## Key Parameters
+`perform_many_shot_scan` does not use the optimizer. When `optimize` is `true`, it stops the module after `min_failure_samples` results.
 
-| Parameter | Description |
-|-----------|-------------|
-| base_estimator | Gaussian Process (GP) used for optimization |
-| n_initial_points | 25 initial exploration points |
-| Real(0, 1) | Single parameter space being optimized |
-| failure_rate | Current failure rate being minimized |
+## Settings
 
-## Optimization Flow
+Set these values in the `[fuzzer]` section of `agentic_security.toml`:
 
-1. Initialize optimizer with GP estimator
-1. Collect initial 25 data points
-1. For each prompt:
-   - Calculate current failure rate
-   - Update optimizer with new point
-   - Check for early stopping conditions
-1. Continue until scan completes or budget exhausted
-
-## Error Handling
-
-The optimizer is wrapped in try/except blocks to ensure scan failures don't crash the entire process. Any optimization errors are logged and the scan continues with default parameters.
+| Key | Default | Description |
+| --- | --- | --- |
+| `initial_optimizer_points` | `25` | The random points before the optimizer fits the model. |
+| `min_failure_samples` | `5` | The minimum number of results before an early stop. |
+| `failure_rate_threshold` | `0.5` | The failure rate that causes an early stop. |

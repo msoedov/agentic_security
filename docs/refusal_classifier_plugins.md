@@ -1,114 +1,88 @@
-# Refusal Classifier Plugin System Documentation
+# Refusal classifier plugins
 
-The refusal classifier plugin system allows for the creation and use of custom refusal classifiers. This system is designed to be modular and extensible, enabling users to add their own refusal detection logic.
+A detector examines each response from the target. If one or more enabled detectors return `True`, the scanner records a refusal for that prompt.
 
-## Overview
+## Built-in detectors
 
-The plugin system is based on the `RefusalClassifierPlugin` abstract base class, which defines the interface for all refusal classifier plugins. The `RefusalClassifierManager` is used to register and manage these plugins.
+| Name | Default | Description |
+| --- | --- | --- |
+| `default` | on | Finds refusal phrases, for example "I'm sorry". |
+| `ml_classifier` | on | A one-class SVM refusal classifier. |
+| `pii` | off | Finds personal data and credential leaks. |
+| `sandbox_escape` | off | Finds Docker and Kubernetes sandbox-escape probes. |
 
-## Creating a Plugin
+To turn a detector on or off, set its name in the `[detectors]` section of `agentic_security.toml`:
 
-To create a custom refusal classifier plugin, you must implement the `RefusalClassifierPlugin` abstract base class. This class requires the implementation of the `is_refusal` method, which checks if a response contains a refusal.
-
-```python
-from abc import ABC, abstractmethod
-
-class RefusalClassifierPlugin(ABC):
-    """Base class for refusal classifier plugins."""
-
-    @abstractmethod
-    def is_refusal(self, response: str) -> bool:
-        """Check if the response contains a refusal.
-
-        Args:
-            response (str): The response from the language model.
-
-        Returns:
-            bool: True if the response contains a refusal, False otherwise.
-        """
-        pass
+```toml
+[detectors]
+default = true
+ml_classifier = true
+pii = true
+sandbox_escape = false
 ```
 
-### Example Plugin
+## Make a custom detector
 
-Here is an example of a custom refusal classifier plugin that checks for specific phrases:
+A detector is a class with the method `is_refusal(response: str) -> bool`.
 
 ```python
-class CustomRefusalClassifier(RefusalClassifierPlugin):
-    def __init__(self, custom_phrases: list[str]):
-        self.custom_phrases = custom_phrases
+# my_package/detectors.py
+class PhraseDetector:
+    def __init__(self, phrases: list[str]):
+        self.phrases = phrases
 
     def is_refusal(self, response: str) -> bool:
-        """Check if the response contains any custom refusal phrases.
-
-        Args:
-            response (str): The response from the language model.
-
-        Returns:
-            bool: True if the response contains a custom refusal phrase, False otherwise.
-        """
-        return any(phrase in response for phrase in self.custom_phrases)
+        return any(phrase in response for phrase in self.phrases)
 ```
 
-## Registering a Plugin
+You can also use the abstract base class `RefusalClassifierPlugin` from `agentic_security.probe_actor.refusal`.
 
-To register a custom refusal classifier plugin, use the `RefusalClassifierManager`:
+## Enable a custom detector
+
+Add a table to `[detectors]`. The tool imports the class and gives the `options` table to the constructor as keyword arguments.
+
+```toml
+[detectors.phrases]
+class = "my_package.detectors:PhraseDetector"
+enabled = true
+
+[detectors.phrases.options]
+phrases = ["I can't", "I won't"]
+```
+
+The class path can use the form `package.module:ClassName` or `package.module.ClassName`.
+
+> **CAUTION:** The tool reads `[detectors]` one time, when it imports `agentic_security.probe_actor.refusal`. Restart the process after you change the section.
+
+> **NOTE:** A new `RefusalClassifierManager()` that you make in code does not change the scan. The scan uses the manager that the tool builds from `[detectors]`. To build that manager from a different configuration, use `build_refusal_manager(config)`.
+
+## Check a response in code
 
 ```python
-from agentic_security.probe_actor.refusal import RefusalClassifierManager
+from agentic_security.probe_actor.refusal import (
+    pii_leak_heuristic,
+    refusal_heuristic,
+    sandbox_escape_heuristic,
+)
 
-# Initialize the plugin manager
-refusal_classifier_manager = RefusalClassifierManager()
-
-# Register the custom plugin
-refusal_classifier_manager.register_plugin("custom", CustomRefusalClassifier(custom_phrases=["I can't", "I won't"]))
+refusal_heuristic("I'm sorry, I can't help with that.")  # True
+pii_leak_heuristic("Contact me at jane@example.com")      # True
 ```
 
-## Using the Plugin System
+`pii_leak_heuristic` and `sandbox_escape_heuristic` always use their detector. They do not change the refusal result.
 
-The `refusal_heuristic` function automatically uses all registered plugins to check for refusals:
+## PII detector
 
-```python
-from agentic_security.probe_actor.refusal import refusal_heuristic
-
-is_refusal = refusal_heuristic(request_json)
-```
-
-## PII Leak Detection
-
-The built-in `PIIDetector` can be used to check scanner responses for sensitive personal or credential material without changing refusal metrics. Use `pii_leak_heuristic` when you want a separate leak signal:
-
-```python
-from agentic_security.probe_actor.refusal import pii_leak_heuristic
-
-has_pii_leak = pii_leak_heuristic(request_json)
-```
-
-`PIIDetector` currently checks for common leak signals including email addresses, US SSNs, phone numbers, private key blocks, API-token style secrets, and credit card candidates that pass Luhn validation. Credit-card detection is controlled separately with `detect_credit_cards`:
+`PIIDetector` finds email addresses, US SSNs, phone numbers, private key blocks, and API tokens. It also finds credit card numbers that pass the Luhn check.
 
 ```python
 from agentic_security.refusal_classifier import PIIDetector
 
-detector = PIIDetector(patterns=(), detect_credit_cards=False)
-```
-
-If you construct your own `RefusalClassifierManager` and intentionally want leak detection to participate in the same boolean plugin result as refusals, register it manually:
-
-```python
-from agentic_security.probe_actor.refusal import RefusalClassifierManager
-from agentic_security.refusal_classifier import PIIDetector
-
-manager = RefusalClassifierManager()
-manager.register_plugin("pii", PIIDetector())
-```
-
-For reporting or debugging, use `detected_types` to see which leak categories matched:
-
-```python
 detector = PIIDetector()
-matched_types = detector.detected_types(response)
+detector.detected_types(response)  # The names of the matched types.
+
+# Credit card check off:
+PIIDetector(detect_credit_cards=False)
 ```
 
-## Conclusion
-
-The refusal classifier plugin system provides a flexible and extensible way to add custom refusal detection logic to the Agentic Security project. This documentation serves as a guide to creating, registering, and using custom refusal classifier plugins.
+To use only your patterns, give a tuple of `PIIPattern` objects as `patterns`. An empty tuple turns the pattern checks off.

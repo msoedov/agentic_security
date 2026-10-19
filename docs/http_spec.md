@@ -1,123 +1,104 @@
-# HTTP Specification Documentation
+# HTTP spec
 
-The HTTP specification in the Agentic Security project is designed to handle various types of requests, including text, image, audio, and file uploads. This documentation provides a detailed overview of the HTTP specification and its usage.
+An HTTP spec is a plain-text HTTP request. It tells the scanner how to send a prompt to the target. The `LLMSpec` class in `agentic_security.http_spec` parses and sends the request.
 
-## Overview
+## Format
 
-The HTTP specification is implemented in the `LLMSpec` class, which is used to define and execute HTTP requests. The class supports different modalities, including text, image, audio, and file uploads, and provides methods to validate and execute these requests.
+```http
+POST https://api.openai.com/v1/chat/completions
+Authorization: Bearer sk-xxxxxxxxx
+Content-Type: application/json
 
-## Modalities
+{
+  "model": "gpt-4o-mini",
+  "messages": [{"role": "user", "content": "<<PROMPT>>"}]
+}
+```
 
-The HTTP specification supports the following modalities:
+- Line 1 is the method and the URL. The URL must start with `http://` or `https://`.
+- The next lines are headers, one `Name: value` on each line.
+- An empty line comes after the headers.
+- The remaining lines are the body.
 
-### Text
+## Placeholders
 
-Text-based requests are the most common type of request. The `LLMSpec` class replaces the `<<PROMPT>>` placeholder in the request body with the provided prompt.
+| Placeholder | Replaced with | Modality |
+| --- | --- | --- |
+| `<<PROMPT>>` | The attack prompt, escaped for JSON. | Text |
+| `<<BASE64_IMAGE>>` | A data URL: `data:image/jpeg;base64,...` | Image |
+| `<<BASE64_AUDIO>>` | A data URL: `data:audio/mpeg;base64,...` | Audio |
 
-### Image
+The scanner sets the modality from the placeholders in the body:
 
-Image-based requests include an image encoded in base64 format. The `LLMSpec` class replaces the `<<BASE64_IMAGE>>` placeholder in the request body with the provided base64-encoded image.
+- `<<BASE64_IMAGE>>` in the body sets the image modality. The scanner makes an image of each prompt.
+- `<<BASE64_AUDIO>>` in the body sets the audio modality.
+- `Content-Type: multipart/form-data` sets the file modality.
 
-### Audio
+> **CAUTION:** The image and audio values already start with `data:...;base64,`. Do not write this prefix in the spec. Use `"url": "<<BASE64_IMAGE>>"`.
 
-Audio-based requests include an audio file encoded in base64 format. The `LLMSpec` class replaces the `<<BASE64_AUDIO>>` placeholder in the request body with the provided base64-encoded audio.
+## Secrets
 
-### Files
+In a web server scan, the tool replaces `$NAME` in the body with a secret value. The value comes from `NAME` in the `[secrets]` section. Refer to [Configuration](configuration.md). The tool does not replace names in the URL or in the headers.
 
-File-based requests include file uploads. The `LLMSpec` class handles multipart form data and includes the provided files in the request.
+## File uploads
 
-## LLMSpec Class
+When the spec has `Content-Type: multipart/form-data`, `probe()` sends only the `files` argument. It does not send the body.
 
-The `LLMSpec` class is the core of the HTTP specification. It provides the following methods and properties:
+## LLMSpec methods
 
-### Methods
-
-- **`from_string(http_spec: str) -> LLMSpec`**: Parses an HTTP specification string into an `LLMSpec` object.
-- **`validate(prompt: str, encoded_image: str, encoded_audio: str, files: dict) -> null`**: Validates the request parameters based on the specified modality.
-- **`probe(prompt: str, encoded_image: str = "", encoded_audio: str = "", files: dict = {}) -> httpx.Response`**: Sends an HTTP request using the specified parameters.
-- **`verify() -> httpx.Response`**: Verifies the HTTP specification by sending a test request.
-
-### Properties
-
-- **`modality: Modality`**: Returns the modality of the request (text, image, audio, or files).
+| Method | Description |
+| --- | --- |
+| `LLMSpec.from_string(text)` | Parses the spec. If the spec is not valid, it raises `InvalidHTTPSpecError`. |
+| `probe(prompt, encoded_image="", encoded_audio="", files=None)` | Sends one request. Returns an `httpx.Response`. This method is async. |
+| `verify()` | Sends a test request for the modality of the spec. This method is async. |
+| `validate(prompt, encoded_image, encoded_audio, files)` | Raises `ValueError` if a value that the modality needs is missing. |
+| `modality` | `Modality.TEXT`, `Modality.IMAGE`, or `Modality.AUDIO`. |
 
 ## Examples
 
-### Text Request
+### Text
 
 ```python
-http_spec = """
-POST https://api.example.com/v1/chat/completions
-Authorization: Bearer sk-xxxxxxxxx
-Content-Type: application/json
+from agentic_security.http_spec import LLMSpec
 
-{
-  "model": "gpt-3.5-turbo",
-  "messages": [{"role": "user", "content": "<<PROMPT>>"}],
-  "temperature": 0.7
-}
-"""
-spec = LLMSpec.from_string(http_spec)
+spec = LLMSpec.from_string(open("target.http").read())
 response = await spec.probe("What is the capital of France?")
 ```
 
-### Image Request
+### Image
 
 ```python
-http_spec = """
-POST https://api.example.com/v1/chat/completions
+from agentic_security.http_spec import LLMSpec, encode_image_base64_by_url
+
+spec = LLMSpec.from_string("""POST https://api.example.com/v1/chat/completions
 Authorization: Bearer sk-xxxxxxxxx
 Content-Type: application/json
 
-{
-  "model": "gpt-4-vision-preview",
-  "messages": [{"role": "user", "content": "What is in this image? <<BASE64_IMAGE>>"}],
-  "temperature": 0.7
-}
-"""
-spec = LLMSpec.from_string(http_spec)
-encoded_image = encode_image_base64_by_url("https://example.com/image.jpg")
-response = await spec.probe("What is in this image?", encoded_image=encoded_image)
+{"messages": [{"role": "user", "content": [
+  {"type": "text", "text": "<<PROMPT>>"},
+  {"type": "image_url", "image_url": {"url": "<<BASE64_IMAGE>>"}}
+]}]}
+""")
+image = encode_image_base64_by_url("https://example.com/image.jpg")
+response = await spec.probe("What is in this image?", encoded_image=image)
 ```
 
-### Audio Request
+### Audio
 
 ```python
-http_spec = """
-POST https://api.example.com/v1/chat/completions
-Authorization: Bearer sk-xxxxxxxxx
-Content-Type: application/json
+from agentic_security.http_spec import encode_audio_base64_by_url
 
-{
-  "model": "whisper-large-v3",
-  "messages": [{"role": "user", "content": "Transcribe this audio: <<BASE64_AUDIO>>"}],
-  "temperature": 0.7
-}
-"""
-spec = LLMSpec.from_string(http_spec)
-encoded_audio = encode_audio_base64_by_url("https://example.com/audio.mp3")
-response = await spec.probe("Transcribe this audio:", encoded_audio=encoded_audio)
+audio = encode_audio_base64_by_url("https://example.com/audio.mp3")
+response = await spec.probe("Transcribe this audio.", encoded_audio=audio)
 ```
 
-### File Request
+### File
 
 ```python
-http_spec = """
-POST https://api.example.com/v1/chat/completions
-Authorization: Bearer sk-xxxxxxxxx
+spec = LLMSpec.from_string("""POST http://127.0.0.1:8718/v1/self-probe-file
+Authorization: Bearer XXXXX
 Content-Type: multipart/form-data
-
-{
-  "model": "gpt-3.5-turbo",
-  "messages": [{"role": "user", "content": "Process this file: <<FILE>>"}],
-  "temperature": 0.7
-}
-"""
-spec = LLMSpec.from_string(http_spec)
-files = {"file": ("document.txt", open("document.txt", "rb"))}
-response = await spec.probe("Process this file:", files=files)
+""")
+with open("sample.m4a", "rb") as f:
+    response = await spec.probe("", files={"file": ("sample.m4a", f)})
 ```
-
-## Conclusion
-
-The HTTP specification in the Agentic Security project provides a flexible and powerful way to handle various types of requests. This documentation serves as a guide to understanding and utilizing the HTTP specification effectively.

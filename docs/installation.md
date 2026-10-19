@@ -1,18 +1,23 @@
 # Installation
 
-Requires Python 3.15 or newer.
+You must have Python 3.15 or newer.
 
-## PyPI
+## Install from PyPI
 
 ```bash
 pip install agentic_security
 ```
 
-## From source
+## Install from the source code
 
 ```bash
 poetry install --with dev
 ```
 
-Then run `agentic_security --help`. See the [CLI](cli.md) and
-[getting started](getting_started.md) pages for the next steps.
+## Make sure that the installation is correct
+
+```bash
+agentic_security --help
+```
+
+The command shows the list of subcommands. For the next steps, refer to the [Quickstart](quickstart.md).

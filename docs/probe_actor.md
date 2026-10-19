@@ -1,42 +1,42 @@
 # Probe actor
 
-The `probe_actor` package runs scans against an LLM endpoint described by an
-HTTP spec.
+The `agentic_security.probe_actor` package sends the attack prompts to the target and scores the responses.
 
 ## Fuzzer
 
-`agentic_security.probe_actor.fuzzer` is the scan engine:
+`agentic_security.probe_actor.fuzzer` is the scan engine.
 
-- `generate_prompts` — yield prompts from a list or async source
-- `get_modality_adapter` — wrap the spec for image or audio endpoints
-- `process_prompt` / `process_prompt_batch` — send a prompt and score the reply
-- `perform_single_shot_scan` — one prompt at a time
-- `perform_many_shot_scan` — many-shot jailbreak conversations
-- `scan_router` — pick the scan mode from configuration
+| Function | Description |
+| --- | --- |
+| `scan_router` | Selects the single-shot scan or the many-shot scan from the scan settings. |
+| `perform_single_shot_scan` | Sends one prompt in each request. |
+| `perform_many_shot_scan` | Sends many-shot jailbreak conversations. |
+| `process_prompt` / `process_prompt_batch` | Sends prompts and records the refusals. |
+| `get_modality_adapter` | Wraps the spec for image or audio targets. |
+| `generate_prompts` | Yields prompts from a list or from an async generator. |
 
-`perform_single_shot_scan` is an async generator; it needs a request factory
-(typically an `LLMSpec`) plus budget and dataset settings, not a bare prompt
-string.
+The scan functions are async generators. Each item is a JSON string with the progress, the failure rate, or a status message.
 
 ```python
 from agentic_security.http_spec import LLMSpec
 from agentic_security.probe_actor.fuzzer import perform_single_shot_scan
 
-spec = LLMSpec.from_string(open("spec.http").read())
-async for event in perform_single_shot_scan(spec, max_budget=1000):
+spec = LLMSpec.from_string(open("target.http").read())
+datasets = [{"dataset_name": "simonycl/aya-23-8B_advbench_jailbreak", "selected": True}]
+async for event in perform_single_shot_scan(spec, max_budget=1000, datasets=datasets):
     print(event)
 ```
 
+At the end of a scan, the fuzzer writes `failures.csv` and `full_scan_log.csv` to the current directory.
+
 ## Refusal checks
 
-There is no `check_refusal` helper. Use `refusal_heuristic(response)` in
-`agentic_security.probe_actor.refusal`, which runs the detectors enabled under
-`[detectors]` in `agentic_security.toml`.
+`refusal_heuristic(response)` in `agentic_security.probe_actor.refusal` uses the detectors that are enabled in `[detectors]`.
 
 ```python
 from agentic_security.probe_actor.refusal import refusal_heuristic
 
-refusal_heuristic("I'm sorry, I can't help with that.")
+refusal_heuristic("I'm sorry, I can't help with that.")  # True
 ```
 
-See [refusal classifier plugins](refusal_classifier_plugins.md) to add a custom detector.
+To add a detector, refer to [Refusal classifier plugins](refusal_classifier_plugins.md).

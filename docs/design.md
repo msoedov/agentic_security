@@ -1,51 +1,38 @@
-# Design Document
+# Design
 
-This document provides an overview of the design and architecture of the Agentic Security project. It outlines the key components, their interactions, and the design principles guiding the development of the system.
+This page shows the main parts of Agentic Security and the flow of a scan.
 
-## Overview
+## Parts
 
-Agentic Security is an open-source LLM vulnerability scanner designed to identify and mitigate potential security threats in language models. It integrates various modules and datasets to perform comprehensive security scans.
+| Part | Package | Function |
+| --- | --- | --- |
+| CLI | `agentic_security.__main__` | Starts the server or a scan. |
+| Web server | `agentic_security.app`, `agentic_security.routes` | Gives the UI and the scan API. |
+| Scanner | `agentic_security.lib` | Reads the configuration and shows the results table. |
+| HTTP spec | `agentic_security.http_spec` | Parses the request template and sends the requests. |
+| Probe data | `agentic_security.probe_data` | Loads datasets, transforms prompts, makes images and audio. |
+| Probe actor | `agentic_security.probe_actor` | Sends the prompts and scores the responses. |
+| Detectors | `agentic_security.refusal_classifier` | Find refusals and leaks in the responses. |
+| Agent harness | `agentic_security_harness` | Runs a scan step by step for an agent or for CI. |
 
-## Architecture
+## Scan flow
 
-The system is built around a modular architecture, allowing for flexibility and extensibility. The core components include:
+1. The CLI or the web server gets the HTTP spec and the list of datasets.
+2. `LLMSpec.from_string` parses the HTTP spec.
+3. `prepare_prompts` loads the selected datasets and adds the transformed datasets.
+4. `scan_router` selects the single-shot scan or the many-shot scan.
+5. For each prompt, the fuzzer puts the prompt in the spec and sends the request.
+6. The detectors examine the response. The fuzzer counts the prompt as a failure if a detector finds a refusal. A request error or a response that is not JSON is also a failure.
+7. The fuzzer sends the failure rate of each module as a JSON line. The failure rate is the failures divided by the prompts sent.
+8. At the end, the fuzzer writes `failures.csv` and `full_scan_log.csv`.
+9. The CLI shows a table. A module with a failure rate above `max_th` has the status FAIL.
 
-- **Agentic Security Core**: The main application responsible for orchestrating the security scans and managing interactions with external modules.
-- **Probe Actor**: Handles the execution of fuzzing and attack techniques on language models.
-- **Probe Data**: Manages datasets used for testing and validation, including loading and processing data.
-- **Refusal Classifier**: Analyzes responses from language models to identify potential security issues.
+## Extension points
 
-## Key Components
-
-### Agentic Security Core
-
-The core application is responsible for initializing the system, managing configurations, and coordinating the execution of security scans. It provides a command-line interface for users to interact with the system.
-
-### Probe Actor
-
-The Probe Actor module implements various fuzzing and attack techniques. It is designed to test the robustness of language models by simulating different attack scenarios.
-
-### Probe Data
-
-The Probe Data module manages datasets used in security scans. It supports loading data from local files and external sources, providing a flexible framework for testing different scenarios.
-
-### Refusal Classifier
-
-The Refusal Classifier analyzes responses from language models to detect potential security vulnerabilities. It uses predefined rules and machine learning models to classify responses.
-
-## Design Principles
-
-- **Modularity**: The system is designed to be modular, allowing for easy integration of new components and features.
-- **Extensibility**: New modules and datasets can be added to the system without significant changes to the core architecture.
-- **Scalability**: The system is built to handle large datasets and complex security scans efficiently.
-
-## Interaction Flow
-
-1. **Initialization**: The system is initialized with the necessary configurations and datasets.
-1. **Execution**: The Probe Actor executes security scans on the language models using the datasets provided by the Probe Data module.
-1. **Analysis**: The Refusal Classifier analyzes the responses to identify potential security issues.
-1. **Reporting**: Results are compiled and presented to the user, highlighting any vulnerabilities detected.
-
-## Conclusion
-
-The design of Agentic Security emphasizes flexibility, extensibility, and scalability, providing a robust framework for identifying and mitigating security threats in language models. This document serves as a guide to understanding the system's architecture and key components.
+| To add | Refer to |
+| --- | --- |
+| Prompts from a CSV file | [Dataset extension](datasets.md) |
+| A dataset in the registry | [Dataset extension](datasets.md) |
+| A prompt generator | [External modules](external_module.md) |
+| A detector | [Refusal classifier plugins](refusal_classifier_plugins.md) |
+| A harness source or converter | [Agent harness](harness.md) |

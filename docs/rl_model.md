@@ -1,194 +1,81 @@
-# RL Model Module
+# RL prompt selection
 
-The RL Model module provides reinforcement learning-based prompt selection strategies for the probe system.
+The module `agentic_security.probe_data.modules.rl_model` selects the next attack prompt. It uses the guard result and a reward to make the selection.
 
-## Overview
+## Selectors
 
-The module implements several prompt selection strategies that use reinforcement learning techniques to optimize prompt selection based on guard results and rewards.
-
-## Classes
-
-### PromptSelectionInterface
-
-Abstract base class defining the interface for prompt selection strategies.
-
-**Methods:**
-
-- `select_next_prompt(current_prompt: str, passed_guard: bool) -> str`
-- `select_next_prompts(current_prompt: str, passed_guard: bool) -> list[str]`
-- `update_rewards(previous_prompt: str, current_prompt: str, reward: float, passed_guard: bool) -> None`
-
-### RandomPromptSelector
-
-Basic random selection strategy with cycle prevention using history.
-
-**Configuration:**
-
-- `prompts`: List of available prompts
-- `history_size`: Size of history buffer to prevent cycles (default: 300)
-
-### CloudRLPromptSelector
-
-Cloud-based reinforcement learning prompt selector with fallback to random selection.
-
-**Configuration:**
-
-- `prompts`: List of available prompts
-- `api_url`: URL of the RL service
-- `auth_token`: Authentication token (default: AS_TOKEN environment variable)
-- `history_size`: Size of history buffer (default: 300)
-- `timeout`: Request timeout in seconds (default: 5)
-- `run_id`: Unique identifier for the run
-
-### QLearningPromptSelector
-
-Q-Learning based prompt selector with exploration/exploitation tradeoff.
-
-**Configuration:**
-
-- `prompts`: List of available prompts
-- `learning_rate`: Learning rate (default: 0.1)
-- `discount_factor`: Discount factor (default: 0.9)
-- `initial_exploration`: Initial exploration rate (default: 1.0)
-- `exploration_decay`: Exploration decay rate (default: 0.995)
-- `min_exploration`: Minimum exploration rate (default: 0.01)
-- `history_size`: Size of history buffer (default: 300)
-
-### Module
-
-Main class that implements the RL-based prompt selection functionality.
-
-**Configuration:**
-
-- `prompt_groups`: List of prompt groups
-- `tools_inbox`: asyncio.Queue for tool communication
-- `opts`: Additional options
-  - `max_prompts`: Maximum number of prompts to generate (default: 10)
-  - `batch_size`: Batch size for processing (default: 500)
-
-## Usage Example
+All selectors implement `PromptSelectionInterface`:
 
 ```python
-from agentic_security.probe_data.modules.rl_model import (
-    Module,
-    CloudRLPromptSelector,
-    QLearningPromptSelector
-)
-
-# Initialize with prompt groups
-prompt_groups = ["What is AI?", "Explain ML", "Describe RL"]
-module = Module(prompt_groups, asyncio.Queue())
-
-# Use the module
-async for prompt in module.apply():
-    print(f"Selected prompt: {prompt}")
-```
-
-## API Reference
-
-### PromptSelectionInterface
-
-```python
-class PromptSelectionInterface(ABC):
-    @abstractmethod
-    def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> str:
-        """Select next prompt based on current state and guard result."""
-
-    @abstractmethod
-    def select_next_prompts(self, current_prompt: str, passed_guard: bool) -> list[str]:
-        """Select next prompts based on current state and guard result."""
-
-    @abstractmethod
-    def update_rewards(
-        self,
-        previous_prompt: str,
-        current_prompt: str,
-        reward: float,
-        passed_guard: bool,
-    ) -> None:
-        """Update internal rewards based on outcome of last selected prompt."""
+select_next_prompt(current_prompt: str, passed_guard: bool) -> str
+select_next_prompts(current_prompt: str, passed_guard: bool) -> list[str]
+update_rewards(previous_prompt: str, current_prompt: str, reward: float, passed_guard: bool) -> None
 ```
 
 ### RandomPromptSelector
 
-```python
-class RandomPromptSelector(PromptSelectionInterface):
-    def __init__(self, prompts: list[str], history_size: int = 300):
-        """Initialize with prompts and history size."""
+Selects a random prompt. It keeps a history to prevent repeated cycles.
 
-    def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> str:
-        """Select next prompt randomly with cycle prevention."""
+| Argument | Default | Description |
+| --- | --- | --- |
+| `prompts` | – | The list of prompts. |
+| `history_size` | `300` | The size of the history. |
 
-    def update_rewards(
-        self,
-        previous_prompt: str,
-        current_prompt: str,
-        reward: float,
-        passed_guard: bool,
-    ) -> None:
-        """No learning in random selection."""
-```
-
-### CloudRLPromptSelector
-
-```python
-class CloudRLPromptSelector(PromptSelectionInterface):
-    def __init__(
-        self,
-        prompts: list[str],
-        api_url: str,
-        auth_token: str = AUTH_TOKEN,
-        history_size: int = 300,
-        timeout: int = 5,
-        run_id: str = "",
-    ):
-        """Initialize with cloud RL configuration."""
-
-    def select_next_prompts(self, current_prompt: str, passed_guard: bool) -> list[str]:
-        """Select next prompts using cloud RL with fallback."""
-
-    def _fallback_selection(self) -> str:
-        """Fallback to random selection if cloud request fails."""
-```
+`update_rewards` does nothing.
 
 ### QLearningPromptSelector
 
+Selects prompts with Q-learning. The exploration rate decreases after each selection.
+
+| Argument | Default | Description |
+| --- | --- | --- |
+| `prompts` | – | The list of prompts. |
+| `learning_rate` | `0.1` | The learning rate. |
+| `discount_factor` | `0.9` | The discount factor. |
+| `initial_exploration` | `1.0` | The exploration rate at the start. |
+| `exploration_decay` | `0.995` | The decrease of the exploration rate. |
+| `min_exploration` | `0.01` | The minimum exploration rate. |
+| `history_size` | `300` | The size of the history. |
+
+### CloudRLPromptSelector
+
+Gets the next prompts from a remote RL service. If the request fails, it selects a random prompt.
+
+| Argument | Default | Description |
+| --- | --- | --- |
+| `prompts` | – | The list of prompts. |
+| `api_url` | – | The URL of the RL service. |
+| `auth_token` | `AS_TOKEN` environment variable | The token for the service. |
+| `history_size` | `300` | The size of the history. |
+| `timeout` | `5` | The request timeout in seconds. |
+| `run_id` | random UUID | The identifier of the run. |
+
+## Module
+
+`Module` uses a selector in a scan.
+
+| Argument | Description |
+| --- | --- |
+| `prompt_groups` | The prompts. |
+| `tools_inbox` | An `asyncio.Queue` for messages. |
+| `opts["max_prompts"]` | The number of selection rounds. The default is `10`. |
+| `opts["batch_size"]` | The batch size. The default is `500`. |
+| `rl_model` | The selector. The default is `CloudRLPromptSelector` with `https://mcp.metaheuristic.co`. |
+
+> **WARNING:** The default selector sends your prompts to `https://mcp.metaheuristic.co`. To keep the prompts on your computer, give a local selector as `rl_model`.
+
 ```python
-class QLearningPromptSelector(PromptSelectionInterface):
-    def __init__(
-        self,
-        prompts: list[str],
-        learning_rate: float = 0.1,
-        discount_factor: float = 0.9,
-        initial_exploration: float = 1.0,
-        exploration_decay: float = 0.995,
-        min_exploration: float = 0.01,
-        history_size: int = 300,
-    ):
-        """Initialize Q-Learning configuration."""
+import asyncio
 
-    def select_next_prompt(self, current_prompt: str, passed_guard: bool) -> str:
-        """Select next prompt using Q-Learning with exploration/exploitation."""
+from agentic_security.probe_data.modules.rl_model import Module, QLearningPromptSelector
 
-    def update_rewards(
-        self,
-        previous_prompt: str,
-        current_prompt: str,
-        reward: float,
-        passed_guard: bool,
-    ) -> None:
-        """Update Q-values based on reward."""
-```
+prompts = ["What is AI?", "Explain ML", "Describe RL"]
 
-### Module
 
-```python
-class Module:
-    def __init__(
-        self, prompt_groups: list[str], tools_inbox: asyncio.Queue, opts: dict = {}
-    ):
-        """Initialize module with prompt groups and configuration."""
+async def main():
+    module = Module(prompts, asyncio.Queue(), rl_model=QLearningPromptSelector(prompts))
+    async for prompt in module.apply():
+        print(prompt)
 
-    async def apply(self):
-        """Apply the RL model to generate prompts."""
+asyncio.run(main())
 ```

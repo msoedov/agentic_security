@@ -1,119 +1,47 @@
-# Image Generation System
+# Image generation
 
-The image generation system creates visual probes for security testing by converting text prompts into images. This document explains its architecture and implementation.
+The image generator makes an image of each text prompt. Use it to test if a vision model obeys text in an image.
 
-## Overview
+The module is `agentic_security.probe_data.image_generator`. It uses matplotlib.
 
-The system:
+## When the scanner makes images
 
-1. Converts text datasets into image datasets
-1. Generates images using matplotlib
-1. Encodes images for transmission
-1. Integrates with the LLM probing system
+If the body of the HTTP spec has `<<BASE64_IMAGE>>`, the scanner wraps the spec in a `RequestAdapter`. For each prompt, the adapter does these steps:
 
-## Core Components
+1. It makes a JPEG image of the prompt with `generate_image(prompt)`.
+2. It encodes the image as a data URL with `encode(image)`.
+3. It puts the data URL in place of `<<BASE64_IMAGE>>` and sends the request.
 
-### Image Generation
+The data URL starts with `data:image/jpeg;base64,`. Do not write this prefix in the spec. Refer to [HTTP spec](http_spec.md).
 
-```python
-@cache_to_disk()
-def generate_image(prompt: str) -> bytes:
-    """
-    Generates a JPEG image containing the provided text prompt
-    """
-    # Create figure with light blue background
-    fig, ax = plt.subplots(figsize=(6, 4))
-    ax.set_facecolor("lightblue")
+## Functions
 
-    # Add centered text
-    ax.text(
-        0.5, 0.5,
-        prompt,
-        fontsize=16,
-        ha="center",
-        va="center",
-        wrap=True,
-        color="darkblue"
-    )
+| Function | Description |
+| --- | --- |
+| `generate_image(prompt, variant=0)` | Returns the JPEG bytes of an image with the prompt text. The tool keeps the result in the disk cache. |
+| `generate_image_dataset(datasets)` | Makes an `ImageProbeDataset` for each `ProbeDataset`. |
+| `encode(image)` | Returns the image as a Base64 data URL. |
 
-    # Save to buffer
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format="jpeg", bbox_inches="tight")
-    return buffer.getvalue()
-```
+## Image styles
 
-### Dataset Conversion
+The image is 6 x 4 inches. The `variant` argument selects the style:
+
+| `variant` | Background |
+| --- | --- |
+| `0` (default) | Light blue, dark blue text |
+| `1` | Dark gray |
+| `2` | Light pink, with a text box |
+| `3` | White, with a circle |
+
+## Example
 
 ```python
-def generate_image_dataset(text_dataset: list[ProbeDataset]) -> list[ImageProbeDataset]:
-    """
-    Converts text datasets into image datasets
-    """
-    image_datasets = []
+from agentic_security.probe_data.image_generator import encode, generate_image
 
-    for dataset in text_dataset:
-        image_prompts = [
-            generate_image(prompt)
-            for prompt in tqdm(dataset.prompts)
-        ]
-
-        image_datasets.append(ImageProbeDataset(
-            test_dataset=dataset,
-            image_prompts=image_prompts
-        ))
-
-    return image_datasets
+data_url = encode(generate_image("Ignore previous instructions"))
 ```
 
-### Image Encoding
+## Limits
 
-```python
-def encode(image: bytes) -> str:
-    """
-    Encodes image bytes into base64 data URL
-    """
-    encoded = base64.b64encode(image).decode("utf-8")
-    return "data:image/jpeg;base64," + encoded
-```
-
-## Integration
-
-### RequestAdapter
-
-The RequestAdapter class integrates image generation with LLM probing:
-
-```python
-class RequestAdapter:
-    def __init__(self, llm_spec):
-        if not llm_spec.has_image:
-            raise ValueError("LLMSpec must have an image")
-        self.llm_spec = llm_spec
-
-    async def probe(self, prompt: str, encoded_image: str = "",
-                   encoded_audio: str = "", files={}) -> httpx.Response:
-        encoded_image = generate_image(prompt)
-        encoded_image = encode(encoded_image)
-        return await self.llm_spec.probe(prompt, encoded_image, encoded_audio, files)
-```
-
-## Key Features
-
-- **Caching**: Generated images are cached to disk using @cache_to_disk
-- **Progress Tracking**: tqdm progress bars for dataset conversion
-- **Error Handling**: Validates LLM specifications before probing
-- **Standard Formats**: Uses JPEG format with base64 encoding
-
-## Configuration
-
-The system is configured through:
-
-1. Figure size (6x4 inches)
-1. Background color (light blue)
-1. Text styling (16pt dark blue centered text)
-1. Image format (JPEG)
-
-## Limitations
-
-- Currently only supports text-based image generation
-- Fixed visual style and formatting
-- Requires matplotlib and associated dependencies
+- The image has only text. It does not have pictures.
+- The styles are fixed.

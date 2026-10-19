@@ -1,28 +1,28 @@
 # Probe data
 
-The `probe_data` package loads attack datasets, optionally transforms prompts,
-and can generate image or audio payloads for multi-modal specs.
+The `agentic_security.probe_data` package loads the attack datasets. It can also change the prompts and make image or audio attacks.
 
 ## Datasets
 
 `agentic_security.probe_data.data`:
 
-- `load_dataset_generic` — load a CSV URL or Hugging Face dataset into a `ProbeDataset`
-- `load_local_csv` / `load_local_csv_files` — datasets from local CSV files
-- `prepare_prompts` — select and transform registry datasets for a scan
+| Function | Description |
+| --- | --- |
+| `prepare_prompts` | Loads and transforms the selected registry datasets for a scan. |
+| `load_dataset_generic` | Loads a CSV URL or a Hugging Face dataset into a `ProbeDataset`. |
+| `load_local_csv` | Loads all CSV files in `./datasets` into one `ProbeDataset`. |
+| `load_local_csv_files` | Loads each CSV file in `./datasets` into a separate `ProbeDataset`. |
 
-`agentic_security.probe_data.models.ProbeDataset` is the in-memory dataset type.
-Image datasets wrap that as `ImageProbeDataset`.
+`ProbeDataset` in `agentic_security.probe_data.models` keeps the prompts and the metadata of one dataset. `ImageProbeDataset` adds the images.
 
 ## Transforms
 
-`agentic_security.probe_data.stenography_fn` provides encoding helpers such as
-`rot13`, `base64_encode`, and `mirror_words`. See [stenography](stenography.md).
+`agentic_security.probe_data.stenography_fn` has encoding functions, for example `rot13`, `base64_encode`, and `mirror_words`. Refer to [Stenography functions](stenography.md).
 
-## Image and audio
+## Images and audio
 
-- `generate_image` / `generate_image_dataset` in `probe_data.image_generator`
-- `generate_audioform` in `probe_data.audio_generator`
+- `generate_image` and `generate_image_dataset` in `probe_data.image_generator`. Refer to [Image generation](image_generation.md).
+- `generate_audioform` in `probe_data.audio_generator`. It makes a WAV file. On macOS it uses the `say` command. On other systems it uses gTTS.
 
 ```python
 from agentic_security.probe_data.audio_generator import generate_audioform
@@ -32,9 +32,7 @@ audio_bytes = generate_audioform("Hello, world!")
 
 ## Prompt selection
 
-`probe_data.modules.rl_model` implements `PromptSelectionInterface` with
-`RandomPromptSelector`, `CloudRLPromptSelector`, and `QLearningPromptSelector`.
-`update_rewards` returns `None`. Boolean arguments are Python `True` / `False`.
+`probe_data.modules.rl_model` has prompt selectors. Refer to [RL prompt selection](rl_model.md).
 
 ```python
 from agentic_security.probe_data.modules.rl_model import QLearningPromptSelector
@@ -43,5 +41,3 @@ selector = QLearningPromptSelector(["What is AI?", "Explain machine learning"])
 next_prompt = selector.select_next_prompt("What is AI?", passed_guard=True)
 selector.update_rewards("What is AI?", next_prompt, reward=1.0, passed_guard=True)
 ```
-
-See [RL model](rl_model.md) for the selector options.

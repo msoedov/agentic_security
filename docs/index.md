@@ -1,24 +1,24 @@
-<p align="center">
+# Agentic Security
 
-<h1 align="center">Agentic Security</h1>
-
-<p align="center">
-    The open-source Agentic LLM Vulnerability Scanner
-    <br />
-    <br />
-
-</p>
-</p>
+Agentic Security is an open-source vulnerability scanner for LLM endpoints and agent workflows.
 
 ## Features
 
-- Customizable Rule Sets or Agent based attacks🛠️
-- Comprehensive fuzzing for any LLMs 🧪
-- LLM API integration and stress testing 🛠️
-- Wide range of fuzzing and attack techniques 🌀
+- Attack datasets from Hugging Face, public CSV files, and your local CSV files.
+- Text, image, and audio attacks.
+- Many-shot (multi-step) jailbreak attacks.
+- Prompt transformations (encodings and ciphers) that hide the attack text.
+- Refusal and leak detectors that you can turn on, turn off, or extend.
+- A web UI, a CLI for CI pipelines, and an agent harness (`agesec`).
 
-Note: Please be aware that Agentic Security is designed as a safety scanner tool and not a foolproof solution. It cannot guarantee complete protection against all possible threats.
+> **WARNING:** Agentic Security is a test tool. It cannot find all vulnerabilities. A scan with no failures does not prove that the target is safe.
 
-## UI 🧙
+## Where to start
 
-<img width="100%" alt="booking-screen" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1741192668/final_aa9jhb.gif">
+1. Install the package. Refer to [Installation](installation.md).
+2. Do the steps in the [Quickstart](quickstart.md).
+3. To scan in a CI pipeline, refer to [CI/CD integration](ci_cd.md).
+
+## UI
+
+<img width="100%" alt="Agentic Security UI" src="https://res.cloudinary.com/dq0w2rtm9/image/upload/v1741192668/final_aa9jhb.gif">

@@ -1,65 +1,50 @@
-# Quickstart Guide
+# Quickstart
 
-Welcome to the Quickstart Guide for Agentic Security. This guide will help you set up and start using the project quickly.
+This procedure starts the web UI and does a scan from the command line.
 
-## Installation
-
-To get started with Agentic Security, install the package using pip:
+## Install the package
 
 ```shell
 pip install agentic_security
 ```
 
-## Initial Setup
-
-After installation, you can start the application using the following command:
+## Start the web UI
 
 ```shell
 agentic_security server
 ```
 
-This will initialize the server and prepare it for use.
+Open `http://127.0.0.1:8718` in a web browser.
 
-## Basic Usage
+> **NOTE:** The `agentic_security` command without a subcommand does not start the server. It shows the help text.
 
-To run the main application, use:
+## Do a scan from the command line
 
-```shell
-python -m agentic_security
-```
+1. Create the configuration file `agentic_security.toml`:
 
-You can also view help options with:
+    ```shell
+    agentic_security init
+    ```
 
-```shell
-agentic_security --help
-```
+2. Open `agentic_security.toml`.
+3. Replace the example `llmSpec` with the HTTP request for your endpoint. Refer to [HTTP spec](http_spec.md).
+4. Show the available datasets:
 
-## Running as a CI Check
+    ```shell
+    agentic_security ls
+    ```
 
-Initialize the configuration for CI checks:
+5. Add the datasets that you want to the `[modules]` section.
+6. Start the scan:
 
-```shell
-agentic_security init
-```
+    ```shell
+    agentic_security ci
+    ```
 
-This will generate a default configuration file named `agentic_security.toml`.
+The scan shows a table with the failure rate for each module.
 
-## Additional Commands
+## Next steps
 
-- List available modules:
-
-  ```shell
-  agentic_security ls
-  ```
-
-- Run a security scan:
-
-  ```shell
-  agentic_security ci
-  ```
-
-## Further Information
-
-For more detailed information, refer to the [Documentation](index.md) or the [API Reference](api_reference.md).
-
-This quickstart guide should help you get up and running with Agentic Security efficiently.
+- [CLI reference](cli.md)
+- [Configuration](configuration.md)
+- [CI/CD integration](ci_cd.md)

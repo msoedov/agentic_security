@@ -31,10 +31,12 @@ nav:
     - Image Generation: image_generation.md
     - Stenography Functions: stenography.md
     - Reinforcement Learning Optimization: rl_model.md
+    - Agent Harness: harness.md
   - WIP:
     - Agent Operator: operator.md
   - Reference:
     - API Reference: api_reference.md
+    - Contributing: contributing.md
   # - Project:
   #     - Setup: setup.md
   #     - Version control: version_control.md

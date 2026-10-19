@@ -1,51 +1,43 @@
-# API Reference
+# API reference
 
-This section provides detailed information about the Agentic Security API.
+The server (`agentic_security server`) has test endpoints. Use them to test a spec before you scan a real target.
 
-## Endpoints
+## POST /v1/self-probe
 
-### `/v1/self-probe`
+A mock LLM for text. It refuses approximately 20% of prompts at random.
 
-- **Method**: POST
-- **Description**: Used for integration testing.
-- **Request Body**:
-  ```json
-  {
-      "prompt": "<<PROMPT>>"
-  }
-  ```
+Request body:
 
-### `/v1/self-probe-image`
+```json
+{"prompt": "<<PROMPT>>"}
+```
 
-- **Method**: POST
-- **Description**: Probes the image modality.
-- **Request Body**:
-  ```json
-  [
-      {
-          "role": "user",
-          "content": [
-              {
-                  "type": "text",
-                  "text": "What is in this image?"
-              },
-              {
-                  "type": "image_url",
-                  "image_url": {
-                      "url": "data:image/jpeg;base64,<<BASE64_IMAGE>>"
-                  }
-              }
-          ]
-      }
-  ]
-  ```
+The response has the OpenAI chat-completion format.
 
-## Authentication
+## POST /v1/self-probe-image
 
-`/v1/self-probe` is an unauthenticated local test endpoint. File and image
-probe routes expect an `Authorization: Bearer ...` header; the mock server
-checks the header shape, not a configured API key.
+A mock LLM for images. It ignores the request body and always gives the same response.
 
-## Further Reading
+## POST /v1/self-probe-file
 
-For more details on API usage, refer to the [Configuration](configuration.md) section.
+A mock audio transcription endpoint. It accepts a multipart upload.
+
+| Part | Description |
+| --- | --- |
+| `file` | An `.m4a`, `.mp3`, or `.wav` file. |
+| `model` | Optional. The default is `whisper-large-v3`. |
+
+The request must have the header `Authorization: Bearer <any value>`. The endpoint does not examine the key. The response is `{"text": "...", "model": "..."}`.
+
+## Other endpoints
+
+| Method | Path | Description |
+| --- | --- | --- |
+| GET | `/health` | Returns `{"status": "ok"}`. |
+| GET | `/v1/llm-specs` | Returns the built-in spec templates. |
+| GET | `/v1/data-config` | Returns the dataset registry. The response is very large. |
+| POST | `/verify` | Sends a test request with a spec. |
+| POST | `/scan` | Starts a scan. The response is a stream of JSON lines. |
+| POST | `/stop` | Stops the current scan. |
+| POST | `/scan-csv` | Starts a scan with an uploaded CSV file. |
+| GET | `/failures` | Returns the failures of the last scan. |

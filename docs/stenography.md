@@ -1,30 +1,28 @@
 # Stenography functions
 
-`agentic_security.probe_data.stenography_fn` transforms prompts so scanners can
-test whether a model still treats obfuscated text as an instruction.
+`agentic_security.probe_data.stenography_fn` changes the text of a prompt. Use these functions to test if a model obeys an instruction that is encoded or hidden.
 
-The module is used by `Stenography` in `probe_data.data` when a dataset
-enables encoding variants.
+The scanner uses these functions to make transformed datasets from the loaded prompts. Refer to [Dataset extension](datasets.md).
+
+> **NOTE:** These functions hide text for red-team tests. They do not give cryptographic security.
 
 ## Functions
 
-| Function | What it does |
+| Function | Description |
 | --- | --- |
-| `rot13` / `rot5` | Letter and digit rotation ciphers |
-| `base64_encode` | Base64-encode a string or bytes |
-| `mirror_words` | Reverse each word, keep word order |
-| `scramble_words` | Shuffle middle letters, keep first and last |
-| `randomize_letter_case` | Random per-character case |
-| `insert_noise_characters` | Insert alphanumeric noise (`frequency=0.2` by default) |
-| `substitute_with_ascii` | Replace characters with ordinals |
-| `remove_vowels` | Drop `aeiou` in either case |
-| `zigzag_obfuscation` | Alternate upper/lower case |
-| `caesar_cipher` / `substitution_cipher` / `vigenere_cipher` | Classical ciphers |
-| `code_block_encode` | Hide the prompt in a Python docstring fenced as code |
+| `rot13` / `rot5` | Rotates the letters (ROT13) or the digits (ROT5). |
+| `base64_encode` | Encodes a string or bytes in Base64. |
+| `mirror_words` | Reverses the letters of each word. The word order does not change. |
+| `scramble_words` | Mixes the middle letters of each word. The first and last letters do not change. |
+| `randomize_letter_case` | Sets a random case for each letter. |
+| `insert_noise_characters` | Adds random letters and digits. The default `frequency` is `0.2`. |
+| `substitute_with_ascii` | Replaces each character with its character code. |
+| `remove_vowels` | Removes the vowels `aeiou` (upper and lower case). |
+| `zigzag_obfuscation` | Uses upper case and lower case in turn. |
+| `caesar_cipher` / `substitution_cipher` / `vigenere_cipher` | Classical ciphers. |
+| `code_block_encode` | Puts the prompt in a Python docstring in a code block. |
 
-These are obfuscation helpers for red-team prompts, not cryptographic primitives.
-
-## Usage
+## Example
 
 ```python
 from agentic_security.probe_data.stenography_fn import rot13, scramble_words
