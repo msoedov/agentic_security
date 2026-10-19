@@ -2,11 +2,11 @@
 
 import json
 import os
-
-import httpx
 from dataclasses import dataclass
 
 from agentic_security_harness.policy import Action
+
+lazy import httpx
 
 
 @dataclass(frozen=True)
