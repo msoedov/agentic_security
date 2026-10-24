@@ -161,6 +161,11 @@ retry = 3
 timeout_connect = 30
 timeout_response = 90
 
+[server]
+# Browser origins allowed to call the local scanner API (empty = same-origin only).
+# Override at runtime with AGENTIC_SECURITY_CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+cors_allow_origins = []
+
 [fuzzer]
 max_prompt_lenght = 2048
 budget_multiplier = 100000000
