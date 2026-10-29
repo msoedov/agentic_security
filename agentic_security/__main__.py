@@ -64,7 +64,9 @@ class CLI:
         Args:
             spec: File path, inline HTTP spec text, or '-' to read from stdin.
             max_budget: Maximum probe budget for the scan.
-            max_th: Failure-rate threshold (0-1); modules above it fail the run.
+            max_th: Attack-success threshold (0-1). Exit code 1 if any module's
+                share of successful attacks is above it, 2 if a module got no
+                answers at all (every prompt errored), otherwise 0.
         """
         if spec == "-":
             llm_spec = sys.stdin.read()

@@ -1,6 +1,6 @@
 [project]
 name = "agentic_security"
-version = "1.0.0"
+version = "1.1.0"
 description = "Agentic LLM vulnerability scanner"
 authors = [{ name = "Alexander Miasoiedov", email = "msoedov@gmail.com" }]
 maintainers = [{ name = "Alexander Miasoiedov", email = "msoedov@gmail.com" }]

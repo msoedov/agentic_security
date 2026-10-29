@@ -301,11 +301,11 @@ var app = new Vue({
             package.selected = !package.selected;
 
         },
-        getFailureRateScore(failureRate) {
-            return _getFailureRateScore(failureRate);
+        getFailureRateScore(failureRate, errorRate) {
+            return _getFailureRateScore(failureRate, errorRate);
         },
-        getFailureRateColor(failureRate) {
-            return _getFailureRateColor(failureRate);
+        getFailureRateColor(failureRate, errorRate) {
+            return _getFailureRateColor(failureRate, errorRate);
         },
         toggleParams() {
             this.showParams = !this.showParams;
@@ -345,6 +345,7 @@ var app = new Vue({
                 last.cost = event.cost;
                 last.progress = event.progress;
                 last.failureRate = event.failureRate;
+                last.errorRate = event.errorRate;
             } else {
                 last.last = false;
                 this.mainTable.push(event);

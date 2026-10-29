@@ -25,6 +25,49 @@ YELLOW = colorama.Fore.YELLOW
 BLUE = colorama.Fore.BLUE
 
 
+def module_status(failure_rate: float, error_rate: float, max_th: float) -> str:
+    """Verdict for one module from its latest rates (both in percent).
+
+    failureRate is the share of answered attacks that worked, so higher is
+    worse. A module where every prompt errored has no answered attacks and
+    gets ERROR rather than a PASS it did not earn.
+    """
+    if error_rate >= 100:
+        return "ERROR"
+    return "PASS" if failure_rate <= max_th * 100 else "FAIL"
+
+
+def _record_rates(rates: dict[str, tuple[float, float]], payload) -> None:
+    """Keep the latest (failureRate, errorRate) for the payload's module."""
+    if not isinstance(payload, dict):
+        return
+    if payload.get("status") or "module" not in payload:
+        return
+    failure_rate = payload.get("failureRate")
+    if not isinstance(failure_rate, (int, float)):
+        return
+    error_rate = payload.get("errorRate") or 0.0
+    rates[payload["module"]] = (float(failure_rate), float(error_rate))
+
+
+def _final_rates(updates) -> dict[str, tuple[float, float]]:
+    """Latest (failureRate, errorRate) per module from scan JSON updates."""
+    rates: dict[str, tuple[float, float]] = {}
+    for payload in updates:
+        _record_rates(rates, payload)
+    return rates
+
+
+def exit_code_for(rates: dict[str, tuple[float, float]], max_th: float) -> int:
+    """CI exit code: 1 if any module failed, 2 if any module only errored, else 0."""
+    statuses = [module_status(f, e, max_th) for f, e in rates.values()]
+    if "FAIL" in statuses:
+        return 1
+    if "ERROR" in statuses:
+        return 2
+    return 0
+
+
 class SecurityScanner(SettingsMixin):
     @classmethod
     async def async_scan(
@@ -64,17 +107,20 @@ class SecurityScanner(SettingsMixin):
             if "module" in update:
                 module = update["module"]
                 failure_rate = update["failureRate"]
+                error_rate = update.get("errorRate") or 0.0
+                if module not in failure_by_module:
+                    completed_modules += 1
                 failure_by_module[module] = failure_rate
 
                 # Store detailed results including timestamp and additional metrics
                 detailed_results[module] = {
                     "failure_rate": failure_rate,
+                    "error_rate": error_rate,
                     "timestamp": datetime.now().isoformat(),
-                    "status": "PASS" if failure_rate <= max_th * 100 else "FAIL",
+                    "status": module_status(failure_rate, error_rate, max_th),
                     "threshold": max_th * 100,
                     "margin": abs(max_th * 100 - failure_rate),
                 }
-                completed_modules += 1
 
         duration = datetime.now() - start_time
         cls.show_enhanced_table(
@@ -96,10 +142,12 @@ class SecurityScanner(SettingsMixin):
         # Prepare table data with enhanced formatting
         table_data = []
         total_failures = 0
+        total_errors = 0
         for module, failure_rate in failure_by_module.items():
             result = detailed_results[module]
-            status_color = GREEN if result["status"] == "PASS" else RED
-            status_symbol = "✔" if result["status"] == "PASS" else "✘"
+            status = result["status"]
+            status_color = {"PASS": GREEN, "ERROR": YELLOW}.get(status, RED)
+            status_symbol = {"PASS": "✔", "ERROR": "ERROR"}.get(status, "✘")
 
             # Color coding for failure rates
             rate_color = (
@@ -111,13 +159,16 @@ class SecurityScanner(SettingsMixin):
             formatted_row = [
                 f"{BRIGHT}{module}{RESET}",
                 f"{rate_color}{failure_rate:.1f}%{RESET}",
+                f"{result.get('error_rate', 0.0):.1f}%",
                 f"{status_color}{status_symbol}{RESET}",
                 f"{result['margin']:.1f}%",
             ]
             table_data.append(formatted_row)
 
-            if result["status"] == "FAIL":
+            if status == "FAIL":
                 total_failures += 1
+            elif status == "ERROR":
+                total_errors += 1
 
         # Sort table by failure rate
         table_data.sort(
@@ -134,29 +185,32 @@ class SecurityScanner(SettingsMixin):
         print(
             tabulate(
                 table_data,
-                headers=["Module", "Failure Rate", "Status", "Margin"],
+                headers=["Module", "Attack Success", "Errors", "Status", "Margin"],
                 tablefmt="grid",
                 stralign="left",
             )
         )
 
         # Summary statistics
-        pass_rate = (
-            ((total_modules - total_failures) / total_modules) * 100
-            if total_modules > 0
-            else 0
-        )
+        total_passing = total_modules - total_failures - total_errors
+        pass_rate = (total_passing / total_modules) * 100 if total_modules > 0 else 0
         print("\nSummary:")
         print(
-            f"Total Passing: {total_modules - total_failures}/{total_modules} ({pass_rate:.1f}%)"
+            "Attack Success = share of answered attacks that worked (lower is better)."
         )
+        print(f"Total Passing: {total_passing}/{total_modules} ({pass_rate:.1f}%)")
+        if total_errors > 0:
+            print(
+                f"{YELLOW}Modules with no answered prompts (all errors): "
+                f"{total_errors}{RESET}"
+            )
 
         if total_failures > 0:
             print(f"{RED}Failed Modules: {total_failures}{RESET}")
             print("\nHighest Risk Modules:")
-            # Show top 3 highest failure rates
+            # Show the 3 modules where the most attacks worked
             for row in sorted(
-                table_data,
+                [r for r in table_data if "✘" in r[3]],
                 key=lambda x: float(
                     x[1]
                     .replace(GREEN, "")
@@ -216,7 +270,8 @@ class SecurityScanner(SettingsMixin):
             dataset["selected"] = True
 
         async def _run() -> int:
-            failures = 0
+            # Only the latest rates per module; payloads hold full responses.
+            rates: dict[str, tuple[float, float]] = {}
             gen = streaming_response_generator(
                 Scan(
                     llmSpec=llm_spec,
@@ -233,15 +288,9 @@ class SecurityScanner(SettingsMixin):
                     payload = json.loads(update)
                 except json.JSONDecodeError:
                     continue
-                if payload.get("status"):
-                    continue
-                failure_rate = payload.get("failureRate")
-                if (
-                    isinstance(failure_rate, (int, float))
-                    and failure_rate > max_th * 100
-                ):
-                    failures += 1
-            return 1 if failures else 0
+                _record_rates(rates, payload)
+            # Judge each module on its final rates, not on early partial ones.
+            return exit_code_for(rates, max_th)
 
         return asyncio.run(_run())
 
