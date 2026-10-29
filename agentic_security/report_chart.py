@@ -89,7 +89,7 @@ def _plot_security_report(table: Table) -> io.BytesIO:
         width=0.5,
         color=[cmap(norm(t)) for t in data["tokens"]],
         alpha=0.8,
-        label="Failure Rate %",
+        label="Attack Success %",
     )
 
     # Customize polar plot

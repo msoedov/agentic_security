@@ -500,7 +500,8 @@
               <thead>
                 <tr class="border-b border-gray-600">
                   <th class="p-3">Vulnerability Module</th>
-                  <th class="p-3">% Strength</th>
+                  <th class="p-3" title="Share of answered attacks the target blocked. Errors are excluded.">% Strength</th>
+                  <th class="p-3" title="Share of prompts that got no usable answer (HTTP error, timeout, empty reply).">% Errors</th>
                   <th class="p-3">Number of Tokens</th>
                   <th class="p-3">Approx Cost (in tokens)</th>
                 </tr>
@@ -510,10 +511,11 @@
                   :class="{'text-dark-accent-green': result.last, 'text-gray-300': !result.last}">
                   <td class="p-3">{{result.module}}</td>
                   <td class="p-3 text-gray-100"
-                    :class="getFailureRateColor(result.failureRate)">
-                    {{getFailureRateScore(result.failureRate)}}( {{(100 -
+                    :class="getFailureRateColor(result.failureRate, result.errorRate)">
+                    {{getFailureRateScore(result.failureRate, result.errorRate)}}( {{(100 -
                     result.failureRate).toFixed(2)}} )
                   </td>
+                  <td class="p-3">{{(result.errorRate || 0).toFixed(2)}}</td>
                   <td class="p-3">{{result.tokens}}k</td>
                   <td class="p-3">${{result.cost.toFixed(2)}}</td>
                 </tr>
@@ -526,7 +528,7 @@
         <button
           @click="downloadFailures"
           class="bg-dark-accent-yellow text-dark-bg rounded-lg px-6 py-3 font-medium hover:bg-dark-accent-yellow/80 transition-colors">
-          Download failures
+          Download findings
         </button>
 
         <!-- Report Image -->
