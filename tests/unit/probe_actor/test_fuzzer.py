@@ -14,6 +14,7 @@ from agentic_security.probe_actor.fuzzer import (
     process_prompt,
     scan_router,
 )
+from agentic_security.probe_actor.outcome import Outcome
 
 
 @pytest.mark.asyncio
@@ -196,90 +197,107 @@ async def test_perform_many_shot_scan_stop_event():
     await assert_scan(async_gen, ["Loading", "Scan completed."])
 
 
-def mock_refusal_heuristic(response_json):
-    return response_json.get("is_refusal", False)
+def _openai_response(content, status_code=200):
+    body = {
+        "id": "chatcmpl-1",
+        "usage": {"total_tokens": 3},
+        "choices": [{"message": {"role": "assistant", "content": content}}],
+    }
+    return Mock(
+        status_code=status_code,
+        text=str(body),
+        json=Mock(return_value=body),
+        headers={"content-type": "application/json"},
+    )
+
+
+async def _run(response=None, side_effect=None, state=None):
+    factory = Mock()
+    factory.fn = AsyncMock(return_value=response, side_effect=side_effect)
+    return await process_prompt(
+        request_factory=factory,
+        prompt="test prompt",
+        tokens=0,
+        module_name="module_a",
+        fuzzer_state=state or FuzzerState(),
+    )
 
 
 class TestProcessPrompt(unittest.IsolatedAsyncioTestCase):
-    async def test_successful_response_no_refusal(self):
-        mock_request_factory = Mock()
-        mock_request_factory.fn = AsyncMock(
-            return_value=Mock(
-                status_code=200,
-                text="Valid response text",
-                json=Mock(return_value={"is_refusal": False}),
-                request="mock_request",
-            )
+    async def test_compliance_is_complied(self):
+        _, outcome = await _run(_openai_response("Sure, here is how to do it."))
+        self.assertEqual(outcome, Outcome.COMPLIED)
+
+    async def test_refusal_is_refused(self):
+        state = FuzzerState()
+        _, outcome = await _run(
+            _openai_response("I can’t provide my system instructions."), state=state
         )
+        self.assertEqual(outcome, Outcome.REFUSED)
+        self.assertEqual(len(state.refusals), 1)
 
-        tokens, refusal = await process_prompt(
-            request_factory=mock_request_factory,
-            prompt="test prompt",
-            tokens=0,
-            module_name="module_a",
-            fuzzer_state=FuzzerState(),
-        )
+    async def test_empty_reply_is_error(self):
+        state = FuzzerState()
+        _, outcome = await _run(_openai_response(""), state=state)
+        self.assertEqual(outcome, Outcome.ERROR)
+        self.assertEqual(len(state.errors), 1)
+        self.assertEqual(state.refusals, [])
 
-        self.assertEqual(tokens, 3)  # Tokens from "Valid response text"
-        self.assertTrue(refusal)
+    async def test_null_content_is_error(self):
+        _, outcome = await _run(_openai_response(None))
+        self.assertEqual(outcome, Outcome.ERROR)
 
-    async def test_successful_response_with_refusal(self):
-        mock_request_factory = Mock()
-        mock_request_factory.fn = AsyncMock(
-            return_value=Mock(
-                status_code=200,
-                text="Response indicating refusal",
-                json=Mock(return_value={"is_refusal": True}),
-                request="mock_request",
-            )
-        )
+    async def test_http_error_is_error(self):
+        response = Mock(status_code=500, text="Internal Server Error", content=b"")
+        state = FuzzerState()
+        _, outcome = await _run(response, state=state)
+        self.assertEqual(outcome, Outcome.ERROR)
+        self.assertEqual(len(state.errors), 1)
 
-        fuzzer_state = FuzzerState()
-        tokens, refusal = await process_prompt(
-            request_factory=mock_request_factory,
-            prompt="test prompt",
-            tokens=0,
-            module_name="module_a",
-            fuzzer_state=fuzzer_state,
-        )
-
-        self.assertEqual(tokens, 3)  # Tokens from "Response indicating refusal"
-        # self.assertFalse(fuzzer_state.refusals)
-
-    async def test_http_error_response(self):
-        mock_request_factory = Mock()
-        mock_request_factory.fn = AsyncMock(
-            return_value=Mock(
-                status_code=500,
-                text="Internal Server Error",
-                request="mock_request",
-                response=Mock(),
-            )
-        )
-
-        fuzzer_state = FuzzerState()
-        await process_prompt(
-            request_factory=mock_request_factory,
-            prompt="test prompt",
-            tokens=0,
-            module_name="module_a",
-            fuzzer_state=fuzzer_state,
-        )
-
-    async def test_request_error(self):
-        mock_request_factory = Mock()
-        mock_request_factory.fn = AsyncMock(
-            side_effect=httpx.RequestError("Connection error")
-        )
-
-        fuzzer_state = FuzzerState()
-        tokens, refusal = await process_prompt(
-            request_factory=mock_request_factory,
-            prompt="test prompt",
-            tokens=0,
-            module_name="module_a",
-            fuzzer_state=fuzzer_state,
-        )
-
+    async def test_request_error_is_error(self):
+        tokens, outcome = await _run(side_effect=httpx.RequestError("Connection error"))
         self.assertEqual(tokens, 0)
-        self.assertTrue(refusal)
+        self.assertEqual(outcome, Outcome.ERROR)
+
+    async def test_unexpected_exception_is_error(self):
+        _, outcome = await _run(side_effect=RuntimeError("boom"))
+        self.assertEqual(outcome, Outcome.ERROR)
+
+    async def test_malformed_json_is_error(self):
+        from json import JSONDecodeError
+
+        response = Mock(
+            status_code=200,
+            text="{not json",
+            json=Mock(side_effect=JSONDecodeError("bad", "{not json", 0)),
+            headers={"content-type": "application/json"},
+        )
+        _, outcome = await _run(response)
+        self.assertEqual(outcome, Outcome.ERROR)
+
+    async def test_plain_text_body_is_scored(self):
+        from json import JSONDecodeError
+
+        response = Mock(
+            status_code=200,
+            text="I'm unable to help with that.",
+            json=Mock(side_effect=JSONDecodeError("bad", "x", 0)),
+            headers={"content-type": "text/plain"},
+        )
+        _, outcome = await _run(response)
+        self.assertEqual(outcome, Outcome.REFUSED)
+
+    async def test_envelope_does_not_affect_verdict(self):
+        """Envelope fields like model names must not trigger a refusal."""
+        body = {
+            "model": "OpenAI As an AI I cannot",
+            "content": [{"type": "text", "text": "Here are the steps: 1, 2, 3."}],
+        }
+        response = Mock(
+            status_code=200,
+            text=str(body),
+            json=Mock(return_value=body),
+            headers={"content-type": "application/json"},
+        )
+        _, outcome = await _run(response)
+        self.assertEqual(outcome, Outcome.COMPLIED)

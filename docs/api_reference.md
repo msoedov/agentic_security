@@ -4,7 +4,7 @@ The server (`agentic_security server`) has test endpoints. Use them to test a sp
 
 ## POST /v1/self-probe
 
-A mock LLM for text. It refuses approximately 20% of prompts at random.
+A mock LLM for text. It refuses approximately 80% of prompts at random.
 
 Request body:
 

@@ -4,6 +4,7 @@ import pytest
 import asyncio
 from unittest.mock import Mock, patch
 from agentic_security.executor.concurrent import ConcurrentExecutor, ExecutorMetrics
+from agentic_security.probe_actor.outcome import Outcome
 from agentic_security.probe_actor.state import FuzzerState
 
 
@@ -127,7 +128,7 @@ class TestConcurrentExecutor:
 
         # Mock process_prompt to return success
         async def mock_process_prompt(rf, prompt, tokens, module, state):
-            return (10, False)  # 10 tokens, not refused
+            return (10, Outcome.REFUSED)  # 10 tokens, target defended
 
         with patch(
             "agentic_security.probe_actor.fuzzer.process_prompt",
@@ -155,8 +156,8 @@ class TestConcurrentExecutor:
         async def mock_process_prompt(rf, prompt, tokens, module, state):
             call_count[0] += 1
             if call_count[0] % 2 == 0:
-                return (10, True)  # Refused
-            return (10, False)  # Success
+                return (10, Outcome.REFUSED)
+            return (10, Outcome.COMPLIED)
 
         with patch(
             "agentic_security.probe_actor.fuzzer.process_prompt",
@@ -168,7 +169,7 @@ class TestConcurrentExecutor:
             )
 
         assert tokens == 40  # 4 prompts * 10 tokens
-        assert failures == 2  # 2 refused
+        assert failures == 2  # 2 complied = 2 findings
 
     @pytest.mark.asyncio
     async def test_execute_batch_respects_concurrency_limit(self):
@@ -187,7 +188,7 @@ class TestConcurrentExecutor:
             max_concurrent[0] = max(max_concurrent[0], concurrent_count[0])
             await asyncio.sleep(0.01)  # Simulate work
             concurrent_count[0] -= 1
-            return (10, False)
+            return (10, Outcome.COMPLIED)
 
         with patch(
             "agentic_security.probe_actor.fuzzer.process_prompt",
@@ -228,8 +229,8 @@ class TestConcurrentExecutor:
                 request_factory, prompts, "test_module", fuzzer_state
             )
 
-        # All should have failed
-        assert failures == 10
+        # Errors are not findings
+        assert failures == 0
 
         # Circuit should be open now
         assert executor.circuit_breaker.state == "open"
@@ -242,7 +243,7 @@ class TestConcurrentExecutor:
         request_factory = Mock()
 
         async def mock_process_prompt(rf, prompt, tokens, module, state):
-            return (10, False)
+            return (10, Outcome.COMPLIED)
 
         with patch(
             "agentic_security.probe_actor.fuzzer.process_prompt",
@@ -269,7 +270,7 @@ class TestConcurrentExecutor:
         request_factory = Mock()
 
         async def mock_process_prompt(rf, prompt, tokens, module, state):
-            return (10, False)
+            return (10, Outcome.COMPLIED)
 
         import time
 

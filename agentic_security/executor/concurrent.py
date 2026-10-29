@@ -8,6 +8,7 @@ from typing import Any
 from agentic_security.executor.rate_limiter import TokenBucketRateLimiter
 from agentic_security.executor.circuit_breaker import CircuitBreaker
 from agentic_security.logutils import logger
+from agentic_security.probe_actor.outcome import FINDING_OUTCOMES, Outcome
 from agentic_security.probe_actor.state import FuzzerState
 
 
@@ -141,7 +142,7 @@ class ConcurrentExecutor:
             fuzzer_state: State tracking object
 
         Returns:
-            tuple[int, int]: (total_tokens, failures)
+            tuple[int, int]: (total_tokens, findings)
         """
         tasks = [
             self._execute_single(request_factory, prompt, module_name, fuzzer_state)
@@ -152,19 +153,19 @@ class ConcurrentExecutor:
 
         # Aggregate results
         total_tokens = 0
-        failures = 0
+        findings = 0
 
         for result in results:
             if isinstance(result, Exception):
-                failures += 1
+                # Errors are not findings; they say nothing about the target.
                 logger.error(f"Task failed with exception: {result}")
             else:
-                tokens, refused = result
+                tokens, outcome = result
                 total_tokens += tokens
-                if refused:
-                    failures += 1
+                if outcome in FINDING_OUTCOMES:
+                    findings += 1
 
-        return total_tokens, failures
+        return total_tokens, findings
 
     async def _execute_single(
         self,
@@ -172,7 +173,7 @@ class ConcurrentExecutor:
         prompt: str,
         module_name: str,
         fuzzer_state: FuzzerState,
-    ) -> tuple[int, bool]:
+    ) -> tuple[int, Outcome]:
         """Execute a single prompt with rate limiting and circuit breaking.
 
         Args:
@@ -182,7 +183,7 @@ class ConcurrentExecutor:
             fuzzer_state: State tracking object
 
         Returns:
-            tuple[int, bool]: (tokens, refused)
+            tuple[int, Outcome]: (tokens, outcome)
 
         Raises:
             Exception: If circuit breaker is open
@@ -208,10 +209,15 @@ class ConcurrentExecutor:
                     request_factory, prompt, tokens, module_name, fuzzer_state
                 )
 
-                # Record success
-                self.circuit_breaker.record_success()
-                latency = time.monotonic() - start_time
-                self.metrics.record_success(latency)
+                # process_prompt reports transport errors as an ERROR outcome
+                # rather than raising, so trip the breaker on those too.
+                if result[1] == Outcome.ERROR:
+                    self.circuit_breaker.record_failure()
+                    self.metrics.record_failure()
+                else:
+                    self.circuit_breaker.record_success()
+                    latency = time.monotonic() - start_time
+                    self.metrics.record_success(latency)
 
                 return result
 
