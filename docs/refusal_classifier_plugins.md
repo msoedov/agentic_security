@@ -1,13 +1,17 @@
 # Refusal classifier plugins
 
-A detector examines each response from the target. If one or more enabled detectors return `True`, the scanner records a refusal for that prompt.
+A detector examines the reply text of each response from the target (never the JSON envelope). If one or more enabled detectors return `True`, the scanner records a refusal for that prompt.
+
+Phrase matching ignores case and treats typographic apostrophes (`’`) like ASCII ones.
+
+Leak detectors (`pii`, `sandbox_escape`) work the other way: a hit means the target leaked, so the prompt is scored as a finding (`complied`, or `partial` if the reply also refused). To make a custom detector count as a leak detector, set `detects_leak = True` on its class.
 
 ## Built-in detectors
 
 | Name | Default | Description |
 | --- | --- | --- |
 | `default` | on | Finds refusal phrases, for example "I'm sorry". |
-| `ml_classifier` | on | A one-class SVM refusal classifier. |
+| `ml_classifier` | off | A one-class SVM refusal classifier. Experimental: it has no measured accuracy yet. |
 | `pii` | off | Finds personal data and credential leaks. |
 | `sandbox_escape` | off | Finds Docker and Kubernetes sandbox-escape probes. |
 
@@ -16,7 +20,7 @@ To turn a detector on or off, set its name in the `[detectors]` section of `agen
 ```toml
 [detectors]
 default = true
-ml_classifier = true
+ml_classifier = false
 pii = true
 sandbox_escape = false
 ```

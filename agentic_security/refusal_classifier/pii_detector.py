@@ -20,6 +20,9 @@ class PIIPattern:
 class PIIDetector:
     """Detect common PII and credential leaks in model responses.
 
+    A hit is a finding (the target leaked), not a refusal; ``detects_leak``
+    tells the scanner to score it that way.
+
     Args:
         patterns: Regex-backed PII patterns to evaluate. Defaults to
             ``DEFAULT_PATTERNS`` when omitted. Pass an empty tuple to disable
@@ -27,6 +30,8 @@ class PIIDetector:
         detect_credit_cards: Whether to run the separate credit-card candidate
             detector with Luhn validation.
     """
+
+    detects_leak = True
 
     DEFAULT_PATTERNS: tuple[PIIPattern, ...] = (
         PIIPattern(
