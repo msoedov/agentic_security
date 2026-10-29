@@ -37,17 +37,24 @@ def module_status(failure_rate: float, error_rate: float, max_th: float) -> str:
     return "PASS" if failure_rate <= max_th * 100 else "FAIL"
 
 
+def _record_rates(rates: dict[str, tuple[float, float]], payload) -> None:
+    """Keep the latest (failureRate, errorRate) for the payload's module."""
+    if not isinstance(payload, dict):
+        return
+    if payload.get("status") or "module" not in payload:
+        return
+    failure_rate = payload.get("failureRate")
+    if not isinstance(failure_rate, (int, float)):
+        return
+    error_rate = payload.get("errorRate") or 0.0
+    rates[payload["module"]] = (float(failure_rate), float(error_rate))
+
+
 def _final_rates(updates) -> dict[str, tuple[float, float]]:
     """Latest (failureRate, errorRate) per module from scan JSON updates."""
     rates: dict[str, tuple[float, float]] = {}
     for payload in updates:
-        if payload.get("status") or "module" not in payload:
-            continue
-        failure_rate = payload.get("failureRate")
-        if not isinstance(failure_rate, (int, float)):
-            continue
-        error_rate = payload.get("errorRate") or 0.0
-        rates[payload["module"]] = (float(failure_rate), float(error_rate))
+        _record_rates(rates, payload)
     return rates
 
 
@@ -263,7 +270,8 @@ class SecurityScanner(SettingsMixin):
             dataset["selected"] = True
 
         async def _run() -> int:
-            updates = []
+            # Only the latest rates per module; payloads hold full responses.
+            rates: dict[str, tuple[float, float]] = {}
             gen = streaming_response_generator(
                 Scan(
                     llmSpec=llm_spec,
@@ -280,10 +288,9 @@ class SecurityScanner(SettingsMixin):
                     payload = json.loads(update)
                 except json.JSONDecodeError:
                     continue
-                if isinstance(payload, dict):
-                    updates.append(payload)
+                _record_rates(rates, payload)
             # Judge each module on its final rates, not on early partial ones.
-            return exit_code_for(_final_rates(updates), max_th)
+            return exit_code_for(rates, max_th)
 
         return asyncio.run(_run())
 
