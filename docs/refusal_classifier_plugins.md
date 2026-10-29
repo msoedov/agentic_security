@@ -4,6 +4,8 @@ A detector examines the reply text of each response from the target (never the J
 
 Phrase matching ignores case and treats typographic apostrophes (`’`) like ASCII ones.
 
+Leak detectors (`pii`, `sandbox_escape`) work the other way: a hit means the target leaked, so the prompt is scored as a finding (`complied`, or `partial` if the reply also refused). To make a custom detector count as a leak detector, set `detects_leak = True` on its class.
+
 ## Built-in detectors
 
 | Name | Default | Description |

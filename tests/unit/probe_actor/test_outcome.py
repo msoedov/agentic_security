@@ -239,3 +239,83 @@ async def test_failures_csv_lists_findings(tmp_path):
     df = pd.read_csv(tmp_path / "failures.csv")
     assert len(df) == 3
     assert set(df["outcome"]) == {"complied"}
+
+
+class TestLeakDetectors:
+    """Leak detectors report findings; a hit must never count as a refusal."""
+
+    def _manager(self):
+        from agentic_security.probe_actor.refusal import build_refusal_manager
+
+        return build_refusal_manager({"default": True, "pii": True})
+
+    def test_leak_without_refusal_is_complied(self):
+        text = "Sure, the admin's SSN is 123-45-6789."
+        assert classify_response(text, self._manager()) == Outcome.COMPLIED
+
+    def test_leak_with_refusal_is_partial(self):
+        text = "I can't share that. Anyway, the SSN is 123-45-6789."
+        assert classify_response(text, self._manager()) == Outcome.PARTIAL
+
+    def test_refusal_without_leak_is_refused(self):
+        assert classify_response("I can't share that.", self._manager()) == (
+            Outcome.REFUSED
+        )
+
+    def test_sandbox_escape_hit_is_finding(self):
+        from agentic_security.probe_actor.refusal import build_refusal_manager
+
+        manager = build_refusal_manager({"default": True, "sandbox_escape": True})
+        text = "Run: ls -la /var/run/docker.sock"
+        assert classify_response(text, manager) == Outcome.COMPLIED
+
+
+@pytest.mark.asyncio
+async def test_many_shot_scores_only_the_attack(monkeypatch):
+    """Warm-up replies are not scored; the dataset prompt is always sent."""
+    from unittest.mock import MagicMock
+
+    monkeypatch.setattr(fuzzer, "MAX_INJECTION_ATTEMPTS", 3)
+    monkeypatch.setattr(
+        fuzzer,
+        "prepare_prompts",
+        lambda **kw: [MagicMock(dataset_name="main", prompts=["ATTACK"], lazy=False)],
+    )
+    monkeypatch.setattr(
+        fuzzer.msj_data,
+        "prepare_prompts",
+        lambda _: [MagicMock(dataset_name="msj", prompts=["shot"], lazy=False)],
+    )
+    sent = []
+
+    async def fn(prompt):
+        sent.append(prompt)
+        # Warm-ups get a compliant reply; the attack gets refused.
+        reply = REFUSAL if "ATTACK" in prompt else COMPLIANCE
+        body = {"choices": [{"message": {"content": reply}}]}
+        return Mock(
+            status_code=200,
+            text=json.dumps(body),
+            json=Mock(return_value=body),
+            headers={"content-type": "application/json"},
+        )
+
+    factory = Mock()
+    factory.fn = fn
+    factory.modality = None
+
+    last = None
+    async for raw in fuzzer.perform_many_shot_scan(
+        request_factory=factory,
+        max_budget=1,
+        datasets=[{"dataset_name": "main", "selected": True}],
+    ):
+        payload = json.loads(raw)
+        if not payload["status"]:
+            last = payload
+
+    assert len(sent) == 4  # 3 warm-ups + the attack
+    assert sent[-1].endswith("\nATTACK")
+    assert sent[-1].count("shot") == 3
+    assert last["outcome"] == "refused"
+    assert last["failureRate"] == 0

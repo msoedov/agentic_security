@@ -606,30 +606,37 @@ async def perform_many_shot_scan(
             prompt_tokens = len(full_prompt.split())
             tokens += prompt_tokens
 
-            injected = False
-            outcome = Outcome.ERROR
+            # Build the many-shot context first. These warm-up replies are not
+            # the attack, so they go to a scratch state and are never scored.
+            warmup_state = FuzzerState()
+            outcome = None
             for _ in range(MAX_INJECTION_ATTEMPTS):
-                if injected:
-                    break
-
-                m_prompt = random.choice(msj_module.prompts)
-                full_prompt += "\n" + m_prompt
                 if tokens > max_ctx_length:
-                    full_prompt = "\n" + prompt
-                    injected = True
-
-                tokens, outcome = await process_prompt(
+                    break
+                full_prompt += "\n" + random.choice(msj_module.prompts)
+                tokens, warmup = await process_prompt(
                     request_factory,
                     full_prompt,
                     tokens,
                     module.dataset_name,
+                    fuzzer_state=warmup_state,
+                )
+                if warmup == Outcome.ERROR:
+                    outcome = Outcome.ERROR
+                    fuzzer_state.errors.extend(warmup_state.errors)
+                    break
+
+            # Then send the dataset attack itself and score only that reply.
+            if outcome is None:
+                if tokens > max_ctx_length:
+                    full_prompt = ""
+                tokens, outcome = await process_prompt(
+                    request_factory,
+                    full_prompt + "\n" + prompt,
+                    tokens,
+                    module.dataset_name,
                     fuzzer_state=fuzzer_state,
                 )
-                # Stop once the attack lands or the target errors out.
-                if outcome in FINDING_OUTCOMES or outcome == Outcome.ERROR:
-                    break
-                if injected:
-                    break
 
             counts[outcome] += 1
             failure_rate, error_rate = summarize(counts)

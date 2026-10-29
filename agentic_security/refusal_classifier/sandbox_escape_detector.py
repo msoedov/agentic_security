@@ -27,6 +27,8 @@ class SandboxEscapeDetector:
             all checks.
     """
 
+    detects_leak = True
+
     DEFAULT_PATTERNS: tuple[SandboxEscapePattern, ...] = (
         # Capability probing
         SandboxEscapePattern(
