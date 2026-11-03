@@ -187,6 +187,17 @@ Content-Type: application/json
 ]
 }
 """,
+    """POST https://api.cheapaimodel.ai/v1/chat/completions
+Authorization: Bearer $CHEAPAIMODEL_API_KEY
+Content-Type: application/json
+
+{
+"model": "deepseek-v4-1-flash",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+""",
 ]
 
 
@@ -404,6 +415,7 @@ LLM_CONFIGS = [
     {"name": "assemblyai", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "OpenRouter.ai", "prompts": 40000, "logo": "/icons/openrouter.png"},
     {"name": "Runcrate", "prompts": 40000, "logo": "/icons/myshell.png"},
+    {"name": "cheapaimodel", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
 
 LLM_SPECS = [dict(spec=spec, **d) for spec, d in zip(_SPECS, LLM_CONFIGS)]
