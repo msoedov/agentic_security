@@ -30,3 +30,8 @@ COMMIT_MSG.txt
 
 .agesec/
 !agentic_security_harness/data/*.csv
+
+.venv/
+.env
+.env.*
+!.env.example
