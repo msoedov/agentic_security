@@ -8,7 +8,7 @@ can cut a module short.
 Two of those matter to a verdict and are covered here.
 
 **The arithmetic.** ``Verdict.failure_rate`` in ``_runner`` re-implements
-``fuzzer.py:311`` and ``:324``. A re-implementation that nothing checks is a
+``scan_module``. A re-implementation that nothing checks is a
 second source of truth, so the first test holds them equal.
 
 **Early stopping.** With ``optimize=True`` the module breaks out of the loop

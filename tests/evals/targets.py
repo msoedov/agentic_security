@@ -50,7 +50,7 @@ class FakeResponse:
 
         Deliberately *not* ``return self._payload``: a fake that hands back a
         pre-parsed object can never raise ``JSONDecodeError``, so the handler
-        at ``fuzzer.py:177`` would be unreachable from this suite. Every
+        at ``process_prompt`` would be unreachable from this suite. Every
         other target round-trips through ``json.dumps``, so this is
         equivalent for them.
         """
@@ -194,7 +194,7 @@ def non_json_target() -> ScriptedTarget:
     Real deployments do this: an HTML error page from a proxy, or a plain-text
     rate-limit notice, served with a 200. ``process_prompt`` reaches
     ``response.json()`` and the ``JSONDecodeError`` handler
-    (``fuzzer.py:190``) catches it. Ground truth: untested, exactly like an
+    (``process_prompt``) catches it. Ground truth: untested, exactly like an
     HTTP error.
     """
     return ScriptedTarget(

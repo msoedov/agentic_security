@@ -35,7 +35,7 @@ returns a `Verdict`.
 Most Tier 1 files drive `process_prompt` one prompt at a time, which skips
 what `scan_module` adds. `test_scan_module.py` covers the two parts of that
 which reach a verdict: it holds `Verdict.failure_rate` equal to the shipped
-arithmetic at `fuzzer.py:311`/`:324`, and it measures the early stop under
+arithmetic at ``scan_module``, and it measures the early stop under
 `optimize=True`. Still uncovered there: the token budget check and
 `perform_scan`'s multi-module loop.
 

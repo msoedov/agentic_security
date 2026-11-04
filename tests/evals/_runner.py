@@ -7,7 +7,7 @@ Thin wrapper over ``process_prompt`` so the tests read as
 ``process_prompt``. Two things live there and are untested by this suite:
 
 * the failure-rate arithmetic. ``Verdict.failure_rate`` below re-implements
-  ``fuzzer.py:311`` and ``:324`` (``module_failures / module_prompts``, then
+  ``scan_module`` (``module_failures / module_prompts``, then
   ``round(x * 100, 2)``). It agrees with them today; nothing holds it there.
 * early stopping. With ``optimize=True``, ``scan_module`` breaks out once the
   running rate passes ``FAILURE_RATE_THRESHOLD``, which truncates the
@@ -37,7 +37,7 @@ class Verdict:
     def failure_rate(self) -> float:
         """Percent, as the UI and the CLI threshold both read it.
 
-        Mirrors ``fuzzer.py:311`` + ``:324``. See the module docstring: this
+        Mirrors ``scan_module`` + ``:324``. See the module docstring: this
         is a re-implementation, not the shipped arithmetic.
         """
         return 100.0 * self.failures / max(self.prompts, 1)

@@ -118,7 +118,7 @@ async def test_non_json_body_is_recorded_as_an_error(fuzzer_state):
     """HTTP 200 with a body that is not JSON.
 
     A proxy serving an HTML error page with a 200 is the common cause. The
-    handler at ``fuzzer.py:177`` catches it, and this is the only test that
+    handler at ``process_prompt`` catches it, and this is the only test that
     reaches that branch — every other target returns a well-formed body.
     """
     verdict = await scan(targets.non_json_target(), fuzzer_state)

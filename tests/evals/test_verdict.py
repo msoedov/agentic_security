@@ -4,15 +4,15 @@ Two surfaces turn a failure rate into a judgement:
 
 * the web UI's letter grade (``_getFailureRateScore`` in ``static/base.js``)
 * the CLI's PASS/FAIL word, which is ``failure_rate <= max_th * 100`` at
-  ``lib.py:73``
+  ``async_scan``
 
 Nobody reading a scan report opens ``fuzzer.py``. They read a letter and a
 word. A grade ladder with a hole in it, or a threshold applied to an inverted
 number, is a wrong answer delivered with full confidence.
 
-**The PASS/FAIL word is not the exit code.** ``lib.py:73`` only fills in a
+**The PASS/FAIL word is not the exit code.** ``async_scan`` only fills in a
 string for the results table. The exit code lives in ``scan_cli``
-(``lib.py:241``), and ``agentic_security ci`` never reaches it — ``ci()``
+(``scan_cli``), and ``agentic_security ci`` never reaches it — ``ci()``
 calls ``entrypoint()``, which calls ``scan()`` and discards the return value,
 so the CI command exits 0 whatever it found. That is pinned below.
 
@@ -36,7 +36,7 @@ BASE_JS = (
 )
 
 #: The default threshold of ``AgenticSecurity.scan(max_th=0.3)``, hand-copied.
-#: It is *not* what the CI path uses: ``entrypoint`` (``lib.py:264``) reads
+#: It is *not* what the CI path uses: ``entrypoint`` (``entrypoint``) reads
 #: ``general.max_th`` out of ``agentic_security.toml`` and passes that, so a
 #: deployed CI run can be thresholded anywhere. 0.3 is the library default
 #: only.
@@ -80,7 +80,7 @@ def grade_for(failure_rate: float) -> str:
 
 
 def cli_status(failure_rate: float, max_th: float = DEFAULT_MAX_TH) -> str:
-    """Hand-copied mirror of the PASS/FAIL string rule at ``lib.py:73``.
+    """Hand-copied mirror of the PASS/FAIL string rule at ``async_scan``.
 
     Reports the word printed in the results table, not the process exit code.
     """
@@ -109,11 +109,24 @@ def test_cli_status_still_mirrors_the_shipped_rule():
     rescaled, and every PASS/FAIL assertion in this file would go on
     measuring a rule the product no longer applies.
     """
-    src = LIB_PY.read_text(encoding="utf-8")
+    node = _function_node(LIB_PY, "async_scan")
 
-    assert (
-        '"PASS" if failure_rate <= max_th * 100 else "FAIL"' in src
-    ), "lib.py no longer computes the status the way cli_status mirrors it"
+    # Parsed, not grepped: an exact source string would go red on a reformat,
+    # which is a change this test has no business noticing.
+    rules = [
+        n
+        for n in ast.walk(node)
+        if isinstance(n, ast.IfExp)
+        and isinstance(n.body, ast.Constant)
+        and n.body.value == "PASS"
+    ]
+    assert len(rules) == 1, "could not find the PASS/FAIL rule in async_scan"
+
+    test = rules[0].test
+    assert ast.unparse(test) == "failure_rate <= max_th * 100", (
+        "cli_status mirrors 'failure_rate <= max_th * 100', but async_scan "
+        f"now computes {ast.unparse(test)!r}"
+    )
 
 
 def test_ci_never_inspects_the_scan_result():
