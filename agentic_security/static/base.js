@@ -199,6 +199,18 @@ Content-Type: application/json
 }
 `,
 
+  `POST https://api.cheapaimodel.ai/v1/chat/completions
+Authorization: Bearer $CHEAPAIMODEL_API_KEY
+Content-Type: application/json
+
+{
+"model": "deepseek-v4-1-flash",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+`,
+
 ]
 
 let fallbackIcon = '/icons/myshell.png';
@@ -219,6 +231,7 @@ let LLM_CONFIGS = [
   { name: 'assemblyai', prompts: 40000, logo: fallbackIcon },
   { name: 'OpenRouter.ai', prompts: 40000, logo: '/icons/openrouter.png' },
   { name: 'Runcrate', prompts: 40000, logo: fallbackIcon },
+  { name: 'cheapaimodel', prompts: 40000, logo: fallbackIcon },
 
 ];
 function has_image(spec) {
