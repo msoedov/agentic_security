@@ -187,6 +187,17 @@ Content-Type: application/json
 ]
 }
 """,
+    """POST https://api.cheaperinference.com/v1/chat/completions
+Authorization: Bearer $CHEAPER_INFERENCE_API_KEY
+Content-Type: application/json
+
+{
+"model": "gpt-5.4-mini",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+""",
 ]
 
 
@@ -404,6 +415,7 @@ LLM_CONFIGS = [
     {"name": "assemblyai", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "OpenRouter.ai", "prompts": 40000, "logo": "/icons/openrouter.png"},
     {"name": "Runcrate", "prompts": 40000, "logo": "/icons/myshell.png"},
+    {"name": "Cheaper Inference", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
 
 LLM_SPECS = [dict(spec=spec, **d) for spec, d in zip(_SPECS, LLM_CONFIGS)]

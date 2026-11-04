@@ -199,6 +199,18 @@ Content-Type: application/json
 }
 `,
 
+  `POST https://api.cheaperinference.com/v1/chat/completions
+Authorization: Bearer $CHEAPER_INFERENCE_API_KEY
+Content-Type: application/json
+
+{
+"model": "gpt-5.4-mini",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+`,
+
 ]
 
 let fallbackIcon = '/icons/myshell.png';
@@ -219,6 +231,7 @@ let LLM_CONFIGS = [
   { name: 'assemblyai', prompts: 40000, logo: fallbackIcon },
   { name: 'OpenRouter.ai', prompts: 40000, logo: '/icons/openrouter.png' },
   { name: 'Runcrate', prompts: 40000, logo: fallbackIcon },
+  { name: 'Cheaper Inference', prompts: 40000, logo: fallbackIcon },
 
 ];
 function has_image(spec) {
