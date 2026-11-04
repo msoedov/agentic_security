@@ -13,6 +13,7 @@ checked against reality rather than against the scanner's own internals.
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -45,7 +46,15 @@ class FakeResponse:
         return self._text.encode()
 
     def json(self) -> Any:
-        return self._payload
+        """Parse the body, the way ``httpx.Response.json`` does.
+
+        Deliberately *not* ``return self._payload``: a fake that hands back a
+        pre-parsed object can never raise ``JSONDecodeError``, so the handler
+        at ``fuzzer.py:177`` would be unreachable from this suite. Every
+        other target round-trips through ``json.dumps``, so this is
+        equivalent for them.
+        """
+        return json.loads(self._text)
 
 
 # --------------------------------------------------------------------------
@@ -114,13 +123,18 @@ class ScriptedTarget:
         replies: Reply text, cycled over the prompts sent.
         status_codes: HTTP statuses, cycled the same way. Defaults to 200s.
         envelope: Wrapper applied to each reply.
-        model_name: Reported to the cost module.
+        model_name: Only read by ``scan_module``'s cost accounting, which
+            ``_runner.scan`` does not go through. Present so a target is
+            shaped like the real request factory, not because it is used.
     """
 
     replies: list[str]
     status_codes: list[int] | None = None
     envelope: Any = envelope_openai
     model_name: str = "fake-model"
+    #: Serve the enveloped reply as the literal body instead of JSON-encoding
+    #: it, so ``response.json()`` raises the way a real non-JSON body does.
+    raw_body: bool = False
     calls: list[str] = field(default_factory=list)
 
     async def fn(self, prompt: str) -> FakeResponse:
@@ -130,6 +144,8 @@ class ScriptedTarget:
         codes = self.status_codes or [200]
         status = codes[i % len(codes)]
         payload = self.envelope(reply)
+        if self.raw_body:
+            return FakeResponse(status, payload, text=payload)
         return FakeResponse(status, payload)
 
 
@@ -141,13 +157,15 @@ class RaisingTarget:
     that is not JSON at all.
     """
 
-    exc: Exception
+    #: Built fresh per call. Re-raising one instance ten times accumulates a
+    #: traceback on it, which makes failure output grow with the prompt count.
+    make_exc: Callable[[], Exception]
     model_name: str = "fake-model"
     calls: list[str] = field(default_factory=list)
 
     async def fn(self, prompt: str) -> FakeResponse:
         self.calls.append(prompt)
-        raise self.exc
+        raise self.make_exc()
 
 
 def secure_target(envelope=envelope_openai) -> ScriptedTarget:
@@ -162,9 +180,27 @@ def broken_target(envelope=envelope_openai) -> ScriptedTarget:
 
 def mixed_target(n_refused: int, n_complied: int, envelope=envelope_openai):
     """Refuses some prompts and answers others, in a fixed repeating pattern."""
+    if n_refused + n_complied <= 0:
+        raise ValueError("a mixed target needs at least one reply to cycle")
     return ScriptedTarget(
         replies=[REFUSAL_REPLY] * n_refused + [COMPLIANCE_REPLY] * n_complied,
         envelope=envelope,
+    )
+
+
+def non_json_target() -> ScriptedTarget:
+    """Returns HTTP 200 with a body that is not JSON at all.
+
+    Real deployments do this: an HTML error page from a proxy, or a plain-text
+    rate-limit notice, served with a 200. ``process_prompt`` reaches
+    ``response.json()`` and the ``JSONDecodeError`` handler
+    (``fuzzer.py:190``) catches it. Ground truth: untested, exactly like an
+    HTTP error.
+    """
+    return ScriptedTarget(
+        replies=["<html><body>502 Bad Gateway</body></html>"],
+        envelope=envelope_plain_string,
+        raw_body=True,
     )
 
 

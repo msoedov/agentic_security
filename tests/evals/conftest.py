@@ -9,12 +9,15 @@ Two things happen here.
 concludes from a known target. If they used the shipped detector, every
 detector tweak would surface as a scoring regression and the two failures would
 be indistinguishable. Tier 2 (``test_detector.py``) is where the real detector
-is measured, and it opts out of the pin.
+is *measured*; ``test_envelopes.py`` also runs it unpinned, because the thing
+it tests is the detector's sensitivity to the envelope it is handed.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
+from functools import cache
 from pathlib import Path
 
 import pytest
@@ -25,6 +28,31 @@ CORPUS_DIR = Path(__file__).resolve().parent / "corpus"
 CORPUS_FIELDS = {"text", "label", "kind", "src", "disputed"}
 CORPUS_REQUIRED = {"text", "label", "kind", "src"}
 CORPUS_LABELS = {"refusal", "compliance", "partial"}
+
+#: Allowed ``kind`` values, per label. A typo would otherwise drop the row out
+#: of every gate silently — and in the false-positive direction that also
+#: lowers the count the cap is measured against, loosening the gate.
+CORPUS_KINDS = {
+    "refusal": {"explicit", "soft"},
+    "compliance": {
+        "disclosure",
+        "roleplay",
+        "benign",
+        "attack_success",
+        "fp_trap",
+    },
+    "partial": {
+        "refuse_then_disclose",
+        "refuse_then_comply",
+        "refuse_then_hint",
+        "comply_then_retract",
+    },
+}
+
+#: ``src`` values that count as real captured model output. Anything else must
+#: be the literal string ``synthetic``; "not synthetic" is too loose a test,
+#: because an empty string would pass it.
+REAL_SOURCES = {"glm-5.3", "gpt-6.1-sol"}
 
 #: label -> filename. The label is also asserted against the file it lives in,
 #: so a row cannot silently migrate between files.
@@ -43,27 +71,48 @@ def pytest_collection_modifyitems(items):
             item.add_marker(pytest.mark.eval)
 
 
-def load_corpus(label: str | None = None) -> list[dict]:
+@cache
+def _parse(label: str) -> tuple[dict, ...]:
+    """Parse one corpus file. Cached: the gates read it hundreds of times.
+
+    ``encoding`` is explicit because the corpus deliberately contains U+2019
+    (see ``test_curly_apostrophes_are_read_like_straight_ones``). Without it,
+    collection dies on a non-UTF-8 locale.
+    """
+    path = CORPUS_DIR / CORPUS_FILES[label]
+    rows = []
+    for lineno, line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        row["_file"] = CORPUS_FILES[label]
+        row["_line"] = lineno
+        rows.append(row)
+    return tuple(rows)
+
+
+def load_corpus(label: str | None = None, undisputed: bool = False) -> list[dict]:
     """Read corpus rows, optionally for one label only.
 
     Args:
         label: ``refusal``, ``compliance``, ``partial``, or None for all.
+        undisputed: Drop rows carrying a ``disputed`` reason. Every hard gate
+            and every ratchet passes ``True``; an arguable label must never
+            fail a build. Keeping the filter here rather than inline at each
+            call site means a gate cannot forget it.
 
     Returns:
         Rows as dicts, each with a ``_file`` and ``_line`` key added so a
         failure message can point at the offending line.
+
+    The dicts are shared between calls — treat them as read-only.
     """
     labels = [label] if label else list(CORPUS_FILES)
-    rows: list[dict] = []
-    for lbl in labels:
-        path = CORPUS_DIR / CORPUS_FILES[lbl]
-        for lineno, line in enumerate(path.read_text().splitlines(), start=1):
-            if not line.strip():
-                continue
-            row = json.loads(line)
-            row["_file"] = CORPUS_FILES[lbl]
-            row["_line"] = lineno
-            rows.append(row)
+    rows = [row for lbl in labels for row in _parse(lbl)]
+    if undisputed:
+        rows = [r for r in rows if "disputed" not in r]
     return rows
 
 
@@ -72,20 +121,30 @@ def row_id(row: dict) -> str:
     return f"{row['_file']}:{row['_line']}"
 
 
-@pytest.fixture(scope="session")
-def corpus() -> list[dict]:
-    """Every labelled row."""
-    return load_corpus()
+def row_key(row: dict) -> str:
+    """Identity of a row that survives reordering and line-number drift.
 
-
-@pytest.fixture(scope="session")
-def undisputed_corpus(corpus) -> list[dict]:
-    """Rows whose label is not arguable.
-
-    Hard gates run on these only. An arguable label should never fail a build;
-    disputed rows are reported separately instead.
+    Baselines are recorded as sets of these rather than as counts. A count
+    cannot tell a fix from a substitution: repair one misread row, break
+    another, and the total is unchanged. A count is also not monotone under
+    corpus edits — deleting rows that the detector gets wrong *lowers* it,
+    which hands back slots for real regressions.
     """
-    return [r for r in corpus if "disputed" not in r]
+    return hashlib.sha1(row["text"].encode("utf-8")).hexdigest()[:12]
+
+
+BASELINE_PATH = Path(__file__).resolve().parent / "baselines.json"
+
+
+@cache
+def baselines() -> dict:
+    """Recorded sets of rows the detector currently gets wrong.
+
+    Regenerate with ``python tests/evals/record_baselines.py`` after a change
+    that is genuinely an improvement, and read the diff before committing it.
+    """
+    raw = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
+    return {k: frozenset(v) for k, v in raw.items() if not k.startswith("_")}
 
 
 class PinnedDetector:
@@ -141,5 +200,11 @@ def _isolate_cwd(tmp_path, monkeypatch):
 
     Tests that need a repo file must resolve it from ``__file__``, not from the
     working directory.
+
+    This covers writes made *while a test runs*. It cannot cover writes made
+    at import time: ``agentic_security.toml`` and ``.cache/agentic_security``
+    are created in the repo root during collection, before any fixture is
+    set up. Both are gitignored, and the first is read by
+    ``build_refusal_manager`` — see ``test_detector_config_is_the_default``.
     """
     monkeypatch.chdir(tmp_path)

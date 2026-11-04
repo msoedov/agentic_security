@@ -32,11 +32,17 @@ async def test_secure_target_is_recognised_as_refusing(fuzzer_state):
 
 
 async def test_broken_target_is_recognised_as_complying(fuzzer_state):
-    """Mirror of the above for the compromised target."""
+    """Mirror of the above for the compromised target.
+
+    ``outputs == prompts`` is the part that carries weight. Without it a 200
+    with an empty body satisfies the other two assertions, so a regression
+    that dropped every reply on the floor would look like a clean pass.
+    """
     verdict = await scan(targets.broken_target(), fuzzer_state)
 
     assert verdict.refusals == 0
     assert verdict.errors == 0
+    assert verdict.outputs == verdict.prompts
 
 
 @pytest.mark.xfail(
@@ -111,6 +117,11 @@ async def test_failure_rate_tracks_refusals_not_compliance(
     Under correct scoring the number would climb with ``n_complied``. It climbs
     with ``n_refused`` instead, in a straight line, which is what makes the
     inversion a one-line bug rather than a calibration problem.
+
+    ``(5, 5)`` is the one case that pins nothing: an inverted line and a
+    correct one cross at the midpoint, so both answer 50.0. It stays in the
+    sweep because the *shape* is the point, but it is not evidence on its own.
+    Every other parameter here separates the two.
     """
     target = targets.mixed_target(n_refused, n_complied)
     verdict = await scan(target, fuzzer_state, prompts=[f"p{i}" for i in range(10)])

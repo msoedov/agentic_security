@@ -33,7 +33,7 @@ async def test_http_errors_are_recorded_as_errors(status, fuzzer_state):
 
 async def test_request_errors_are_recorded(fuzzer_state):
     """A connection failure is an error, not a result."""
-    target = targets.RaisingTarget(httpx.ConnectError("connection refused"))
+    target = targets.RaisingTarget(lambda: httpx.ConnectError("connection refused"))
     verdict = await scan(target, fuzzer_state)
 
     assert verdict.errors == verdict.prompts
@@ -47,7 +47,7 @@ async def test_unexpected_exception_vanishes(fuzzer_state):
     scans as a flawless target. The assertions are split so the failure message
     says which half is wrong.
     """
-    target = targets.RaisingTarget(ValueError("exploded"))
+    target = targets.RaisingTarget(lambda: ValueError("exploded"))
     verdict = await scan(target, fuzzer_state)
 
     assert verdict.errors == 0, "current behaviour: unexpected errors vanish"
@@ -64,7 +64,7 @@ async def test_unexpected_exception_vanishes(fuzzer_state):
 )
 async def test_unexpected_exception_should_be_recorded(fuzzer_state):
     """What should happen: the probe is recorded as an error."""
-    target = targets.RaisingTarget(ValueError("exploded"))
+    target = targets.RaisingTarget(lambda: ValueError("exploded"))
     verdict = await scan(target, fuzzer_state)
 
     assert verdict.errors == verdict.prompts
@@ -73,17 +73,31 @@ async def test_unexpected_exception_should_be_recorded(fuzzer_state):
 @pytest.mark.xfail(
     strict=True,
     reason=(
-        "Known defect: HTTP errors are returned as refusals, so a target that "
-        "is simply down is indistinguishable from one that refused every "
-        "attack. Both score 100%, and the CLI threshold treats that as a pass."
+        "Known defect: an HTTP error is scored as an attack outcome, so a "
+        "target that is simply down is indistinguishable from one that "
+        "refused every attack. Both score 100%, and the CLI threshold reads "
+        "that as a pass."
     ),
 )
 async def test_dead_target_does_not_score_like_a_secure_one():
-    """An unreachable target must not produce the same verdict as a secure one."""
-    dead = await scan(targets.erroring_target(500), FuzzerState())
-    secure = await scan(targets.secure_target(), FuzzerState())
+    """An unreachable target must not produce a verdict at all.
 
-    assert dead.failure_rate != secure.failure_rate
+    The assertion is on ``failures``, not on ``failure_rate``, and that is
+    deliberate. ``dead.failure_rate != secure.failure_rate`` would go green
+    the moment the *scoring inversion* is fixed — secure would drop to 0% and
+    dead would sit at 100% — while leaving this defect fully intact and the
+    dead target now reported as maximally compromised. Scoring an error as an
+    outcome is the defect; not resembling a secure target is a side effect.
+
+    Ten prompts were sent and none of them were answered, so none of them
+    produced anything to judge.
+    """
+    dead = await scan(targets.erroring_target(500), FuzzerState())
+
+    assert dead.failures == 0, (
+        f"{dead.failures}/{dead.prompts} unanswered prompts were scored as "
+        "attack outcomes"
+    )
 
 
 async def test_dead_and_secure_targets_are_currently_identical():
@@ -91,11 +105,38 @@ async def test_dead_and_secure_targets_are_currently_identical():
     dead = await scan(targets.erroring_target(500), FuzzerState())
     secure = await scan(targets.secure_target(), FuzzerState())
 
+    assert dead.failures == dead.prompts
     assert dead.failure_rate == secure.failure_rate == pytest.approx(100.0)
-    # The only thing that still tells them apart is the error list, which the
-    # reported score does not consult.
-    assert dead.errors == 10
-    assert secure.errors == 0
+    # The data that tells them apart is collected and then ignored: the dead
+    # scan recorded ten errors and no refusals, the secure scan the reverse,
+    # and the reported score consults neither.
+    assert (dead.errors, dead.refusals) == (dead.prompts, 0)
+    assert (secure.errors, secure.refusals) == (0, secure.prompts)
+
+
+async def test_non_json_body_is_recorded_as_an_error(fuzzer_state):
+    """HTTP 200 with a body that is not JSON.
+
+    A proxy serving an HTML error page with a 200 is the common cause. The
+    handler at ``fuzzer.py:177`` catches it, and this is the only test that
+    reaches that branch — every other target returns a well-formed body.
+    """
+    verdict = await scan(targets.non_json_target(), fuzzer_state)
+
+    assert verdict.errors == verdict.prompts
+    assert verdict.refusals == 0
+    assert verdict.outputs == 0
+
+
+async def test_non_json_body_scores_like_a_secure_target(fuzzer_state):
+    """Pins that it lands in the same collision as an HTTP error.
+
+    Nothing was learned about this target, and it is reported at 100% the
+    same way a target that refused every attack is.
+    """
+    verdict = await scan(targets.non_json_target(), fuzzer_state)
+
+    assert verdict.failure_rate == pytest.approx(100.0)
 
 
 async def test_error_rate_is_derivable_from_state(fuzzer_state):

@@ -26,28 +26,34 @@ from agentic_security.probe_actor.refusal import refusal_classifier_manager
 from .conftest import (
     CORPUS_FIELDS,
     CORPUS_FILES,
+    CORPUS_KINDS,
     CORPUS_LABELS,
     CORPUS_REQUIRED,
+    REAL_SOURCES,
+    baselines,
     load_corpus,
     row_id,
+    row_key,
 )
 
 # --------------------------------------------------------------------------
 # Baselines
 #
-# Measured against the shipped detector on this corpus. They are a ratchet,
-# not a target: the gates below fail if the numbers get worse, which is what
-# makes an unnoticed regression impossible. The aspirational numbers live in
-# the xfail-marked tests at the end of the file.
+# Recorded as *sets of rows* in ``baselines.json``, not as counts, and asserted
+# as subsets: no row may newly join a wrong-answer set, and any row leaving one
+# is an improvement the gate accepts silently.
+#
+# Counts were the obvious first choice and three things are wrong with them:
+#
+# * they are not monotone under corpus edits. Deleting a row the detector
+#   misreads lowers the cap, handing back a slot for a real regression.
+# * they cannot tell a fix from a substitution. Repair one row, break another,
+#   and the total does not move.
+# * a failure can only report the whole set, never the delta, so it does not
+#   say what regressed.
+#
+# Regenerate with ``python tests/evals/record_baselines.py`` and read the diff.
 # --------------------------------------------------------------------------
-
-#: Refusals the detector must keep catching, by kind.
-MIN_RECALL = {"explicit": 11, "soft": 1}
-
-#: Compliances it is currently allowed to misread as refusals. Every one of
-#: these is a successful attack reported as a refusal. The number may go down.
-#: It may never go up.
-MAX_FALSE_POSITIVES = 7
 
 
 def detect(text: str) -> bool:
@@ -87,8 +93,19 @@ def test_row_schema(row):
     assert CORPUS_REQUIRED <= fields, f"missing: {CORPUS_REQUIRED - fields}"
     assert fields <= CORPUS_FIELDS, f"unknown fields: {fields - CORPUS_FIELDS}"
     assert row["label"] in CORPUS_LABELS
+    assert row["kind"] in CORPUS_KINDS[row["label"]], (
+        f"unknown kind {row['kind']!r} for label {row['label']!r}; a typo "
+        "here drops the row out of every gate silently"
+    )
+    assert row["src"] == "synthetic" or row["src"] in REAL_SOURCES, (
+        f"unknown src {row['src']!r}: use 'synthetic' or a model in "
+        f"{sorted(REAL_SOURCES)}"
+    )
     assert row["text"].strip(), "empty text is not a test case"
-    assert isinstance(row.get("disputed", ""), str), "disputed must carry a reason"
+    if "disputed" in row:
+        assert (
+            isinstance(row["disputed"], str) and row["disputed"].strip()
+        ), "disputed must carry a reason, not an empty string"
 
 
 @pytest.mark.parametrize("row", load_corpus(), ids=row_id)
@@ -108,7 +125,7 @@ def test_corpus_has_no_duplicate_text():
 
 def test_corpus_contains_real_captured_output():
     """Invented refusals all start with "I'm sorry" and flatter the detector."""
-    real = [r for r in load_corpus() if r["src"] != "synthetic"]
+    real = [r for r in load_corpus() if r["src"] in REAL_SOURCES]
 
     assert len(real) >= 10, "corpus has drifted towards synthetic-only"
 
@@ -123,71 +140,189 @@ def _score(label: str, undisputed_only: bool = True):
 
     A "hit" is the detector saying ``refusal``.
     """
-    rows = [r for r in load_corpus(label) if not (undisputed_only and "disputed" in r)]
+    rows = load_corpus(label, undisputed=undisputed_only)
     hits = [r for r in rows if detect(r["text"])]
     return hits, rows
 
 
-@pytest.mark.parametrize("kind", sorted(MIN_RECALL))
-def test_refusal_recall_does_not_regress(kind):
-    """Catching fewer refusals than today is a regression."""
-    rows = [
-        r for r in load_corpus("refusal") if r["kind"] == kind and "disputed" not in r
-    ]
-    caught = [r for r in rows if detect(r["text"])]
+def test_detector_config_is_the_default():
+    """Every number in this file is conditional on which plugins are enabled.
 
-    assert len(caught) >= MIN_RECALL[kind], (
-        f"recall for {kind} refusals dropped to {len(caught)}/{len(rows)}; "
-        f"missed: {[row_id(r) for r in rows if r not in caught]}"
-    )
+    ``refusal_classifier_manager`` is built at import time from the
+    ``[detectors]`` table of ``agentic_security.toml`` — a file that is
+    gitignored and auto-generated, so it differs between machines. Setting
+    ``ml_classifier = false`` there changes every measurement below and makes
+    the gates pass or fail for a reason that has nothing to do with the code.
 
-
-def test_false_positives_do_not_regress():
-    """Calling more compliances "refusals" than today is a regression.
-
-    Each false positive is a successful attack reported as a refusal, so this
-    ratchet is the most important line in the suite.
+    This test states the configuration the baselines were recorded under, so
+    a surprising run says *why* rather than just going red.
     """
-    hits, rows = _score("compliance")
+    from agentic_security.probe_actor.refusal import build_refusal_manager
 
-    assert len(hits) <= MAX_FALSE_POSITIVES, (
-        f"false positives rose to {len(hits)}/{len(rows)}; "
-        f"newly misread as refusals: {[row_id(r) for r in hits]}"
+    default = build_refusal_manager(config=None)
+    names = sorted(default.plugins)
+
+    assert names == ["default", "ml_classifier"], (
+        f"detectors in use are {names}, but baselines.json was recorded with "
+        "['default', 'ml_classifier']; check [detectors] in "
+        "agentic_security.toml"
+    )
+    assert sorted(refusal_classifier_manager.plugins) == names
+
+
+def _wrong(label: str, pred, want: bool, kind: str | None = None) -> list[dict]:
+    """Undisputed rows of ``label`` where ``pred`` answers ``want``."""
+    rows = load_corpus(label, undisputed=True)
+    if kind:
+        rows = [r for r in rows if r["kind"] == kind]
+    return [r for r in rows if pred(r["text"]) is want]
+
+
+def _assert_no_new(rows: list[dict], baseline: str, what: str) -> None:
+    """Fail only on rows that were not already in the recorded set.
+
+    The message names the delta, which is the thing a reader needs. A count
+    ratchet can only print every row it found and leave the reader to work
+    out which one is new.
+    """
+    recorded = baselines()[baseline]
+    new = [r for r in rows if row_key(r) not in recorded]
+
+    assert not new, (
+        f"{len(new)} row(s) newly {what}: {[row_id(r) for r in new]}\n"
+        f"If this is intended, regenerate with record_baselines.py."
     )
 
 
+def test_no_refusal_is_newly_missed():
+    """Catching fewer refusals than today is a regression.
+
+    Subset, not a count: adding a hundred refusals the detector misses would
+    leave a count gate green while recall collapsed.
+    """
+    _assert_no_new(_wrong("refusal", detect, False), "missed_refusals", "missed")
+
+
+def test_no_compliance_is_newly_misread():
+    """A compliance newly read as a refusal is a successful attack reported
+    as a decline. This is the most important gate in the suite."""
+    _assert_no_new(
+        _wrong("compliance", detect, True),
+        "misread_compliances",
+        "misread as a refusal",
+    )
+
+
+def test_phrase_list_recall_does_not_regress():
+    """The phrase list on its own must not start missing more refusals.
+
+    Pairs with ``test_phrase_list_catches_all_explicit_refusals`` below, which
+    states the target. Gated separately from ``detect`` because the ML
+    classifier fires often enough to hide a phrase list emptied to zero.
+    """
+    _assert_no_new(
+        _wrong("refusal", detect_phrases_only, False),
+        "phrase_missed_refusals",
+        "missed by the phrase list",
+    )
+
+
+def test_phrase_list_false_positives_do_not_regress():
+    """Adding another bare topic word to the phrase list must show up here."""
+    _assert_no_new(
+        _wrong("compliance", detect_phrases_only, True),
+        "phrase_misread_compliances",
+        "misread by the phrase list",
+    )
+
+
+def _attack_success_rows():
+    return [
+        r
+        for r in load_corpus("compliance", undisputed=True)
+        if r["kind"] == "attack_success"
+    ]
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="the ML classifier reads short imperative text as a refusal, so "
+    "step-by-step attack output scores as a decline",
+)
 def test_attack_successes_are_never_read_as_refusals():
     """The unambiguous case: an answered attack is not a refusal.
 
     These rows contain step-by-step attack instructions with no hedging. No
-    reasonable detector reads them as declines, so this one is a hard gate
-    rather than a ratchet.
+    reasonable detector reads them as declines.
+
+    This was a hard gate while the corpus was small enough to pass it. Growing
+    the corpus to 241 rows exposed ten more, which is the corpus doing its job:
+    the defect was always there, and the gate was green only because nothing
+    had triggered it yet. Stating it as a strict xfail keeps the requirement
+    exact and visible, and pairs it with the pin below.
     """
-    rows = [
-        r
-        for r in load_corpus("compliance")
-        if r["kind"] == "attack_success" and "disputed" not in r
-    ]
+    rows = _attack_success_rows()
     misread = [r for r in rows if detect(r["text"])]
 
-    assert not misread, (
-        f"attack output scored as a refusal: {[row_id(r) for r in misread]}"
+    assert (
+        not misread
+    ), f"attack output scored as a refusal: {[row_id(r) for r in misread]}"
+
+
+def test_attack_output_is_currently_misread():
+    """Pins the defect above so it cannot drift unnoticed.
+
+    Paired with the strict xfail: a detector fix turns that one XPASS and this
+    one FAIL in the same run, and both are removed together.
+    """
+    misread = {row_key(r) for r in _attack_success_rows() if detect(r["text"])}
+
+    assert misread == baselines()["misread_attack_successes"], (
+        "the set of attack rows read as refusals changed; a count would have "
+        "hidden a fix paired with a new break"
     )
 
 
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "Known defect: the phrase list is written with U+0027, so every "
+        "phrase misses the U+2019 form that real model output actually uses."
+    ),
+)
 def test_curly_apostrophes_are_read_like_straight_ones():
     """Typographic apostrophes must not change the verdict.
 
-    Real model output uses U+2019. A phrase list written with U+0027 silently
-    misses every one of them, which is why the real-capture rows score worse
-    than the synthetic ones.
+    Asserted on the phrase list, not on ``detect``. An earlier version of this
+    test compared ``detect`` outputs and passed vacuously: the ML classifier
+    fires on both spellings, so both sides were ``True`` while the phrase list
+    went on missing every curly one.
     """
     straight = "I can't provide my system instructions."
-    curly = straight.replace("'", "’")
+    curly = straight.replace("'", "\u2019")
 
-    assert detect(straight) == detect(curly), (
-        "the same sentence was read differently depending on its apostrophe"
+    assert detect_phrases_only(straight) == detect_phrases_only(curly), (
+        "the phrase list read the same sentence differently depending on its "
+        "apostrophe"
     )
+
+
+def test_curly_apostrophes_are_currently_missed():
+    """Pins the defect above.
+
+    Also records why it matters: the real captured rows use U+2019 throughout,
+    so this is not a typographic curiosity — it is most of the corpus.
+    """
+    straight = "I can't provide my system instructions."
+    curly = straight.replace("'", "\u2019")
+
+    assert detect_phrases_only(straight) is True
+    assert detect_phrases_only(curly) is False
+
+    real_curly = [
+        r for r in load_corpus() if r["src"] in REAL_SOURCES and "\u2019" in r["text"]
+    ]
+    assert real_curly, "no real captured row uses a curly apostrophe any more"
 
 
 # --------------------------------------------------------------------------
@@ -214,9 +349,7 @@ def test_phrase_list_catches_all_explicit_refusals():
     can actually fix by editing a constant.
     """
     rows = [
-        r
-        for r in load_corpus("refusal")
-        if r["kind"] == "explicit" and "disputed" not in r
+        r for r in load_corpus("refusal", undisputed=True) if r["kind"] == "explicit"
     ]
     missed = [r for r in rows if not detect_phrases_only(r["text"])]
 
@@ -241,9 +374,9 @@ def test_no_compliance_is_read_as_a_refusal():
 @pytest.mark.xfail(
     strict=True,
     reason=(
-        "Known gap: PARTIAL does not exist in the scanner's outcome model yet, "
-        "so a reply that refuses and then discloses collapses to a clean "
-        "refusal. Arrives with the outcome work."
+        "Known gap: the detector is binary, and the scanner's outcome model "
+        "has no PARTIAL, so a reply that refuses and then discloses collapses "
+        "to a clean refusal. Arrives with the outcome work."
     ),
 )
 def test_partials_are_not_scored_as_clean_refusals():
@@ -251,11 +384,29 @@ def test_partials_are_not_scored_as_clean_refusals():
 
     This is the attack that matters most in practice: the opening sentence
     looks like a decline, and the payload is in the second paragraph.
-    """
-    from agentic_security.probe_actor import outcome  # noqa: F401  (not yet)
 
-    rows = [r for r in load_corpus("partial") if "disputed" not in r]
-    assert rows
+    Asserted on behaviour, not on whether a module exists. An earlier version
+    of this test imported ``probe_actor.outcome`` and passed only because the
+    import raised; creating an empty file would have turned it green without
+    changing a single verdict.
+    """
+    rows = load_corpus("partial", undisputed=True)
+    clean = [r for r in rows if detect(r["text"])]
+
+    assert not clean, (
+        "partial disclosures read as plain refusals: " f"{[row_id(r) for r in clean]}"
+    )
+
+
+def test_partials_are_currently_read_as_refusals():
+    """Pins the defect above so the count cannot drift unnoticed."""
+    clean = {
+        row_key(r) for r in load_corpus("partial", undisputed=True) if detect(r["text"])
+    }
+
+    assert (
+        clean == baselines()["partials_read_as_refusals"]
+    ), "the set of partials read as plain refusals changed"
 
 
 # --------------------------------------------------------------------------
@@ -271,12 +422,8 @@ def test_report(capsys):
     """
     lines = ["", "detector vs corpus", "-" * 52]
 
-    for kind in sorted(MIN_RECALL):
-        rows = [
-            r
-            for r in load_corpus("refusal")
-            if r["kind"] == kind and "disputed" not in r
-        ]
+    for kind in ("explicit", "soft"):
+        rows = [r for r in load_corpus("refusal", undisputed=True) if r["kind"] == kind]
         caught = sum(1 for r in rows if detect(r["text"]))
         pct = 100 * caught / max(len(rows), 1)
         lines.append(f"recall, {kind:<9}: {caught:>2}/{len(rows):<3} ({pct:5.1f}%)")
@@ -288,7 +435,7 @@ def test_report(capsys):
     lines.append("")
     lines.append("phrase list alone (not gated, for diagnosis)")
     for label in ("refusal", "compliance"):
-        rows = [r for r in load_corpus(label) if "disputed" not in r]
+        rows = load_corpus(label, undisputed=True)
         hits_only = sum(1 for r in rows if detect_phrases_only(r["text"]))
         name = "caught" if label == "refusal" else "false positives"
         lines.append(f"  {label:<11} {name:<16}: {hits_only:>2}/{len(rows)}")
