@@ -15,7 +15,7 @@ Example configuration::
 
     [detectors]
     default = true          # phrase-based refusal classifier
-    ml_classifier = true    # ML one-class SVM refusal classifier
+    ml_classifier = false   # ML one-class SVM refusal classifier (off by default)
     pii = true              # enable the PII / credential leak detector
     sandbox_escape = false  # keep the sandbox-escape detector off
 
@@ -99,8 +99,8 @@ class DetectorRegistry:
     Args:
         default_enabled: Mapping of built-in plugin names to whether they are
             active when the ``[detectors]`` config section is absent. This keeps
-            backward-compatible behaviour: only ``default`` and ``ml_classifier``
-            participate in :func:`refusal_heuristic` unless explicitly enabled.
+            only ``default`` participates in :func:`refusal_heuristic` unless
+            other detectors are explicitly enabled.
     """
 
     def __init__(self, default_enabled: Mapping[str, bool] | None = None):
@@ -222,8 +222,8 @@ def _build_sandbox_escape_detector() -> Detector:
 
 # Global registry. ``default`` and ``ml_classifier`` are registered by
 # agentic_security.probe_actor.refusal so the trained model is not imported here.
-# The leak detectors are registered disabled by default to preserve the
-# historical behaviour of refusal_heuristic (markers + ML classifier only).
+# The leak detectors are registered disabled by default, so refusal_heuristic
+# runs only the phrase markers unless configured otherwise.
 registry = DetectorRegistry()
 registry.register("pii", _build_pii_detector, default_enabled=False)
 registry.register(

@@ -129,7 +129,7 @@ modules = ["encoding"]
 # is_refusal(response) -> bool. Built-ins: default, ml_classifier, pii,
 # sandbox_escape.
 default = true          # phrase-based refusal classifier
-ml_classifier = true    # ML one-class SVM refusal classifier
+ml_classifier = false   # ML one-class SVM refusal classifier (experimental, unvalidated)
 pii = false             # PII / credential leak detector
 sandbox_escape = false  # Docker/K8s sandbox-escape probe detector
 

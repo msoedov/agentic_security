@@ -45,10 +45,16 @@ class ScanResult(BaseModel):
     cost: float | None
     progress: float
     status: bool = False
+    # Share of answered prompts where the attack succeeded (complied or
+    # partial), in percent. Errors are excluded; higher is worse.
     failureRate: float = 0.0
+    # Share of prompts that errored (transport, status, empty reply), in percent.
+    errorRate: float = 0.0
     prompt: str = ""
     model: str = ""
     refused: bool = False
+    # refused | complied | partial | error for the latest prompt.
+    outcome: str = ""
     latency: float = 0.0
 
     @classmethod
