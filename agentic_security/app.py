@@ -2,6 +2,7 @@ from .core.app import create_app
 from .core.logging import setup_logging
 from .middleware.cors import setup_cors
 from .middleware.logging import LogNon200ResponsesMiddleware
+from .middleware.origin_guard import OriginGuardMiddleware
 from .routes import (
     probe_router,
     proxy_router,
@@ -15,6 +16,7 @@ from .routes import (
 app = create_app()
 
 # Setup middleware
+app.add_middleware(OriginGuardMiddleware)
 setup_cors(app)
 app.add_middleware(LogNon200ResponsesMiddleware)
 
