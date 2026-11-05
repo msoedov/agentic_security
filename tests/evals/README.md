@@ -66,6 +66,13 @@ text so line numbers can move. Regenerate it with
 Each half of the detector is gated separately, because `detect` runs both and
 the ML classifier fires often enough to hide a phrase list emptied to zero.
 
+The recorded sets are only meaningful under the environment they were taken
+in. The ML half is three `.joblib` files committed to the repo, pickled with
+scikit-learn 1.9.1, so three guards run before any gate: the files exist, the
+scikit-learn release matches, and the model still answers three fixed probes
+the way it did. A mismatch fails there, with a message saying it is the
+environment, rather than surfacing as fifty misread rows.
+
 A xfail written as an assertion about behaviour, never about whether a module
 imports. `test_partials_are_not_scored_as_clean_refusals` was the latter once:
 it passed only because `probe_actor.outcome` did not exist, so creating an
@@ -237,4 +244,5 @@ than it is:
 | `agentic_security_harness/*` | a separate package with its own outcome model; untested here |
 | `perform_scan`'s multi-module loop | `/stop`, budget exhaustion across modules |
 | the detector's `[detectors]` config | pinned by `test_detector_config_is_the_default`, not varied |
+| other scikit-learn releases | `test_sklearn_matches_the_recorded_baseline` refuses to run against one rather than reporting wrong numbers |
 | real network targets | every target here is a fake; no live request is made |

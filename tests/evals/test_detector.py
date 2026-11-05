@@ -19,8 +19,12 @@ number would average the harmless error against the dangerous one.
 
 from __future__ import annotations
 
-import pytest
+from pathlib import Path
 
+import pytest
+import sklearn
+
+import agentic_security
 from agentic_security.probe_actor.refusal import refusal_classifier_manager
 
 from .conftest import (
@@ -143,6 +147,95 @@ def _score(label: str, undisputed_only: bool = True):
     rows = load_corpus(label, undisputed=undisputed_only)
     hits = [r for r in rows if detect(r["text"])]
     return hits, rows
+
+
+#: The scikit-learn release the bundled models were pickled with. Stated in
+#: ``pyproject.toml`` next to the dependency pin.
+BASELINE_SKLEARN = "1.9.1"
+
+#: Fixed probes with their answers as recorded. The last one is the load-
+#: bearing case: it is the only one of the three the model answers ``False``
+#: to, so a model that has degenerated to a constant would be caught here.
+MODEL_PROBES = {
+    "I cannot help with that request.": True,
+    "Two plus two is four.": True,
+    "The build finished in 42 seconds with no warnings.": False,
+}
+
+
+def test_bundled_model_files_are_present():
+    """Name the missing file rather than failing inside joblib."""
+    model_dir = Path(agentic_security.__file__).resolve().parent / "refusal_classifier"
+    missing = [
+        name
+        for name in (
+            "oneclass_svm_model.joblib",
+            "tfidf_vectorizer.joblib",
+            "scaler.joblib",
+        )
+        if not (model_dir / name).is_file()
+    ]
+
+    assert not missing, f"bundled classifier files missing: {missing}"
+
+
+def test_sklearn_matches_the_recorded_baseline():
+    """Guard the environment, so a mismatch does not read as a defect.
+
+    ``baselines.json`` records what the bundled ``OneClassSVM`` answers. Those
+    answers come out of pickled ``.joblib`` files, and unpickling an estimator
+    under a different scikit-learn release can change them. Every gate in this
+    file would then go red for a reason that has nothing to do with the code.
+
+    This test fails first and says so.
+    """
+    assert sklearn.__version__ == BASELINE_SKLEARN, (
+        f"baselines.json was recorded on scikit-learn {BASELINE_SKLEARN}; "
+        f"this environment has {sklearn.__version__}. The bundled models are "
+        "pickled with the former (see the pin in pyproject.toml), so detector "
+        "numbers will differ. This is an environment mismatch, not a defect: "
+        "install the pinned version, or regenerate with record_baselines.py "
+        "if the bump is intended."
+    )
+
+
+@pytest.mark.parametrize("text", sorted(MODEL_PROBES))
+def test_bundled_model_answers_as_recorded(text):
+    """Catch a swapped or re-trained model even on the pinned scikit-learn.
+
+    A version check alone is not enough: the ``.joblib`` files are committed
+    to the repo and can be replaced without the dependency moving. Probing
+    the plugin directly isolates the model from the phrase list, which is
+    gated separately.
+    """
+    ml = refusal_classifier_manager.plugins["ml_classifier"]
+
+    # ``bool()`` because the plugin returns ``numpy.bool_``, not ``bool``,
+    # despite its ``-> bool`` annotation. Harmless where the manager wraps it
+    # in ``any()``, but it means ``is True`` is False for a true answer.
+    assert bool(ml.is_refusal(text)) is MODEL_PROBES[text], (
+        "the bundled classifier no longer answers as baselines.json records; "
+        "the model files may have been retrained or replaced"
+    )
+
+
+def test_ml_plugin_returns_a_plain_bool():
+    """Records that it does not, today.
+
+    ``RefusalClassifierPlugin.is_refusal`` is annotated ``-> bool`` and the
+    ML plugin returns ``numpy.bool_``. Nothing downstream breaks, because
+    ``RefusalClassifierManager.is_refusal`` passes it through ``any()``. Any
+    caller reaching the plugin directly and using ``is True`` gets the wrong
+    answer, so it is pinned rather than left as a surprise.
+    """
+    ml = refusal_classifier_manager.plugins["ml_classifier"]
+    result = ml.is_refusal("I cannot help with that request.")
+
+    assert not isinstance(result, bool), (
+        "the plugin now returns a plain bool; drop the bool() in the probe "
+        "above and remove this test"
+    )
+    assert bool(result) is True
 
 
 def test_detector_config_is_the_default():
