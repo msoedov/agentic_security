@@ -20,7 +20,11 @@ class FuzzNode:
     async def run(self, **kwargs: Any) -> str:
         full_prompt = self._render_prompt(kwargs)
         response = await self._llm.generate(full_prompt)
-        return response if response else ""
+        # Distinguish between None (API error) and empty string (valid empty response)
+        if response is None:
+            logger.warning("LLM returned None response for prompt: %s", self._prompt[:100])
+            return ""
+        return response
 
     def _render_prompt(self, kwargs: dict[str, Any]) -> str:
         if not kwargs:
@@ -30,7 +34,7 @@ class FuzzNode:
             result = result.replace(f"{{{key}}}", str(value))
         return result
 
-    def __or__(self, other: Any) -> FuzzChain:
+    def __or__(self, other: Any) -> "FuzzChain":
         if isinstance(other, FuzzChain):
             return FuzzChain([self, *other._nodes])
         if isinstance(other, FuzzNode):
@@ -57,11 +61,11 @@ class FuzzChain:
         for i, node in enumerate(self._nodes):
             logger.debug(f"Running node {i}: {node} with kwargs {kwargs}")
             result = await node.run(**kwargs)
-            logger.debug(f"Node {i} result: {result[:100]}...")
+            logger.debug(f"Node {i} result: {result[:100]}..." if result else f"Node {i} result: (empty)")
             kwargs = {"input": result}
         return result
 
-    def __or__(self, other: Any) -> FuzzChain:
+    def __or__(self, other: Any) -> "FuzzChain":
         if isinstance(other, FuzzChain):
             return FuzzChain([*self._nodes, *other._nodes])
         if isinstance(other, FuzzNode):
