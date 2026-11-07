@@ -40,6 +40,19 @@ class SecurityValidator:
             if parsed.netloc.startswith("10.") or parsed.netloc.startswith("192.168."):
                 return False
 
+            # Missing: 172.16.0.0 - 172.31.255.255 private range
+            parts = parsed.netloc.split(".")
+            if len(parts) == 4:
+                try:
+                    first = int(parts[0])
+                    second = int(parts[1])
+                    if first == 172 and 16 <= second <= 31:
+                        return False
+                    if first == 172 and second == 17:
+                        return False
+                except ValueError:
+                    pass
+
             if allowed_hosts and parsed.netloc not in allowed_hosts:
                 return False
 
@@ -148,32 +161,3 @@ def require_auth(func: Callable) -> Callable:
 
     @wraps(func)
     async def wrapper(*args, **kwargs):
-        # TODO: Implement actual auth check
-        # For now, check if API key is present
-        api_key = kwargs.get("api_key") or os.getenv("API_KEY")
-        if not api_key:
-            from fastapi import HTTPException
-
-            raise HTTPException(status_code=401, detail="Authentication required")
-        return await func(*args, **kwargs)
-
-    return wrapper
-
-
-def sanitize_log_output(data: str | dict) -> str:
-    """Remove sensitive data from logs."""
-    if isinstance(data, dict):
-        data = str(data)
-
-    patterns = [
-        (r'(api[_-]?key["\'\s:=]+)["\']?[\w-]+', r"\1***"),
-        (r'(token["\'\s:=]+)["\']?[\w-]+', r"\1***"),
-        (r'(password["\'\s:=]+)["\']?[\w-]+', r"\1***"),
-        (r'(secret["\'\s:=]+)["\']?[\w-]+', r"\1***"),
-        (r"Bearer\s+[\w-]+", "Bearer ***"),
-    ]
-
-    for pattern, replacement in patterns:
-        data = re.sub(pattern, replacement, data, flags=re.IGNORECASE)
-
-    return data
