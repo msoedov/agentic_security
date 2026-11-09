@@ -13,8 +13,6 @@ is *measured*; ``test_envelopes.py`` also runs it unpinned, because the thing
 it tests is the detector's sensitivity to the envelope it is handed.
 """
 
-from __future__ import annotations
-
 import hashlib
 import json
 from functools import cache

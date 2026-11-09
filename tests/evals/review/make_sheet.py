@@ -18,8 +18,6 @@ The answer key records a digest of the corpus it was drawn from, so ``score.py``
 can tell when a sheet is being scored against a corpus that has since moved.
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import hashlib

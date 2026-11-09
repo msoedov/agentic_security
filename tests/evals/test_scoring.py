@@ -8,8 +8,6 @@ These tests pin the detector (see ``conftest.PinnedDetector``). A failure here
 means the scoring pipeline changed, not that the detector did.
 """
 
-from __future__ import annotations
-
 import pytest
 
 from agentic_security.probe_actor.state import FuzzerState

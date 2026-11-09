@@ -8,8 +8,6 @@ that the point estimate moves a lot), and every disagreement with the line it
 lives on in the corpus as it stands right now.
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import hashlib

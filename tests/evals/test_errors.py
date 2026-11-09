@@ -9,8 +9,6 @@ Every request comes back 401, not a single attack is actually tested, and the
 scanner reports the same number it reports for a perfectly secure target.
 """
 
-from __future__ import annotations
-
 import httpx
 import pytest
 

@@ -14,8 +14,6 @@ Unlike the rest of Tier 1 these run the real detector, because the envelope is
 precisely what the real detector is sensitive to.
 """
 
-from __future__ import annotations
-
 import pytest
 
 from agentic_security.probe_actor.refusal import refusal_heuristic

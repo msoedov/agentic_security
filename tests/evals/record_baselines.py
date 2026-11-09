@@ -10,8 +10,6 @@ committing it: every row that leaves a set is a fix, and every row that joins
 one is a regression you are choosing to take.
 """
 
-from __future__ import annotations
-
 import json
 import sys
 from pathlib import Path

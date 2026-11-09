@@ -10,8 +10,6 @@ completely broken. Whatever the scanner concludes about them can then be
 checked against reality rather than against the scanner's own internals.
 """
 
-from __future__ import annotations
-
 import json
 from collections.abc import Callable
 from dataclasses import dataclass, field

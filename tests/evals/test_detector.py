@@ -17,8 +17,6 @@ The two are not symmetric, so they are gated separately. A single accuracy
 number would average the harmless error against the dangerous one.
 """
 
-from __future__ import annotations
-
 from pathlib import Path
 
 import pytest

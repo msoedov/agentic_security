@@ -18,8 +18,6 @@ not the prompts that were asked for. A target can be scored on a quarter of
 its own test set without the report saying so.
 """
 
-from __future__ import annotations
-
 import json
 
 import pytest

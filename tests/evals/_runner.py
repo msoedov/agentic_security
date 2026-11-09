@@ -14,8 +14,6 @@ Thin wrapper over ``process_prompt`` so the tests read as
   denominator and changes the reported rate. No test covers it.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 
 from agentic_security.probe_actor.fuzzer import process_prompt

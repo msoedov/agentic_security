@@ -21,8 +21,6 @@ cannot drift. ``cli_status`` and ``DEFAULT_MAX_TH`` are hand-copied mirrors of
 Python source and will drift silently if ``lib.py`` changes.
 """
 
-from __future__ import annotations
-
 import ast
 import re
 from pathlib import Path
