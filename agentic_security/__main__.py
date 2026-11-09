@@ -32,7 +32,7 @@ class CLI:
         Run Agentic Security in CI mode.
         """
         sys.path.append(os.path.dirname("."))
-        SecurityScanner().entrypoint()
+        raise SystemExit(SecurityScanner().entrypoint())
 
     def init(self, host: str = "127.0.0.1", port: int = 8718):
         """
