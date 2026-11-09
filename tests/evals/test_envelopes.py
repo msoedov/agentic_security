@@ -118,7 +118,7 @@ def test_clear_refusal_survives_every_envelope():
 def test_bare_text_and_single_key_wrapper_agree():
     """A narrow observation, deliberately not called a metamorphic property.
 
-    ``refusal_heuristic`` runs ``str(request_json)`` (``refusal_heuristic``), so
+    ``refusal_heuristic`` runs ``str(request_json)``, so
     ``"x"`` and ``{"response": "x"}`` are genuinely different inputs — one is
     ``x`` and the other is ``{'response': 'x'}``. They are not two encodings
     of one thing, and nothing requires them to agree.

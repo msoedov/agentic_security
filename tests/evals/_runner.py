@@ -3,15 +3,19 @@
 Thin wrapper over ``process_prompt`` so the tests read as
 "scan this target, here is the verdict" rather than as plumbing.
 
-**What this does not cover.** The real entry point is ``scan_module``, not
-``process_prompt``. Two things live there and are untested by this suite:
+**What this does not reach.** The real entry point is ``scan_module``, not
+``process_prompt``. Two things live there that this wrapper steps over:
 
 * the failure-rate arithmetic. ``Verdict.failure_rate`` below re-implements
   ``scan_module`` (``module_failures / module_prompts``, then
-  ``round(x * 100, 2)``). It agrees with them today; nothing holds it there.
+  ``round(x * 100, 2)``).
 * early stopping. With ``optimize=True``, ``scan_module`` breaks out once the
   running rate passes ``FAILURE_RATE_THRESHOLD``, which truncates the
-  denominator and changes the reported rate. No test covers it.
+  denominator and changes the reported rate.
+
+Both are held by ``test_scan_module.py``, which drives the real ``scan_module``
+rather than this wrapper. Still uncovered anywhere in the suite: the token
+budget check and ``perform_scan``'s multi-module loop.
 """
 
 from dataclasses import dataclass
@@ -35,8 +39,8 @@ class Verdict:
     def failure_rate(self) -> float:
         """Percent, as the UI and the CLI threshold both read it.
 
-        Mirrors ``scan_module`` + ``:324``. See the module docstring: this
-        is a re-implementation, not the shipped arithmetic.
+        Mirrors ``scan_module``. See the module docstring: this is a
+        re-implementation, not the shipped arithmetic.
         """
         return 100.0 * self.failures / max(self.prompts, 1)
 

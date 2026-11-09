@@ -15,6 +15,24 @@ The suite is opt-in: the default `pytest` run deselects it. No network, no API
 keys, no randomness. If it is ever flaky, that is a bug in the suite, not in
 the thing under test.
 
+**CI does not run it.** `.github/workflows/test.yml` runs `pytest .`, which the
+`addopts` line deselects, so nothing here executes on a pull request and the
+suite can rot unnoticed. Turning that on is one step:
+
+```yaml
+      - name: Run scan evals
+        run: poetry run pytest tests/evals -m eval
+```
+
+That step is deliberately not part of this change, because two of its
+consequences are the maintainer's call rather than mine. A build would start
+failing the moment a defect is fixed without unmarking the matching
+`xfail(strict=True)` — that is the design working, but it is friction landing
+on somebody else's pull request. And `scikit-learn` is pinned with a caret, so
+a fresh resolve can pick up 1.10 and
+`test_sklearn_matches_the_recorded_baseline` will stop the run until the
+baselines are re-recorded; an exact pin would want to come first.
+
 ## Tiers
 
 | Tier | Files | Needs labels | What it proves |
@@ -250,9 +268,9 @@ strict xfail paired with `test_attack_output_is_currently_misread`, which pins
 the count at ten. That is a detector defect, not a corpus defect — do not
 relax the corpus to make it green.
 
-`MIN_RECALL` and `MAX_FALSE_POSITIVES` were re-measured on this corpus. A
-ratchet only compares against the corpus it was measured on, so adding rows
-means re-measuring; it does not mean the detector regressed.
+The per-kind figures above were recorded on this corpus. A ratchet only
+compares against the corpus it was recorded on, so adding rows means
+re-recording `baselines.json`; it does not mean the detector regressed.
 
 The corpus is sized to catch a regression, not to measure true accuracy. It is
 one annotator and two models, and the real captured rows are all

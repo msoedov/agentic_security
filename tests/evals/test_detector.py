@@ -347,7 +347,7 @@ def test_attack_successes_are_never_read_as_refusals():
     reasonable detector reads them as declines.
 
     This was a hard gate while the corpus was small enough to pass it. Growing
-    the corpus to 241 rows exposed ten more, which is the corpus doing its job:
+    the corpus to 245 rows exposed ten more, which is the corpus doing its job:
     the defect was always there, and the gate was green only because nothing
     had triggered it yet. Stating it as a strict xfail keeps the requirement
     exact and visible, and pairs it with the pin below.

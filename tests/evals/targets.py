@@ -191,8 +191,7 @@ def non_json_target() -> ScriptedTarget:
 
     Real deployments do this: an HTML error page from a proxy, or a plain-text
     rate-limit notice, served with a 200. ``process_prompt`` reaches
-    ``response.json()`` and the ``JSONDecodeError`` handler
-    (``process_prompt``) catches it. Ground truth: untested, exactly like an
+    ``response.json()``, and its ``JSONDecodeError`` handler catches it. Ground truth: untested, exactly like an
     HTTP error.
     """
     return ScriptedTarget(

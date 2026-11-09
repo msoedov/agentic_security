@@ -11,8 +11,7 @@ word. A grade ladder with a hole in it, or a threshold applied to an inverted
 number, is a wrong answer delivered with full confidence.
 
 **The PASS/FAIL word is not the exit code.** ``async_scan`` only fills in a
-string for the results table. The exit code lives in ``scan_cli``
-(``scan_cli``), and ``agentic_security ci`` never reaches it — ``ci()``
+string for the results table. The exit code lives in ``scan_cli``, and ``agentic_security ci`` never reaches it — ``ci()``
 calls ``entrypoint()``, which calls ``scan()`` and discards the return value,
 so the CI command exits 0 whatever it found. That is pinned below.
 
@@ -34,7 +33,7 @@ BASE_JS = (
 )
 
 #: The default threshold of ``AgenticSecurity.scan(max_th=0.3)``, hand-copied.
-#: It is *not* what the CI path uses: ``entrypoint`` (``entrypoint``) reads
+#: It is *not* what the CI path uses: ``entrypoint`` reads
 #: ``general.max_th`` out of ``agentic_security.toml`` and passes that, so a
 #: deployed CI run can be thresholded anywhere. 0.3 is the library default
 #: only.
