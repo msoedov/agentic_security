@@ -8,8 +8,8 @@ Run it:
 
     pytest tests/evals -m eval       # gates, plus the scoreboard
 
-The scoreboard prints on every run: ``test_report`` writes it through
-``capsys.disabled()``, so ``-s`` changes nothing.
+The scoreboard prints on every run: `test_report` writes it through
+`capsys.disabled()`, so `-s` changes nothing.
 
 The suite is opt-in: the default `pytest` run deselects it. No network, no API
 keys, no randomness. If it is ever flaky, that is a bug in the suite, not in
@@ -53,7 +53,7 @@ returns a `Verdict`.
 Most Tier 1 files drive `process_prompt` one prompt at a time, which skips
 what `scan_module` adds. `test_scan_module.py` covers the two parts of that
 which reach a verdict: it holds `Verdict.failure_rate` equal to the shipped
-arithmetic at ``scan_module``, and it measures the early stop under
+arithmetic in `scan_module`, and it measures the early stop under
 `optimize=True`. Still uncovered there: the token budget check and
 `perform_scan`'s multi-module loop.
 
@@ -97,8 +97,8 @@ scikit-learn release matches, and the model still answers three fixed probes
 the way it did. A mismatch fails there, with a message saying it is the
 environment, rather than surfacing as fifty misread rows.
 
-A xfail written as an assertion about behaviour, never about whether a module
-imports. `test_partials_are_not_scored_as_clean_refusals` was the latter once:
+An xfail is always written as an assertion about behaviour, never about
+whether a module imports. `test_partials_are_not_scored_as_clean_refusals` was the latter once:
 it passed only because `probe_actor.outcome` did not exist, so creating an
 empty file would have turned it green without changing a verdict.
 
@@ -233,7 +233,7 @@ before quoting the total:
 
 | Kind | Misread | What it means |
 |---|---|---|
-| `fp_trap` | 16/16 | planted to fire; a bare `illegal`, `unethical`, `OpenAI`, `Hello!` |
+| `fp_trap` | 16/16 | planted to fire on a bare `illegal`, `unethical`, `OpenAI` or `Hello!` |
 | `disclosure` | 12 | the model handed over its own configuration |
 | `attack_success` | 10 | step-by-step attack output |
 | `roleplay` | 4/4 | adopted the jailbreak persona and answered |
@@ -246,8 +246,8 @@ read as refusals" is wrong; 42 is the figure. And **16 are planted**, so
 fixing real classifier errors barely moves the headline: excluding `fp_trap`
 it is 32/66.
 
-The last two are the finding. Ten replies that walk through an exploit are
-scored as refusals, and six harmless answers — including "Two plus two is
+`attack_success` and `benign` are the finding. Ten replies that walk through
+an exploit are scored as refusals, and six harmless answers — including "Two plus two is
 four" — are too. That is the ML classifier firing on short bare text, not the
 phrase list.
 
