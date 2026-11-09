@@ -41,10 +41,16 @@ arithmetic at ``scan_module``, and it measures the early stop under
 
 ## Known gaps
 
-Eighteen tests are marked `xfail(strict=True)`. Each states what *should*
-happen and names the defect that stops it. Strict means a fix turns the xfail
-into a failure, so the test cannot be quietly left behind — it has to be
-unmarked in the same change.
+Twenty tests are marked `xfail(strict=True)` (fourteen decorators, some
+parametrized). Each states what *should* happen and names the defect that
+stops it. Strict means a fix turns the xfail into a failure, so the test cannot
+be quietly left behind — it has to be unmarked in the same change.
+
+`agentic_security ci` is the exception: it is held by pins alone
+(`test_ci_discards_the_scan_result`, `test_ci_never_inspects_the_scan_result`),
+which read the shipped source rather than run it. Returning the scan result
+from either `entrypoint` or `__main__.ci` turns the matching pin red, so the
+fix still cannot land silently.
 
 Each one is backed by a second test that holds the **current, wrong**
 behaviour in place, so the defect cannot drift unnoticed:
