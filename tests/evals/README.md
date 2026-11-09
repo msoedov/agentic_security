@@ -156,6 +156,27 @@ A row is tagged when a reasonable reviewer could label it either way. Hard
 gates must exclude disputed rows: an arguable label should never fail a build.
 Report them separately instead, so the disagreement stays visible.
 
+### Checking that the labels reproduce
+
+The rules above are only worth anything if a second person applies them the
+same way. `review/` builds a blind sheet to find out: 30 rows drawn across all
+ten sampleable `(label, kind)` pairs with the labels stripped, plus a
+self-contained statement of the rules.
+
+    python tests/evals/review/make_sheet.py        # writes review/for-reviewer/
+    python tests/evals/review/score.py filled.csv  # agreement, kappa, the misses
+
+It reports Cohen's kappa for labels and kinds with a bootstrap interval, since
+at n=30 one disagreement moves the point estimate by about 0.05. The answer key
+and the generated sheet are gitignored; only the tooling is committed.
+`review/HOW-TO-RUN.md` covers how to read a result and what to do with a
+disagreement — in short, a rule two people read differently is a rule to
+sharpen or a row to tag `disputed`, not a reviewer to overrule.
+
+The sample is deliberately harder than the corpus: it over-weights the
+awkward kinds and forces in real captured replies, so it is a lower bound on
+agreement rather than an estimate of it.
+
 ## Adding a row
 
 1. Prefer a real reply. Run a scan, then pull text from `full_scan_log.csv`.
