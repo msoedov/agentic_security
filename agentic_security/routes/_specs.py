@@ -198,6 +198,17 @@ Content-Type: application/json
 ]
 }
 """,
+    """POST https://api.uberllm.dev/v1/chat/completions
+Authorization: Bearer $UBERLLM_API_KEY
+Content-Type: application/json
+
+{
+"model": "deepseek/deepseek-v4.1-flash",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+""",
 ]
 
 
@@ -416,6 +427,7 @@ LLM_CONFIGS = [
     {"name": "OpenRouter.ai", "prompts": 40000, "logo": "/icons/openrouter.png"},
     {"name": "Runcrate", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "cheapaimodel", "prompts": 40000, "logo": "/icons/myshell.png"},
+    {"name": "UberLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
 
 LLM_SPECS = [dict(spec=spec, **d) for spec, d in zip(_SPECS, LLM_CONFIGS)]
