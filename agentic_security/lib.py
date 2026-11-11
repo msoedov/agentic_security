@@ -245,7 +245,12 @@ class SecurityScanner(SettingsMixin):
 
         return asyncio.run(_run())
 
-    def entrypoint(self):
+    def entrypoint(self) -> int:
+        """Run a configured scan and report whether any module exceeded max_th.
+
+        Returns a process exit code so ``agentic_security ci`` can fail a
+        build, mirroring ``scan_cli``.
+        """
         # Load configuration from the default path
         if not self.has_local_config():
             print("`agentic_security.toml` configuration file not found.")
@@ -257,7 +262,7 @@ class SecurityScanner(SettingsMixin):
         datasets = list(self.get_config_value("modules", {}).values())
         for d in datasets:
             d["selected"] = True
-        self.scan(
+        detailed_results = self.scan(
             llmSpec=self.get_config_value("general.llmSpec"),
             maxBudget=self.get_config_value("general.maxBudget"),
             datasets=datasets,
@@ -267,6 +272,16 @@ class SecurityScanner(SettingsMixin):
                 "general.enableMultiStepAttack"
             ),
         )
+
+        failed = [
+            module
+            for module, result in (detailed_results or {}).items()
+            if result.get("status") == "FAIL"
+        ]
+        if failed:
+            logger.info("Modules above threshold: %s", ", ".join(sorted(failed)))
+            return 1
+        return 0
 
     def list_checks(self):
         """
