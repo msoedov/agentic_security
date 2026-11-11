@@ -11,9 +11,10 @@ word. A grade ladder with a hole in it, or a threshold applied to an inverted
 number, is a wrong answer delivered with full confidence.
 
 **The PASS/FAIL word is not the exit code.** ``async_scan`` only fills in a
-string for the results table. The exit code lives in ``scan_cli``, and ``agentic_security ci`` never reaches it — ``ci()``
-calls ``entrypoint()``, which calls ``scan()`` and discards the return value,
-so the CI command exits 0 whatever it found. That is pinned below.
+string for the results table. ``agentic_security ci`` used to never reach an
+exit code at all: ``ci()`` called ``entrypoint()``, which called ``scan()``
+and discarded the return value, so the command exited 0 whatever it found.
+That was fixed in #369; what remains below is a regression guard, not a pin.
 
 Only the ladder is parsed out of the shipped JavaScript, so only the ladder
 cannot drift. ``cli_status`` and ``DEFAULT_MAX_TH`` are hand-copied mirrors of
@@ -126,58 +127,47 @@ def test_cli_status_still_mirrors_the_shipped_rule():
     )
 
 
-def test_ci_never_inspects_the_scan_result():
-    """``__main__.ci`` is where the exit code would have to be decided.
+def test_the_ci_exit_path_stays_connected():
+    """``agentic_security ci`` must still be able to fail a build.
 
-    ``entrypoint`` discarding the result is only half the defect; the other
-    half is that nothing upstream looks at it either. Pinned separately,
-    because fixing one without the other still exits 0.
+    This replaces two pins that held the opposite. Before #369, ``entrypoint``
+    discarded ``scan``'s result and ``ci()`` discarded ``entrypoint``'s, so the
+    process exited 0 no matter how many modules were graded FAIL.
+
+    Kept as a structural guard rather than deleted, because the shape is what
+    would regress quietly. ``tests/unit/test_ci_exit_code.py`` covers the
+    behaviour directly; what is checked here is that the two halves stay
+    joined, since fixing one without the other exits 0 again.
+
+    Parsed out of the source rather than asserted by running the CLI: the real
+    thing needs a config file, a network target and a budget.
     """
-    main_py = Path(__file__).resolve().parents[2] / "agentic_security" / "__main__.py"
-    node = _function_node(main_py, "ci")
-
-    returns_value = [
-        n for n in ast.walk(node) if isinstance(n, ast.Return) and n.value is not None
-    ]
-    assert not returns_value, (
-        "__main__.ci now returns a value; if it propagates the scan result, "
-        "this defect may be fixed"
-    )
-    assert not any(
-        isinstance(n, ast.Raise) for n in ast.walk(node)
-    ), "__main__.ci now raises; it may be failing the build another way"
-
-
-def test_ci_discards_the_scan_result():
-    """Pins that ``agentic_security ci`` cannot fail a build.
-
-    ``scan`` returns ``detailed_results``, which carries the PASS/FAIL word
-    for every module. ``entrypoint`` throws it away, and ``__main__.ci``
-    throws away ``entrypoint``'s return in turn, so the process exits 0 no
-    matter how many modules were graded FAIL.
-
-    Parsed out of the source rather than asserted by running the CLI: the
-    real thing needs a config file, a network target and a budget.
-    """
-    node = _function_node(LIB_PY, "entrypoint")
+    entrypoint = _function_node(LIB_PY, "entrypoint")
 
     calls_scan = any(
         isinstance(n, ast.Call)
         and isinstance(n.func, ast.Attribute)
         and n.func.attr == "scan"
-        for n in ast.walk(node)
+        for n in ast.walk(entrypoint)
     )
     assert calls_scan, "entrypoint no longer calls scan"
 
     # Parsed, not grepped: a bare ``return`` or the word "return" in a
-    # docstring would turn a substring check red without the defect moving.
-    returns_value = [
-        n for n in ast.walk(node) if isinstance(n, ast.Return) and n.value is not None
-    ]
-    assert not returns_value, (
-        "entrypoint now returns a value — if it forwards the scan result, "
-        "check __main__.ci propagates it and remove this test"
-    )
+    # docstring would move a substring check without the behaviour moving.
+    assert [
+        n
+        for n in ast.walk(entrypoint)
+        if isinstance(n, ast.Return) and n.value is not None
+    ], "entrypoint stopped returning the scan outcome; `agentic_security ci` cannot fail a build"
+
+    main_py = Path(__file__).resolve().parents[2] / "agentic_security" / "__main__.py"
+    ci = _function_node(main_py, "ci")
+
+    # Returning is not enough: under fire a returned value is printed, not
+    # used as the exit code, which is why CLI.scan ends in raise SystemExit.
+    assert any(
+        isinstance(n, ast.Raise) for n in ast.walk(ci)
+    ), "__main__.ci stopped raising; a returned value is printed by fire, not used as an exit code"
 
 
 # --------------------------------------------------------------------------
