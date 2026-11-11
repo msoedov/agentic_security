@@ -93,8 +93,11 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.pytest.ini_options]
-addopts = "-m 'not slow'"
+addopts = "-m 'not slow and not eval'"
 # addopts = "--durations=5 -m 'not slow' -n 3"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
-markers = "slow: marks tests as slow"
+markers = [
+    "slow: marks tests as slow",
+    "eval: scan evaluation suite (tests/evals); opt-in, no network",
+]
