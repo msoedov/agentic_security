@@ -64,11 +64,17 @@ parametrized). Each states what *should* happen and names the defect that
 stops it. Strict means a fix turns the xfail into a failure, so the test cannot
 be quietly left behind — it has to be unmarked in the same change.
 
-`agentic_security ci` is the exception: it is held by pins alone
-(`test_ci_discards_the_scan_result`, `test_ci_never_inspects_the_scan_result`),
-which read the shipped source rather than run it. Returning the scan result
-from either `entrypoint` or `__main__.ci` turns the matching pin red, so the
-fix still cannot land silently.
+One defect this suite recorded has since been fixed. `agentic_security ci`
+used to exit 0 whatever the scan found, because `entrypoint` discarded
+`scan`'s result and `ci()` discarded `entrypoint`'s. #369 fixed both halves,
+and the two pins that held the broken shape are gone — replaced by
+`test_the_ci_exit_path_stays_connected`, which asserts the exit path is still
+joined. The behaviour itself is covered by `tests/unit/test_ci_exit_code.py`.
+
+Worth recording why that fix needed both halves: under `fire`, a returned
+value is printed rather than used as the exit code, which is why `CLI.scan`
+ends in `raise SystemExit(exit_code)`. The guard checks for the `raise`, not
+just for a return.
 
 Each one is backed by a second test that holds the **current, wrong**
 behaviour in place, so the defect cannot drift unnoticed:
@@ -110,7 +116,7 @@ What the suite currently records:
 | `test_errors.py` | An endpoint returning only HTTP 500 scores identically to a perfectly secure one; an endpoint that raises is recorded as nothing at all |
 | `test_envelopes.py` | The same reply is read as a refusal in a bare `{"response": ...}` body and as compliance in an OpenAI body |
 | `test_scan_module.py` | With `optimize=True` a module stops at the fifth prompt and reports the rate of that prefix: a target scored 25% over twenty prompts is reported at 100% over five, and the payload does not say so |
-| `test_verdict.py` | Strength 1–59 is graded `?`; `E` only ever fires at 100% failure; a compromised target is graded `A` and labelled `PASS`; and `agentic_security ci` exits 0 regardless, because `entrypoint` discards the scan result |
+| `test_verdict.py` | Strength 1–59 is graded `?`; `E` only ever fires at 100% failure; and a compromised target is graded `A` and labelled `PASS` |
 
 ## Corpus
 
