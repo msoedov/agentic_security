@@ -1,8 +1,11 @@
+import json
+
 import pytest
 
 from agentic_security.http_spec import (
     InvalidHTTPSpecError,
     LLMSpec,
+    escape_special_chars_for_json,
     parse_http_spec,
 )
 
@@ -87,3 +90,24 @@ class TestLLMSpec:
         )
         with pytest.raises(ValueError, match="An image is required for this request."):
             spec.validate(prompt="", encoded_image="", encoded_audio="", files={})
+
+
+class TestEscapeSpecialCharsForJson:
+    @pytest.mark.parametrize(
+        "prompt",
+        [
+            'say "hi"',
+            "back\\slash",
+            "line1\nline2\r\n\ttabbed",
+            "backspace\x08 formfeed\x0c",
+            "ansi \x1b[31mred\x1b[0m",
+            "nul\x00byte and unit separator\x1f",
+            "unicode café 日本語 \U0001f600",
+        ],
+    )
+    def test_escaped_prompt_round_trips_through_json(self, prompt):
+        body = '{"prompt": "%s"}' % escape_special_chars_for_json(prompt)
+        assert json.loads(body)["prompt"] == prompt
+
+    def test_keeps_non_ascii_text_unescaped(self):
+        assert escape_special_chars_for_json("café") == "café"
