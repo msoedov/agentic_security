@@ -258,13 +258,7 @@ def escape_special_chars_for_json(prompt: str) -> str:
     Returns:
         str: The escaped string.
     """
-    # Escape backslashes first to avoid double escaping
-    escaped_prompt = prompt.replace("\\", "\\\\")
-
-    # Escape other special characters
-    escaped_prompt = escaped_prompt.replace('"', '\\"')
-    escaped_prompt = escaped_prompt.replace("\n", "\\n")
-    escaped_prompt = escaped_prompt.replace("\r", "\\r")
-    escaped_prompt = escaped_prompt.replace("\t", "\\t")
-
-    return escaped_prompt
+    # json.dumps escapes backslashes, quotes and every control character below
+    # U+0020 (backspace, form feed, ESC, NUL, ...), all of which JSON forbids
+    # unescaped. ensure_ascii=False keeps non-ASCII text readable in the body.
+    return json.dumps(prompt, ensure_ascii=False)[1:-1]
