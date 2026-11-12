@@ -97,7 +97,7 @@ class TestEscapeSpecialCharsForJson:
         "prompt",
         [
             'say "hi"',
-            "back\slash",
+            "back\\slash",
             "line1\nline2\r\n\ttabbed",
             "backspace\x08 formfeed\x0c",
             "ansi \x1b[31mred\x1b[0m",
