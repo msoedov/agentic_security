@@ -10,33 +10,31 @@ handful of purpose-built local probes (data leak, hallucination, agentic,
 malware) map to their own categories.
 """
 
-# OWASP Top 10 for LLM Applications (2023/2024 numbering).
+# OWASP Top 10 for LLM Applications 2025 (https://genai.owasp.org/llm-top-10/).
 OWASP_LLM_TOP_10 = {
     "LLM01": "Prompt Injection",
-    "LLM02": "Insecure Output Handling",
-    "LLM03": "Training Data Poisoning",
-    "LLM04": "Model Denial of Service",
-    "LLM05": "Supply Chain Vulnerabilities",
-    "LLM06": "Sensitive Information Disclosure",
-    "LLM07": "Insecure Plugin Design",
-    "LLM08": "Excessive Agency",
-    "LLM09": "Overreliance",
-    "LLM10": "Model Theft",
+    "LLM02": "Sensitive Information Disclosure",
+    "LLM03": "Supply Chain",
+    "LLM04": "Data and Model Poisoning",
+    "LLM05": "Improper Output Handling",
+    "LLM06": "Excessive Agency",
+    "LLM07": "System Prompt Leakage",
+    "LLM08": "Vector and Embedding Weaknesses",
+    "LLM09": "Misinformation",
+    "LLM10": "Unbounded Consumption",
 }
 
-OWASP_PROJECT_URL = (
-    "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
-)
+OWASP_PROJECT_URL = "https://genai.owasp.org/llm-top-10/"
 
 _DEFAULT_CATEGORY = "LLM01"
 
 # Datasets whose intent doesn't match the prompt-injection default. Keyed by the
 # lowercased dataset name (or a substring of it).
 _NAME_OVERRIDES = {
-    "dataleak": "LLM06",
+    "dataleak": "LLM02",
     "hallucination": "LLM09",
-    "malwaregen": "LLM02",
-    "agenticbackend": "LLM08",
+    "malwaregen": "LLM05",
+    "agenticbackend": "LLM06",
     "refuse-to-answer": "LLM09",
 }
 
