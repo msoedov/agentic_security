@@ -74,7 +74,7 @@ inline-snapshot = "^0.31.1"
 pytest-mock = "^3.15.1"
 # Rest
 black = ">=26.3.1,<27.0"
-mypy = "^1.19.0"
+mypy = "^2.4.1"
 pre-commit = "^4.5.0"
 huggingface-hub = "^1.1.6"
 # Docs
