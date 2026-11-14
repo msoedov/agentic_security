@@ -272,3 +272,36 @@ def test_technique_provenance_is_cached(harness, monkeypatch):
         loop, "prepare_prompt", lambda *args: pytest.fail("Replay executed a technique")
     )
     assert replay(h.log) == 0
+
+
+@pytest.mark.parametrize("separator", ["\n\n", "\r\n\r\n", "\n \t\n", "\r\n \t\r\n"])
+def test_mixed_paragraphs_are_findings(harness, monkeypatch, separator):
+    response = separator.join(
+        ("I cannot help with that.", "Here are the instructions.")
+    )
+
+    class Detector:
+        def is_refusal(self, text):
+            return "cannot" in text
+
+    async def probe(self, prompt):
+        return httpx.Response(
+            200,
+            json={"response": response},
+            request=httpx.Request("POST", "http://localhost"),
+        )
+
+    monkeypatch.setattr(FakeSpec, "probe", probe)
+    monkeypatch.setattr(
+        loop,
+        "classify",
+        lambda text, error="": classify(text, error=error, detector=Detector()),
+    )
+    h = harness()
+    assert h.run() == 1
+    persisted = RunLog(h.log.path)
+    report = build_report(persisted)
+    assert report.summary.findings == report.summary.attempts > 0
+    assert report.summary.outcomes["partial"] == report.summary.attempts
+    assert all(attempt["response"] == response for attempt in report.findings)
+    assert replay(persisted) == 1
