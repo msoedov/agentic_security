@@ -1,5 +1,6 @@
 """Conservative refusal classification; findings are signals, not proof of exploitation."""
 
+import re
 from dataclasses import dataclass
 from enum import StrEnum
 from functools import lru_cache
@@ -33,7 +34,9 @@ def classify(response: str, error: str = "", detector=None) -> Classification:
     detector = detector or classifier()
     refused = bool(detector.is_refusal(response))
     # Mixed paragraph classifications are a review signal, not a semantic judge.
-    paragraphs = [p.strip() for p in response.split("\n\n") if p.strip()]
+    paragraphs = [
+        p.strip() for p in re.split(r"\r?\n[ \t]*\r?\n", response) if p.strip()
+    ]
     votes = [bool(detector.is_refusal(p)) for p in paragraphs]
     if len(votes) > 1 and any(votes) and not all(votes):
         return Classification(
