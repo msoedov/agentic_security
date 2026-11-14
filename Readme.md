@@ -377,13 +377,13 @@ Replace `$GROQ_API_KEY` with your actual API key and ensure that the `file` para
 
 This sample GitHub Action is designed to perform automated security scans
 
-[Sample GitHub Action Workflow](https://github.com/msoedov/agentic_security/blob/main/.github/workflows/security-scan.yml)
+[Sample GitHub Action Workflow](https://github.com/msoedov/agentic_security/blob/main/docs/ci_cd.md)
 
 This setup ensures a continuous integration approach towards maintaining security in your projects.
 
 ## Module Class
 
-The `Module` class is designed to manage prompt processing and interaction with external AI models and tools. It supports fetching, processing, and posting prompts asynchronously for model vulnerabilities. Check out [module.md](https://github.com/msoedov/agentic_security/blob/main/docs/module.md) for details.
+The `Module` class is designed to manage prompt processing and interaction with external AI models and tools. It supports fetching, processing, and posting prompts asynchronously for model vulnerabilities. Check out [external_module.md](https://github.com/msoedov/agentic_security/blob/main/docs/external_module.md) for details.
 
 
 ## Documentation
