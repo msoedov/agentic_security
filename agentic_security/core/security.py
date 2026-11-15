@@ -82,11 +82,24 @@ class SecretManager:
 
     @staticmethod
     def get_secret(key: str, default: str | None = None) -> str | None:
-        """Get secret from environment."""
+        """Get secret from environment.
+
+        Supports indirect references: if the value of ``key`` starts with
+        ``$``, the remainder is treated as a second environment variable name
+        to look up. This allows config files to reference secrets by name
+        rather than hardcoding them.
+
+        The fallback ``default`` is only used for the initial lookup, not for
+        the indirect reference — if the referenced variable does not exist,
+        ``None`` is returned rather than the default, which avoids silently
+        returning a non-secret default value when a secret was expected.
+        """
         value = os.getenv(key, default)
         if value and value.startswith("$"):
             env_key = value[1:]
-            value = os.getenv(env_key, default)
+            # Don't pass default here: if the indirect env var is missing,
+            # returning the default would be a silent security issue.
+            value = os.getenv(env_key)
         return value
 
     @staticmethod
