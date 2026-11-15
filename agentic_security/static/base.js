@@ -223,6 +223,18 @@ Content-Type: application/json
 }
 `,
 
+  `POST https://router.requesty.ai/v1/chat/completions
+Authorization: Bearer $REQUESTY_API_KEY
+Content-Type: application/json
+
+{
+"model": "openai/gpt-4o-mini",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+`,
+
 ]
 
 let fallbackIcon = '/icons/myshell.png';
@@ -245,6 +257,7 @@ let LLM_CONFIGS = [
   { name: 'Runcrate', prompts: 40000, logo: fallbackIcon },
   { name: 'cheapaimodel', prompts: 40000, logo: fallbackIcon },
   { name: 'UberLLM', prompts: 40000, logo: fallbackIcon },
+  { name: 'Requesty', prompts: 40000, logo: fallbackIcon },
 
 ];
 function has_image(spec) {
