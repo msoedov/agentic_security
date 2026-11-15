@@ -209,6 +209,17 @@ Content-Type: application/json
 ]
 }
 """,
+    """POST https://router.requesty.ai/v1/chat/completions
+Authorization: Bearer $REQUESTY_API_KEY
+Content-Type: application/json
+
+{
+"model": "openai/gpt-4o-mini",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+""",
 ]
 
 
@@ -428,6 +439,7 @@ LLM_CONFIGS = [
     {"name": "Runcrate", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "cheapaimodel", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "UberLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
+    {"name": "Requesty", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
 
 LLM_SPECS = [dict(spec=spec, **d) for spec, d in zip(_SPECS, LLM_CONFIGS)]
