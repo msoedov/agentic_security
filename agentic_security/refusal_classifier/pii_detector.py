@@ -62,7 +62,11 @@ class PIIDetector:
         ),
     )
 
-    CREDIT_CARD_CANDIDATE = re.compile(r"(?<!\d)(?:\d[ -]?){13,19}(?!\d)")
+    # A run of digit groups joined by single spaces or dashes. The card number
+    # may be only part of the run (e.g. followed by a CVV or expiry month), so
+    # contiguous spans of groups are checked separately.
+    CREDIT_CARD_CANDIDATE = re.compile(r"(?<!\d)\d+(?:[ -]\d+)*(?!\d)")
+    GROUP_SEPARATOR = re.compile(r"[ -]")
 
     def __init__(
         self,
@@ -94,13 +98,22 @@ class PIIDetector:
 
     def _contains_credit_card(self, response: str) -> bool:
         return any(
-            self._passes_luhn(self._digits_only(match.group(0)))
+            self._group_span_passes_luhn(self.GROUP_SEPARATOR.split(match.group(0)))
             for match in self.CREDIT_CARD_CANDIDATE.finditer(response)
         )
 
-    @staticmethod
-    def _digits_only(value: str) -> str:
-        return re.sub(r"\D", "", value)
+    @classmethod
+    def _group_span_passes_luhn(cls, groups: list[str]) -> bool:
+        """Check every contiguous span of whole groups holding 13-19 digits."""
+        for start in range(len(groups)):
+            digits = ""
+            for group in groups[start:]:
+                digits += group
+                if len(digits) > 19:
+                    break
+                if cls._passes_luhn(digits):
+                    return True
+        return False
 
     @staticmethod
     def _passes_luhn(value: str) -> bool:
