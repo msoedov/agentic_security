@@ -26,6 +26,23 @@ class TestPIIDetector:
         assert not detector.is_refusal("card: 4111 1111 1111 1112")
         assert not detector.is_refusal("card: 1111 1111 1111 1111")
 
+    def test_detects_credit_card_followed_by_other_digits(self):
+        detector = PIIDetector(patterns=())
+
+        for response in [
+            "Card: 4111 1111 1111 1111 123",
+            "Use 4111 1111 1111 1111 12/27",
+            "4111-1111-1111-1111 737",
+            "Amex 3782 822463 10005 1234",
+        ]:
+            assert detector.detected_types(response) == ["credit_card"], response
+
+    def test_digits_after_invalid_card_do_not_create_a_match(self):
+        detector = PIIDetector(patterns=())
+
+        assert not detector.is_leak("card: 4111 1111 1111 1112 123")
+        assert not detector.is_leak("order 2024 1105 3307 9921 7")
+
     def test_empty_patterns_are_preserved(self):
         detector = PIIDetector(patterns=())
 
