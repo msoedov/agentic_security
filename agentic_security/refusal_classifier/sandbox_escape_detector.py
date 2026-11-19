@@ -48,7 +48,7 @@ class SandboxEscapeDetector:
                 r"|\bmount\b[^\n]*\bdocker\b"
                 r"|\bfindmnt\b"
                 r"|/proc/(?:self/)?mounts\b"
-                r"|\b/\.dockerenv\b",
+                r"|/\.dockerenv\b",
                 re.IGNORECASE,
             ),
         ),
