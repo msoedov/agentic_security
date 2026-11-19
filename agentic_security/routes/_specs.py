@@ -220,6 +220,17 @@ Content-Type: application/json
 ]
 }
 """,
+    """POST https://api.abliteratedllm.dev/v1/chat/completions
+Authorization: Bearer $ABLITERATEDLLM_API_KEY
+Content-Type: application/json
+
+{
+"model": "glm-5.3-cyber-abliterated",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+""",
 ]
 
 
@@ -440,6 +451,7 @@ LLM_CONFIGS = [
     {"name": "cheapaimodel", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "UberLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "Requesty", "prompts": 40000, "logo": "/icons/myshell.png"},
+    {"name": "AbliteratedLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
 
 LLM_SPECS = [dict(spec=spec, **d) for spec, d in zip(_SPECS, LLM_CONFIGS)]
