@@ -157,7 +157,7 @@ The harness does not make HTML, XML, or JUnit reports. An agent or a CI job can 
 
 A finding is a signal from the refusal classifier. A person must examine it. A finding does not prove that the attack goal was reached.
 
-The OWASP mappings show the objective of the attack: [LLM01:2025](https://genai.owasp.org/llmrisk/llm01-prompt-injection/) and [ASI01](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/). The harness does not test the full OWASP Top 10.
+The OWASP mappings show the objective of the attack: [LLM01:2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/) and [ASI01](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/). The harness does not test the full OWASP Top 10.
 
 ## Integrations
 

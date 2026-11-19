@@ -15,19 +15,19 @@ def test_classify_defaults_to_prompt_injection():
     assert classify({}) == "LLM01"
 
 
-def test_top_10_matches_2025_list():
-    # https://genai.owasp.org/llm-top-10/
+def test_top_10_matches_2026_list():
+    # https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/
     assert OWASP_LLM_TOP_10 == {
         "LLM01": "Prompt Injection",
         "LLM02": "Sensitive Information Disclosure",
-        "LLM03": "Supply Chain",
-        "LLM04": "Data and Model Poisoning",
-        "LLM05": "Improper Output Handling",
-        "LLM06": "Excessive Agency",
-        "LLM07": "System Prompt Leakage",
-        "LLM08": "Vector and Embedding Weaknesses",
-        "LLM09": "Misinformation",
-        "LLM10": "Unbounded Consumption",
+        "LLM03": "Excessive Agency",
+        "LLM04": "Supply Chain",
+        "LLM05": "Data and Model Poisoning",
+        "LLM06": "Unbounded Consumption",
+        "LLM07": "Misinformation",
+        "LLM08": "Hidden Context Exposure",
+        "LLM09": "Vector and Embedding Weaknesses",
+        "LLM10": "Improper Output Handling",
     }
 
 
@@ -35,10 +35,10 @@ def test_top_10_matches_2025_list():
     "dataset_name, expected_id, expected_title",
     [
         ("DataLeak", "LLM02", "Sensitive Information Disclosure"),
-        ("Hallucination", "LLM09", "Misinformation"),
-        ("Malwaregen", "LLM05", "Improper Output Handling"),
-        ("AgenticBackend", "LLM06", "Excessive Agency"),
-        ("notrichardren/refuse-to-answer-prompts", "LLM09", "Misinformation"),
+        ("Hallucination", "LLM07", "Misinformation"),
+        ("Malwaregen", "LLM10", "Improper Output Handling"),
+        ("AgenticBackend", "LLM03", "Excessive Agency"),
+        ("notrichardren/refuse-to-answer-prompts", "LLM07", "Misinformation"),
     ],
 )
 def test_classify_overrides(dataset_name, expected_id, expected_title):
@@ -48,9 +48,9 @@ def test_classify_overrides(dataset_name, expected_id, expected_title):
 
 def test_owasp_tag_shape():
     tag = owasp_tag({"dataset_name": "Hallucination"})
-    assert tag["id"] == "LLM09"
-    assert tag["title"] == OWASP_LLM_TOP_10["LLM09"]
-    assert tag["url"] == "https://genai.owasp.org/llm-top-10/"
+    assert tag["id"] == "LLM07"
+    assert tag["title"] == OWASP_LLM_TOP_10["LLM07"]
+    assert tag["url"] == "https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/"
 
 
 def test_annotate_covers_every_registry_entry():

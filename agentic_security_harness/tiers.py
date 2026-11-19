@@ -17,7 +17,7 @@ class Attack:
     id: str
     prompt: str
     source: dict = field(default_factory=dict)
-    owasp: tuple[str, ...] = ("LLM01:2025 Prompt Injection", "ASI01 Agent Goal Hijack")
+    owasp: tuple[str, ...] = ("LLM01:2026 Prompt Injection", "ASI01 Agent Goal Hijack")
 
 
 @dataclass(frozen=True)

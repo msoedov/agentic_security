@@ -10,21 +10,21 @@ handful of purpose-built local probes (data leak, hallucination, agentic,
 malware) map to their own categories.
 """
 
-# OWASP Top 10 for LLM Applications 2025 (https://genai.owasp.org/llm-top-10/).
+# OWASP Top 10 for LLM Applications 2026 (https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/).
 OWASP_LLM_TOP_10 = {
     "LLM01": "Prompt Injection",
     "LLM02": "Sensitive Information Disclosure",
-    "LLM03": "Supply Chain",
-    "LLM04": "Data and Model Poisoning",
-    "LLM05": "Improper Output Handling",
-    "LLM06": "Excessive Agency",
-    "LLM07": "System Prompt Leakage",
-    "LLM08": "Vector and Embedding Weaknesses",
-    "LLM09": "Misinformation",
-    "LLM10": "Unbounded Consumption",
+    "LLM03": "Excessive Agency",
+    "LLM04": "Supply Chain",
+    "LLM05": "Data and Model Poisoning",
+    "LLM06": "Unbounded Consumption",
+    "LLM07": "Misinformation",
+    "LLM08": "Hidden Context Exposure",
+    "LLM09": "Vector and Embedding Weaknesses",
+    "LLM10": "Improper Output Handling",
 }
 
-OWASP_PROJECT_URL = "https://genai.owasp.org/llm-top-10/"
+OWASP_PROJECT_URL = "https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/"
 
 _DEFAULT_CATEGORY = "LLM01"
 
@@ -32,10 +32,10 @@ _DEFAULT_CATEGORY = "LLM01"
 # lowercased dataset name (or a substring of it).
 _NAME_OVERRIDES = {
     "dataleak": "LLM02",
-    "hallucination": "LLM09",
-    "malwaregen": "LLM05",
-    "agenticbackend": "LLM06",
-    "refuse-to-answer": "LLM09",
+    "hallucination": "LLM07",
+    "malwaregen": "LLM10",
+    "agenticbackend": "LLM03",
+    "refuse-to-answer": "LLM07",
 }
 
 
