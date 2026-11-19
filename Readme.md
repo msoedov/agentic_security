@@ -2,7 +2,7 @@
   <h1 align="center">Agentic Security</h1>
   <p align="center">
     <b>Jailbreak and prompt-injection tests for LLM apps and agents.</b><br />
-    An open-source red-team scanner for chatbots, RAG apps and AI agents. Point it at any HTTP endpoint, pin the attacks you care about, and fail the build when one gets through. It covers multimodal attacks with images and audio, multi-step jailbreaks, and fuzzing with encoded and mutated prompts.  </p>
+    An open-source red-team scanner for chatbots, RAG apps and AI agents. Point it at any HTTP endpoint, pin the attacks you care about, and fail the build when one gets through. It covers <b>multimodal attacks</b> with images and audio, <b>multi-step jailbreaks</b>, and <b>fuzzing</b> with encoded and mutated prompts.  </p>
   <p align="center">
     <a href="https://pypi.org/project/agentic_security/"><img alt="PyPI" src="https://img.shields.io/pypi/v/agentic_security"></a>
     <a href="https://github.com/msoedov/agentic_security/blob/main/LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/license-Apache%202.0-blue"></a>
