@@ -8,7 +8,7 @@ from agentic_security.routes._specs import LLM_SPECS
 
 
 def uberllm_spec() -> LLMSpec:
-    entry = next(item for item in LLM_SPECS if item["name"] == "UberLLM")
+    entry = next(item for item in LLM_SPECS if item["name"] == "MartLLM")
     return LLMSpec.from_string(entry["spec"])
 
 
@@ -16,7 +16,7 @@ def test_uberllm_preset_parses_to_chat_completions():
     spec = uberllm_spec()
 
     assert spec.method == "POST"
-    assert spec.url == "https://api.uberllm.dev/v1/chat/completions"
+    assert spec.url == "https://api.martllm.com/v1/chat/completions"
     assert spec.headers["Authorization"] == "Bearer $UBERLLM_API_KEY"
     assert spec.model_name == "deepseek/deepseek-v4.1-flash"
     assert spec.modality == Modality.TEXT
@@ -36,7 +36,7 @@ async def test_uberllm_preset_probe_sends_prompt_as_user_message(monkeypatch):
 
     assert response.status_code == 200
     assert captured["method"] == "POST"
-    assert captured["url"] == "https://api.uberllm.dev/v1/chat/completions"
+    assert captured["url"] == "https://api.martllm.com/v1/chat/completions"
     body = json.loads(captured["content"])
     assert body["model"] == "deepseek/deepseek-v4.1-flash"
     assert body["messages"] == [{"role": "user", "content": 'Say "hi"'}]

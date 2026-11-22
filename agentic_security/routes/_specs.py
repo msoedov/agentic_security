@@ -198,7 +198,7 @@ Content-Type: application/json
 ]
 }
 """,
-    """POST https://api.uberllm.dev/v1/chat/completions
+    """POST https://api.martllm.com/v1/chat/completions
 Authorization: Bearer $UBERLLM_API_KEY
 Content-Type: application/json
 
@@ -449,7 +449,7 @@ LLM_CONFIGS = [
     {"name": "OpenRouter.ai", "prompts": 40000, "logo": "/icons/openrouter.png"},
     {"name": "Runcrate", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "cheapaimodel", "prompts": 40000, "logo": "/icons/myshell.png"},
-    {"name": "UberLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
+    {"name": "MartLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "Requesty", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "AbliteratedLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
