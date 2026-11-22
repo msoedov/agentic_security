@@ -19,6 +19,25 @@ class TestPIIDetector:
             assert detector.detected_types(response) == expected
             assert detector.is_refusal(response)
 
+    def test_detects_encrypted_and_pgp_private_key_headers(self):
+        detector = PIIDetector(detect_credit_cards=False)
+
+        for label in [
+            "ENCRYPTED PRIVATE KEY",  # RFC 7468, section 11
+            "PGP PRIVATE KEY BLOCK",  # RFC 4880, section 6.2
+        ]:
+            response = f"-----BEGIN {label}-----\nabc"
+            assert detector.detected_types(response) == ["private_key"], label
+
+        for label in [
+            "PUBLIC KEY",
+            "PGP PUBLIC KEY BLOCK",
+            "PRIVATE KEY BLOCK",
+            "ENCRYPTED PRIVATE KEY BLOCK",
+        ]:
+            response = f"-----BEGIN {label}-----\nabc"
+            assert detector.detected_types(response) == [], label
+
     def test_detects_credit_card_candidates_with_luhn_validation(self):
         detector = PIIDetector()
 
