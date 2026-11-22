@@ -154,6 +154,12 @@ class TestCreateLLMClassifier:
         with pytest.raises(ValueError, match="Anthropic API key required"):
             create_llm_classifier(provider="anthropic")
 
+    def test_create_anthropic_default_model(self, monkeypatch):
+        # claude-3-haiku-20240307 was retired by Anthropic on 2026-04-20.
+        monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+        classifier = create_llm_classifier(provider="anthropic")
+        assert classifier.client.model == snapshot("claude-haiku-5-5")
+
     def test_create_unknown_provider(self):
         with pytest.raises(ValueError, match="Unknown provider"):
             create_llm_classifier(provider="unknown")

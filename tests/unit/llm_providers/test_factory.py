@@ -91,7 +91,7 @@ class TestCreateProvider:
     def test_create_anthropic_with_default_model(self, monkeypatch):
         monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
         provider = create_provider("anthropic")
-        assert provider.model == snapshot("claude-3-haiku-20240307")
+        assert provider.model == snapshot("claude-haiku-5-5")
 
     def test_create_anthropic_with_custom_model(self, monkeypatch):
         monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
