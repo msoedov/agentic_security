@@ -94,7 +94,7 @@ class AnthropicClient:
     """Anthropic API client."""
 
     api_key: str | None = None
-    model: str = "claude-3-haiku-20240307"
+    model: str = "claude-haiku-5-5"
 
     def __post_init__(self):
         self.api_key = self.api_key or os.environ.get("ANTHROPIC_API_KEY")
@@ -211,7 +211,7 @@ def create_llm_classifier(
     elif provider == "anthropic":
         client = AnthropicClient(
             api_key=api_key,
-            model=model or "claude-3-haiku-20240307",
+            model=model or "claude-haiku-5-5",
         )
     else:
         raise ValueError(f"Unknown provider: {provider}")

@@ -15,7 +15,7 @@ from agentic_security.llm_providers.base import (
 class AnthropicProvider(BaseLLMProvider):
     """Anthropic API provider supporting messages API."""
 
-    DEFAULT_MODEL = "claude-3-haiku-20240307"
+    DEFAULT_MODEL = "claude-haiku-5-5"
     API_KEY_ENV = "ANTHROPIC_API_KEY"
 
     def __init__(
