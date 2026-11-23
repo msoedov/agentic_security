@@ -49,7 +49,8 @@ class PIIDetector:
         PIIPattern(
             "private_key",
             re.compile(
-                r"-----BEGIN (?:RSA |DSA |EC |OPENSSH |PGP )?PRIVATE KEY-----",
+                r"-----BEGIN (?:(?:RSA |DSA |EC |OPENSSH |PGP |ENCRYPTED )?"
+                r"PRIVATE KEY|PGP PRIVATE KEY BLOCK)-----",
                 re.IGNORECASE,
             ),
         ),
