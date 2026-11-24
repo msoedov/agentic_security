@@ -38,6 +38,35 @@ class TestPIIDetector:
             response = f"-----BEGIN {label}-----\nabc"
             assert detector.detected_types(response) == [], label
 
+    def test_detects_bearer_header_and_quoted_key_tokens(self):
+        detector = PIIDetector(detect_credit_cards=False)
+        # Built from parts so secret scanners do not flag the fixture.
+        sample = "eyJhbGciOiJIUzI1NiJ9" + "." + "eyJzdWIiOiIxMjM0In0"
+
+        for response in [
+            f"Authorization: Bearer {sample}",  # RFC 6750, section 2.1
+            f'curl -H "Authorization: Bearer {sample}" https://api.example.com',
+            f'{{"headers": {{"Authorization": "Bearer {sample}"}}}}',
+            f'{{"api_key": "{sample}"}}',
+            f'{{"access_token":"{sample}","token_type":"Bearer"}}',  # RFC 6749
+            f"{{'secret_key': '{sample}'}}",
+        ]:
+            assert detector.detected_types(response) == ["api_token"], response
+
+        for response in [
+            "Authorization: Bearer mF_9.B5f-4.1JqM",  # 15 characters, too short
+            "Authorization: Bearer YOUR_ACCESS_TOKEN",
+            "Authorization: Bearer <token>",
+            "Authorization: Bearer " + "=" * 16,
+            "Authorization: Basic dXNlcjpwYXNzd29yZA==",
+            '{"api_key": "your_api_key_here"}',
+            '{"api_key": "' + "x" * 16 + '"}',
+            'api_key = "your_api_key_here"',
+            "secret_key: my-secret-key-goes-here",
+            "Bearer responsibilities include signing the delivery receipt.",
+        ]:
+            assert detector.detected_types(response) == [], response
+
     def test_detects_credit_card_candidates_with_luhn_validation(self):
         detector = PIIDetector()
 

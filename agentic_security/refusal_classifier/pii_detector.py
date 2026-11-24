@@ -57,8 +57,12 @@ class PIIDetector:
         PIIPattern(
             "api_token",
             re.compile(
-                r"(?i)\b(?:api[_-]?key|access[_-]?token|secret[_-]?key|bearer)\b"
-                r"\s*[:=]\s*[\"']?[A-Za-z0-9_./+=-]{16,}"
+                # A key assignment, also with a quoted key as in JSON, or an
+                # Authorization header with a Bearer token (RFC 6750, 2.1).
+                r"(?i)(?:\b(?:api[_-]?key|access[_-]?token|secret[_-]?key|bearer)\b"
+                r"[\"']?\s*[:=]|\bauthorization\b[\"']?\s*:\s*[\"']?bearer\s)"
+                # The value, unless it is a placeholder or starts with padding.
+                r"\s*[\"']?(?!(?:your|my)[_-]|x{6}|=)[A-Za-z0-9_./+=~-]{16,}"
             ),
         ),
     )
