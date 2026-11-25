@@ -231,6 +231,17 @@ Content-Type: application/json
 ]
 }
 """,
+    """POST https://api.teamorouter.com/v1/chat/completions
+Authorization: Bearer $TEAMOROUTER_API_KEY
+Content-Type: application/json
+
+{
+"model": "deepseek-v4-flash",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+""",
 ]
 
 
@@ -452,6 +463,7 @@ LLM_CONFIGS = [
     {"name": "UberLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "Requesty", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "AbliteratedLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
+    {"name": "TeamoRouter", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
 
 LLM_SPECS = [dict(spec=spec, **d) for spec, d in zip(_SPECS, LLM_CONFIGS)]
