@@ -59,10 +59,25 @@ class PIIDetector:
             re.compile(
                 # A key assignment, also with a quoted key as in JSON, or an
                 # Authorization header with a Bearer token (RFC 6750, 2.1).
-                r"(?i)(?:\b(?:api[_-]?key|access[_-]?token|secret[_-]?key|bearer)\b"
+                r"(?i)(?:(?:\b(?:api[_-]?key|access[_-]?token|secret[_-]?key|bearer)\b"
                 r"[\"']?\s*[:=]|\bauthorization\b[\"']?\s*:\s*[\"']?bearer\s)"
                 # The value, unless it is a placeholder or starts with padding.
-                r"\s*[\"']?(?!(?:your|my)[_-]|x{6}|=)[A-Za-z0-9_./+=~-]{16,}"
+                r"\s*[\"']?(?!(?:your|my)[_-]|x{6}|=)"
+                # A key name joined to a prefix by "_", such as OPENAI_API_KEY,
+                # where the alternative above cannot start. Its value counts only
+                # with a digit directly followed by a letter in the first 64
+                # characters, as random tokens have. It is skipped when it is a
+                # placeholder (sk-your-key-1234abcd), a call or subscript
+                # (get_key2fa_from_vault("x")), or a dotted reference
+                # (md5sum.digest_value2x) that is not a JWT.
+                r"|(?<=_)(?:api[_-]?key|access[_-]?token|secret[_-]?key)\b"
+                r"[\"']?\s*[:=]\s*[\"']?"
+                r"(?=[A-Za-z0-9_./+=~-]{0,62}[0-9][A-Za-z])"
+                r"(?!(?:[a-z]+[_-]){0,2}(?:(?:your|my|replace|change[_-]?me)[_-]|x{6})|="
+                r"|(?-i:[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)* *[(\[]"
+                r"|(?!eyJ[A-Za-z0-9_-]*\.eyJ)[A-Za-z_][A-Za-z0-9_]*"
+                r"(?:\.[A-Za-z_][A-Za-z0-9_]*)+(?![A-Za-z0-9_./+=~-]))))"
+                r"[A-Za-z0-9_./+=~-]{16,}"
             ),
         ),
     )
