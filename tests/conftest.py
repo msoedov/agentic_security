@@ -41,3 +41,40 @@ def setup_delete_old_disk_caches():
         logger.warning("Skipping cache cleanup due to permissions for %s", CACHE_DIR)
     except OSError as exc:
         logger.warning("Skipping cache cleanup due to OS error: %s", exc)
+
+
+# ── isolation from the developer's machine ──
+#
+# A developer with real keys exported must not make paid API calls by running
+# the unit suite. Every *_API_KEY that is set gets swapped for a placeholder
+# (keys that are unset stay unset, so "missing key" tests keep working).
+# Tests that really need the network and a key opt in with @pytest.mark.live.
+
+PLACEHOLDER_API_KEY = "sk-test-placeholder-not-a-real-key"
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers", "live: uses real API keys from the environment (opt-in)"
+    )
+
+
+@pytest.fixture(autouse=True)
+def _no_real_api_keys(request, monkeypatch):
+    if request.node.get_closest_marker("live"):
+        yield
+        return
+    for name in list(os.environ):
+        if name.endswith("_API_KEY") and os.environ[name]:
+            monkeypatch.setenv(name, PLACEHOLDER_API_KEY)
+    yield
+
+
+@pytest.fixture
+def fake_llm_api():
+    """A running localhost OpenAI/Anthropic stand-in (tests/fakes/fake_llm_api.py)."""
+    from tests.fakes.fake_llm_api import FakeLLMServer
+
+    server = FakeLLMServer().start()
+    yield server
+    server.stop()
