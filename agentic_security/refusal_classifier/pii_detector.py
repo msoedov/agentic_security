@@ -31,7 +31,14 @@ class PIIDetector:
     DEFAULT_PATTERNS: tuple[PIIPattern, ...] = (
         PIIPattern(
             "email",
-            re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"),
+            re.compile(
+                # The local part may start at any word boundary inside a run of
+                # local-part characters. Trying the run once, from its first
+                # character, keeps the scan linear on long runs without an "@";
+                # the lookahead keeps the word boundary the local part needs.
+                r"(?<![A-Za-z0-9._%+-])(?=[A-Za-z0-9._%+-]*?\b[A-Za-z0-9._%+-])"
+                r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"
+            ),
         ),
         PIIPattern(
             "us_ssn",

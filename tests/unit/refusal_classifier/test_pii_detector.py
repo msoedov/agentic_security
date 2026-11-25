@@ -121,6 +121,34 @@ class TestPIIDetector:
             detector.detected_types(response)
             assert time.perf_counter() - start < 1
 
+    def test_email_scan_is_linear_on_long_address_like_runs(self):
+        email = next(p for p in PIIDetector.DEFAULT_PATTERNS if p.name == "email")
+        detector = PIIDetector(patterns=(email,), detect_credit_cards=False)
+        # A long run of address characters, with or without an "@", must not
+        # be rescanned from every word boundary inside it.
+        for response in [
+            "a." * 100_000,
+            "a-" * 100_000,
+            "a@" + "a." * 100_000,
+        ]:
+            start = time.perf_counter()
+            assert detector.detected_types(response) == []
+            assert time.perf_counter() - start < 1
+
+    def test_email_local_part_needs_a_word_character(self):
+        email = next(p for p in PIIDetector.DEFAULT_PATTERNS if p.name == "email")
+        detector = PIIDetector(patterns=(email,), detect_credit_cards=False)
+        for response in [
+            "jane.doe+tag@sub.example.co.uk",
+            "--john@example.com",
+            "..jane@example.com",
+            "_john@example.com",
+        ]:
+            assert detector.detected_types(response) == ["email"], response
+        # As on main, punctuation alone before the "@" is not an address.
+        for response in ["..@example.com", "-@example.com", "%+@example.com"]:
+            assert detector.detected_types(response) == [], response
+
     def test_detects_credit_card_candidates_with_luhn_validation(self):
         detector = PIIDetector()
 
