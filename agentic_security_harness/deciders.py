@@ -59,9 +59,25 @@ class JevDecider:
         )
         response.raise_for_status()
         data = response.json()
-        result = json.loads(data["choices"][0]["message"]["content"])
+        if not isinstance(data, dict):
+            raise ValueError("Expected JSON object in decider response")
+        choices = data.get("choices")
+        if not isinstance(choices, list) or not choices:
+            raise ValueError("Expected non-empty choices in decider response")
+        first = choices[0]
+        message = first.get("message") if isinstance(first, dict) else None
+        content = message.get("content") if isinstance(message, dict) else None
+        if not isinstance(content, str):
+            raise ValueError("Expected text content in decider response")
+        result = json.loads(content)
+        if not isinstance(result, dict) or not isinstance(result.get("action"), str):
+            raise ValueError(
+                "Decider response must be a JSON object with a string action"
+            )
+        usage = data.get("usage")
+        raw_cost = usage.get("cost") if isinstance(usage, dict) else None
         return Decision(
             result["action"],
             str(result.get("reason", "")),
-            float(data.get("usage", {}).get("cost") or 0),
+            float(raw_cost or 0),
         )

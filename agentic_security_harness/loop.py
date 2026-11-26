@@ -81,9 +81,15 @@ def extract_response(response):
     except ValueError:
         return response.text, None
     if isinstance(data, dict):
-        cost = data.get("usage", {}).get("cost")
+        usage = data.get("usage")
+        cost = usage.get("cost") if isinstance(usage, dict) else None
         if "choices" in data:
-            text = data["choices"][0]["message"].get("content")
+            choices = data["choices"]
+            if not isinstance(choices, list) or not choices:
+                raise ValueError("Expected non-empty choices in response")
+            first = choices[0]
+            message = first.get("message") if isinstance(first, dict) else None
+            text = message.get("content") if isinstance(message, dict) else None
             if not isinstance(text, str):
                 raise ValueError("Expected text content in response")
             return text, cost
