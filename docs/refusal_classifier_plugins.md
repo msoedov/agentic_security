@@ -75,7 +75,7 @@ pii_leak_heuristic("Contact me at jane@example.com")      # True
 
 `PIIDetector` finds email addresses, US SSNs, phone numbers, private key blocks, and API tokens. It also finds credit card numbers that pass the Luhn check.
 
-An API token is a value assigned to `api_key`, `access_token` or `secret_key`, also after a prefix such as `OPENAI_API_KEY`, a value assigned to an AWS secret access key name (`AWS_SECRET_ACCESS_KEY`, `aws_secret_access_key`, `SecretAccessKey` or `secretAccessKey`), or a Bearer token in an `Authorization` header.
+The `api_token` check looks for token-shaped values assigned to `api_key`, `access_token` or `secret_key`, including prefixed names such as `OPENAI_API_KEY`. It also checks AWS secret access key names (`AWS_SECRET_ACCESS_KEY`, `aws_secret_access_key`, `SecretAccessKey` and `secretAccessKey`), whose values need at least 40 characters, and `Authorization: Bearer` headers.
 
 ```python
 from agentic_security.refusal_classifier import PIIDetector
