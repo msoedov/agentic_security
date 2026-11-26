@@ -358,3 +358,66 @@ class TestUnifiedDatasetLoader:
 
         assert len(result.prompts) == 1
         assert result.prompts[0] == "remote_prompt"
+
+    @staticmethod
+    def _ds(name: str, count: int = 4, tokens: int = 40) -> ProbeDataset:
+        return ProbeDataset(
+            name, {}, [f"{name}{i}" for i in range(1, count + 1)], tokens, 0.0
+        )
+
+    @pytest.mark.asyncio
+    async def test_zero_weight_excluded(self):
+        """Zero-weight sources are skipped in load_all and _merge_weighted."""
+        cfg = [
+            InputSourceConfig(source_type="csv", dataset_name="a", weight=0.0),
+            InputSourceConfig(
+                source_type="csv", dataset_name="b", path="b.csv", weight=1.0
+            ),
+        ]
+        ds_a, ds_b = self._ds("a"), self._ds("b")
+        patch_csv = "agentic_security.probe_data.unified_loader.load_csv"
+        with patch(patch_csv, return_value=ds_b) as mock_load:
+            loaded = await UnifiedDatasetLoader(cfg).load_all()
+        assert mock_load.call_count == 1
+        assert loaded.prompts == ds_b.prompts
+        assert loaded.metadata["sources"] == ["b"]
+
+        loader = UnifiedDatasetLoader([])
+        direct = loader._merge_weighted([(ds_a, 0.0), (ds_b, 1.0)])
+        assert direct.prompts == ds_b.prompts
+        assert direct.metadata["sources"] == ["b"]
+        assert loader._merge_weighted([(ds_a, 0.0)]).dataset_name == "unified_empty"
+
+    def test_fractional_weights_blend_proportionally(self):
+        """Fractional weights scale prompts and tokens proportionally."""
+        ds_a, ds_b = self._ds("a", 4, 40), self._ds("b", 4, 40)
+        loader = UnifiedDatasetLoader([])
+
+        blend_25_75 = loader._merge_weighted([(ds_a, 0.25), (ds_b, 0.75)])
+        assert [p[0] for p in blend_25_75.prompts] == ["a", "b", "b", "b"]
+        assert blend_25_75.tokens == 40
+
+        blend_half_15 = loader._merge_weighted([(ds_a, 0.5), (ds_b, 1.5)])
+        assert sum(p.startswith("a") for p in blend_half_15.prompts) == 2
+        assert sum(p.startswith("b") for p in blend_half_15.prompts) == 6
+        assert blend_half_15.tokens == 80
+
+    def test_seeded_blending_is_deterministic_and_shuffles(self):
+        """Passing a seed yields deterministic sampling and interleaved order."""
+        pairs = [(self._ds("a", 10, 100), 0.3), (self._ds("b", 10, 100), 0.7)]
+        first = UnifiedDatasetLoader([], seed=42)._merge_weighted(pairs)
+        second = UnifiedDatasetLoader([], seed=42)._merge_weighted(pairs)
+        unseeded = UnifiedDatasetLoader([])._merge_weighted(pairs)
+
+        assert first.prompts == second.prompts
+        assert sum(p.startswith("a") for p in first.prompts) == 3
+        assert sum(p.startswith("b") for p in first.prompts) == 7
+        assert first.prompts != unseeded.prompts
+
+    @pytest.mark.parametrize("bad_weight", [-0.5, float("nan"), float("inf")])
+    def test_invalid_weight_rejected(self, bad_weight: float):
+        """Negative, NaN, and infinite weights raise ValueError."""
+        with pytest.raises(ValueError):
+            InputSourceConfig(source_type="csv", dataset_name="a", weight=bad_weight)
+        with pytest.raises(ValueError):
+            UnifiedDatasetLoader([])._merge_weighted([(self._ds("a"), bad_weight)])
