@@ -170,7 +170,7 @@ class LLMSpec(BaseModel):
 
 
 def _build_secret_replacer(
-    secrets: dict[str, str | None],
+    secrets: dict[str, str],
 ) -> Callable[[str], str]:
     """Return a single-pass replacer for ``$SECRET`` placeholders."""
     replacements: dict[str, str] = {}

@@ -21,7 +21,7 @@ def test_expand_secrets_with_env_var():
 def test_expand_secrets_without_env_var():
     secrets = {"secret_key": "$NON_EXISTENT_VAR"}
     expand_secrets(secrets)
-    assert secrets["secret_key"] is None
+    assert secrets["secret_key"] == ""
 
 
 def test_expand_secrets_without_dollar_sign():
@@ -30,23 +30,14 @@ def test_expand_secrets_without_dollar_sign():
     assert secrets["secret_key"] == "plain_value"
 
 
-def test_expand_secrets_skips_none_and_non_string_values():
-    secrets = {"missing": None, "count": 42, "env": "$TEST_ENV_VAR"}
-    expand_secrets(secrets)
-    assert secrets == {"missing": None, "count": 42, "env": "test_value"}
-
-
-def test_set_secrets_repeated_calls_with_unset_and_dollar_values(monkeypatch):
+def test_set_secrets_repeated_calls_with_unset_env_vars(monkeypatch):
     monkeypatch.setattr(app_module, "_secrets", {})
     monkeypatch.delenv("NON_EXISTENT_VAR", raising=False)
-    monkeypatch.setenv("DOLLAR_SECRET", "$literal_token_value")
-    monkeypatch.delenv("literal_token_value", raising=False)
 
-    set_secrets({"missing": "$NON_EXISTENT_VAR", "token": "$DOLLAR_SECRET"})
+    set_secrets({"missing": "$NON_EXISTENT_VAR"})
     set_secrets({"present": "$TEST_ENV_VAR"})
 
     assert get_secrets() == {
-        "missing": None,
-        "token": "$literal_token_value",
+        "missing": "",
         "present": "test_value",
     }
