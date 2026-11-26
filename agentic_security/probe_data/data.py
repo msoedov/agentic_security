@@ -297,21 +297,36 @@ def file_dataset(file) -> list[str]:
     return prompts
 
 
+def _is_non_empty_text_column(series: pd.Series) -> bool:
+    """Return True when a Series contains non-empty string values."""
+    non_null = series.dropna()
+    if non_null.empty or not pd.api.types.is_string_dtype(non_null):
+        return False
+    return bool(non_null.astype(str).str.strip().ne("").any())
+
+
 def parse_csv_content(content: bytes) -> ProbeDataset:
     """Parse uploaded CSV bytes into a ProbeDataset.
 
-    Looks for a 'prompt' column first; falls back to the first text-like column.
+    Looks for a 'prompt' column first (case-insensitive); falls back to the
+    first non-empty text column.
     """
     df = pd.read_csv(io.BytesIO(content), encoding_errors="ignore")
 
     prompt_col = None
-    # Prefer an explicit 'prompt' column
+    # Prefer an explicit 'prompt' column (exact match first, then case-insensitive)
     if "prompt" in df.columns:
         prompt_col = "prompt"
     else:
-        # Fall back to the first string/object column
         for col in df.columns:
-            if df[col].dtype == object:
+            if str(col).strip().lower() == "prompt":
+                prompt_col = col
+                break
+
+    if prompt_col is None:
+        # Fall back to the first non-empty string column
+        for col in df.columns:
+            if _is_non_empty_text_column(df[col]):
                 prompt_col = col
                 break
 
