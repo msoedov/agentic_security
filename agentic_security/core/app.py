@@ -16,7 +16,7 @@ class CurrentRun(TypedDict):
 tools_inbox: Queue = Queue()
 stop_event: Event = Event()
 current_run: CurrentRun = {"spec": None, "id": None}
-_secrets: dict[str, str] = {}
+_secrets: dict[str, str | None] = {}
 
 
 def create_app() -> FastAPI:
@@ -47,22 +47,19 @@ def set_current_run(spec: LLMSpec) -> CurrentRun:
     return current_run
 
 
-def get_secrets() -> dict[str, str]:
+def get_secrets() -> dict[str, str | None]:
     return _secrets
 
 
-def set_secrets(secrets: dict[str, str]) -> dict[str, str]:
-    _secrets.update(secrets)
-    expand_secrets(_secrets)
+def set_secrets(secrets: dict[str, str | None]) -> dict[str, str | None]:
+    expanded = dict(secrets)
+    expand_secrets(expanded)
+    _secrets.update(expanded)
     return _secrets
 
 
-def expand_secrets(secrets: dict[str, str]) -> None:
-    for key in secrets:
-        val = secrets[key]
-        if val.startswith("$"):
-            env_value = os.getenv(val.strip("$"))
-            if env_value is not None:
-                secrets[key] = env_value
-            else:
-                secrets[key] = None
+def expand_secrets(secrets: dict[str, str | None]) -> None:
+    for key, val in secrets.items():
+        if isinstance(val, str) and val.startswith("$"):
+            env_name = val.strip("$")
+            secrets[key] = os.getenv(env_name) if env_name else None

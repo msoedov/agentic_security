@@ -1,5 +1,7 @@
 import base64
 import json
+import re
+from collections.abc import Callable
 from enum import Enum
 from urllib.parse import urlparse
 
@@ -167,6 +169,35 @@ class LLMSpec(BaseModel):
         return Modality.TEXT
 
 
+def _build_secret_replacer(
+    secrets: dict[str, str | None],
+) -> Callable[[str], str]:
+    """Return a single-pass replacer for ``$SECRET`` placeholders."""
+    replacements: dict[str, str] = {}
+    for key, value in secrets.items():
+        if not isinstance(key, str) or not isinstance(value, str) or not value:
+            continue
+        name = key.strip("$")
+        if not name:
+            continue
+        replacements[f"${name}"] = value
+
+    if not replacements:
+        return lambda text: text
+
+    ordered_tokens = sorted(replacements, key=len, reverse=True)
+    pattern = re.compile(
+        "(?:"
+        + "|".join(re.escape(token) for token in ordered_tokens)
+        + r")(?![A-Za-z0-9_])"
+    )
+
+    def replace(text: str) -> str:
+        return pattern.sub(lambda match: replacements[match.group(0)], text)
+
+    return replace
+
+
 def parse_http_spec(http_spec: str) -> LLMSpec:
     """Parses an HTTP specification string into a LLMSpec object.
 
@@ -178,7 +209,7 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     """
     from agentic_security.core.app import get_secrets
 
-    secrets = get_secrets()
+    replace_secrets = _build_secret_replacer(get_secrets())
 
     # Split the spec by lines
     lines = http_spec.strip("\n").splitlines()
@@ -191,14 +222,15 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
         raise InvalidHTTPSpecError(
             "First line of HTTP spec must include the method and URL."
         )
-    method, url = request_line_parts[0], request_line_parts[1]
+    method, raw_url = request_line_parts[0], request_line_parts[1]
+    url = replace_secrets(raw_url)
 
     # Check url validity
     valid_url = urlparse(url)
     # if missing the correct formatting ://, urlparse.netloc will be empty
     if valid_url.scheme not in ("http", "https") or not valid_url.netloc:
         raise InvalidHTTPSpecError(
-            f"Invalid URL: {url}. Ensure it starts with 'http://' or 'https://'"
+            f"Invalid URL: {raw_url}. Ensure it starts with 'http://' or 'https://'"
         )
 
     # Initialize headers and body
@@ -231,11 +263,8 @@ def parse_http_spec(http_spec: str) -> LLMSpec:
     has_image = "<<BASE64_IMAGE>>" in body
     has_audio = "<<BASE64_AUDIO>>" in body
 
-    for key, value in secrets.items():
-        if not value:
-            continue
-        key = key.strip("$")
-        body = body.replace(f"${key}", value)
+    headers = {key: replace_secrets(value) for key, value in headers.items()}
+    body = replace_secrets(body)
 
     return LLMSpec(
         method=method,

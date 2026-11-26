@@ -2,12 +2,14 @@ import json
 
 import pytest
 
+from agentic_security.core import app as app_module
 from agentic_security.http_spec import (
     InvalidHTTPSpecError,
     LLMSpec,
     escape_special_chars_for_json,
     parse_http_spec,
 )
+from agentic_security.routes._specs import LLM_SPECS
 
 
 class TestParseHttpSpec:
@@ -111,3 +113,70 @@ class TestEscapeSpecialCharsForJson:
 
     def test_keeps_non_ascii_text_unescaped(self):
         assert escape_special_chars_for_json("café") == "café"
+
+
+class TestParseHttpSpecSecretExpansion:
+    @pytest.fixture(autouse=True)
+    def isolated_secrets(self, monkeypatch):
+        monkeypatch.setattr(app_module, "_secrets", {})
+
+    def test_expands_openai_preset_url_headers_and_body(self, monkeypatch):
+        monkeypatch.setenv("OPENAI_API_KEY", "sk-test-FAKEOPENAI999")
+        app_module.set_secrets(
+            {"OPENAI_API_KEY": "$OPENAI_API_KEY", "API_KEY": "user:p@ss=1;2"}
+        )
+        entry = next(item for item in LLM_SPECS if item["name"] == "Open AI")
+        preset = LLMSpec.from_string(entry["spec"])
+        assert preset.headers["Authorization"] == "Bearer sk-test-FAKEOPENAI999"
+        assert "<<PROMPT>>" in preset.body
+
+        spec = parse_http_spec(
+            "POST https://api.example.com/v1?key=$API_KEY\n"
+            "$API_KEY: $API_KEY\n\n"
+            '{"token": "$API_KEY", "prompt": "<<PROMPT>>"}'
+        )
+        assert spec.url == "https://api.example.com/v1?key=user:p@ss=1;2"
+        assert spec.headers == {"$API_KEY": "user:p@ss=1;2"}
+        assert spec.body == '{"token": "user:p@ss=1;2", "prompt": "<<PROMPT>>"}'
+
+    def test_longest_key_boundary_and_single_pass_substitution(self):
+        app_module.set_secrets(
+            {"API_KEY": "sk-test-V1", "API_KEY_V2": r"tok_$API_KEY\1"}
+        )
+        spec = parse_http_spec(
+            "POST https://api.example.com/v1/chat\n"
+            "X-V1: $API_KEY\nX-V2: $API_KEY_V2\nX-Unset: $API_KEY_UNSET\n\n{}"
+        )
+        assert spec.headers == {
+            "X-V1": "sk-test-V1",
+            "X-V2": r"tok_$API_KEY\1",
+            "X-Unset": "$API_KEY_UNSET",
+        }
+
+    def test_skips_non_string_secrets_and_redacts_invalid_url_errors(self, monkeypatch):
+        monkeypatch.setattr(
+            app_module,
+            "_secrets",
+            {
+                "MISSING": None,
+                "EMPTY": "",
+                "PORT": 8080,
+                "$": "x",
+                "KEY": "sk-test-FAKEOK",
+            },
+        )
+        spec = parse_http_spec(
+            "POST https://api.example.com/v1/chat\n"
+            "X-Missing: $MISSING\nX-Port: $PORT\nAuthorization: Bearer $KEY\n\n"
+            '{"missing": "$MISSING", "empty": "$EMPTY"}'
+        )
+        assert spec.headers == {
+            "X-Missing": "$MISSING",
+            "X-Port": "$PORT",
+            "Authorization": "Bearer sk-test-FAKEOK",
+        }
+        assert spec.body == '{"missing": "$MISSING", "empty": "$EMPTY"}'
+
+        with pytest.raises(InvalidHTTPSpecError) as exc_info:
+            parse_http_spec("POST ftp://api.example.com/v1?key=$KEY\n\n{}")
+        assert "sk-test-FAKEOK" not in str(exc_info.value)
