@@ -15,7 +15,8 @@ MASK = "***"
 # httpx errors repeat the full URL. Mask secret-looking values before any
 # record reaches a handler:
 #   ?api_key=...  &token=...  &client_secret=...  &password=...
-#   Authorization: Bearer ...   x-api-key: ...
+#   scheme://user:pass@host/...   scheme://token@host/...
+#   Authorization: Bearer/Basic/Token/ApiKey ...   x-api-key: ...
 #   sk-..., sk-ant-..., hf_..., AKIA... shaped keys anywhere in the text
 _SECRET_PATTERNS = (
     re.compile(
@@ -23,10 +24,14 @@ _SECRET_PATTERNS = (
         r"[^&\s#\"'<>]+",
         re.IGNORECASE,
     ),
+    re.compile(
+        r"\b([a-zA-Z][a-zA-Z0-9+.-]{0,15}://)[^\s/?#\"'<>,]+(?=@[^\s/?#\"'<>,@])"
+    ),
     re.compile(r"(\bBearer\s+)[A-Za-z0-9._~+/=-]{8,}", re.IGNORECASE),
     re.compile(
-        r"(\b(?:x-api-key|api-key|authorization)[\"']?\s*[:=]\s*[\"']?)"
-        r"(?!Bearer\b)[^\s\"',}]{8,}",
+        r"(\b(?:x-api-key|api-key|authorization)[\"']?\s*[:=]\s*[\"']?"
+        r"(?!Bearer\b)(?:(?:Basic|Token|ApiKey|Api-Key)[ \t]+)?)"
+        r"[^\s\"',}]{8,}",
         re.IGNORECASE,
     ),
     re.compile(r"()\b(?:sk-(?:ant-|proj-)?|hf_|AKIA)[A-Za-z0-9_-]{12,}"),
