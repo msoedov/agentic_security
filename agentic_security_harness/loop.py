@@ -74,6 +74,34 @@ def result_code(state):
     return int(any(a["outcome"] in ("partial", "complied") for a in state.attempts))
 
 
+def _message_text(message):
+    """Text of a chat completion ``message``, or ``None`` when it has none.
+
+    Besides a plain string ``content`` this accepts the two other shapes
+    OpenAI-compatible APIs return: a list of content parts (the text of every
+    ``text`` / ``output_text`` part, joined), and ``content: null`` with the
+    model's refusal in ``refusal``, which is a refusal and must be classified
+    as one rather than recorded as an error.
+    """
+    content = message.get("content")
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = [
+            part["text"]
+            for part in content
+            if isinstance(part, dict)
+            and part.get("type") in ("text", "output_text")
+            and isinstance(part.get("text"), str)
+        ]
+        if parts:
+            return "".join(parts)
+    refusal = message.get("refusal")
+    if content is None and isinstance(refusal, str) and refusal.strip():
+        return refusal
+    return None
+
+
 def extract_response(response):
     response.raise_for_status()
     try:
@@ -89,7 +117,7 @@ def extract_response(response):
                 raise ValueError("Expected non-empty choices in response")
             first = choices[0]
             message = first.get("message") if isinstance(first, dict) else None
-            text = message.get("content") if isinstance(message, dict) else None
+            text = _message_text(message) if isinstance(message, dict) else None
             if not isinstance(text, str):
                 raise ValueError("Expected text content in response")
             return text, cost
