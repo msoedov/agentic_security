@@ -1,5 +1,7 @@
 """Unified dataset loader for CSV, HuggingFace, and proxy sources."""
 
+import math
+import random
 from typing import Literal
 from pydantic import BaseModel, Field
 
@@ -21,7 +23,10 @@ class InputSourceConfig(BaseModel):
     enabled: bool = Field(default=True, description="Whether this source is enabled")
     dataset_name: str = Field(description="Name/identifier of the dataset")
     weight: float = Field(
-        default=1.0, ge=0.0, description="Sampling weight for merging"
+        default=1.0,
+        ge=0.0,
+        allow_inf_nan=False,
+        description="Sampling weight for merging",
     )
 
     # CSV-specific fields
@@ -45,13 +50,15 @@ class InputSourceConfig(BaseModel):
 class UnifiedDatasetLoader:
     """Loads and merges datasets from multiple sources."""
 
-    def __init__(self, configs: list[InputSourceConfig]):
+    def __init__(self, configs: list[InputSourceConfig], seed: int | None = None):
         """Initialize with list of input source configurations.
 
         Args:
             configs: List of InputSourceConfig objects defining data sources
+            seed: Optional random seed for deterministic sampling and shuffling
         """
         self.configs = configs
+        self.seed = seed
         logger.info(f"Initialized UnifiedDatasetLoader with {len(configs)} sources")
 
     async def load_all(self) -> ProbeDataset:
@@ -63,8 +70,8 @@ class UnifiedDatasetLoader:
         datasets = []
 
         for config in self.configs:
-            if not config.enabled:
-                logger.debug(f"Skipping disabled source: {config.dataset_name}")
+            if not config.enabled or config.weight == 0:
+                logger.debug(f"Skipping inactive source: {config.dataset_name}")
                 continue
 
             try:
@@ -201,15 +208,15 @@ class UnifiedDatasetLoader:
         )
 
     def _merge_weighted(
-        self, datasets: list[tuple[ProbeDataset, float]]
+        self,
+        datasets: list[tuple[ProbeDataset, float]],
+        seed: int | None = None,
     ) -> ProbeDataset:
         """Merge multiple datasets with weighted sampling.
 
-        For PoC, this implements simple concatenation with optional weighting.
-        Production version would implement proper stratified sampling.
-
         Args:
             datasets: List of (ProbeDataset, weight) tuples
+            seed: Optional seed overriding the loader's default seed
 
         Returns:
             ProbeDataset: Merged dataset
@@ -217,25 +224,47 @@ class UnifiedDatasetLoader:
         if not datasets:
             return create_probe_dataset("unified_empty", [], {"sources": []})
 
-        # For PoC: simple concatenation, repeat prompts based on weight
+        effective_seed = self.seed if seed is None else seed
+        rng = random.Random(effective_seed) if effective_seed is not None else None
         all_prompts = []
         source_names = []
+        weights = {}
         total_tokens = 0
+        total_cost = 0.0
 
         for dataset, weight in datasets:
+            if not math.isfinite(weight) or weight < 0:
+                raise ValueError(
+                    f"Weight for {dataset.dataset_name} must be finite and >= 0, got {weight}"
+                )
+            prompt_count = len(dataset.prompts)
+            if weight == 0 or prompt_count == 0:
+                continue
+
+            target = max(1, round(prompt_count * weight))
+            full_copies, remainder = divmod(target, prompt_count)
+            all_prompts.extend(list(dataset.prompts) * full_copies)
+            if remainder:
+                picked = (
+                    rng.sample(dataset.prompts, remainder)
+                    if rng is not None
+                    else dataset.prompts[:remainder]
+                )
+                all_prompts.extend(picked)
+
             source_names.append(dataset.dataset_name)
+            weights[dataset.dataset_name] = weight
+            scale = target / prompt_count
+            total_tokens += round(dataset.tokens * scale)
+            total_cost += dataset.approx_cost * scale
 
-            # Calculate how many times to include this dataset based on weight
-            # Weight of 1.0 = include once, 2.0 = include twice, etc.
-            repeat_count = max(1, int(weight))
-
-            for _ in range(repeat_count):
-                all_prompts.extend(dataset.prompts)
-
-            total_tokens += dataset.tokens * repeat_count
+        if not all_prompts:
+            return create_probe_dataset("unified_empty", [], {"sources": []})
+        if rng is not None:
+            rng.shuffle(all_prompts)
 
         logger.info(
-            f"Merged {len(datasets)} datasets into {len(all_prompts)} total prompts "
+            f"Merged {len(source_names)} datasets into {len(all_prompts)} total prompts "
             f"from sources: {source_names}"
         )
 
@@ -243,10 +272,10 @@ class UnifiedDatasetLoader:
             dataset_name="unified",
             metadata={
                 "sources": source_names,
-                "source_count": len(datasets),
-                "weights": {ds.dataset_name: w for ds, w in datasets},
+                "source_count": len(source_names),
+                "weights": weights,
             },
             prompts=all_prompts,
             tokens=total_tokens,
-            approx_cost=0.0,
+            approx_cost=total_cost,
         )
