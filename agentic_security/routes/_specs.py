@@ -242,6 +242,17 @@ Content-Type: application/json
 ]
 }
 """,
+    """POST https://llmtr.com/v1/chat/completions
+Authorization: Bearer $LLMTR_API_KEY
+Content-Type: application/json
+
+{
+"model": "qwen/qwen3.8-flash",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+""",
 ]
 
 
@@ -464,6 +475,7 @@ LLM_CONFIGS = [
     {"name": "Requesty", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "AbliteratedLLM", "prompts": 40000, "logo": "/icons/myshell.png"},
     {"name": "TeamoRouter", "prompts": 40000, "logo": "/icons/myshell.png"},
+    {"name": "LLMTR", "prompts": 40000, "logo": "/icons/myshell.png"},
 ]
 
 LLM_SPECS = [dict(spec=spec, **d) for spec, d in zip(_SPECS, LLM_CONFIGS)]

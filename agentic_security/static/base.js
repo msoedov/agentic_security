@@ -259,6 +259,18 @@ Content-Type: application/json
 }
 `,
 
+  `POST https://llmtr.com/v1/chat/completions
+Authorization: Bearer $LLMTR_API_KEY
+Content-Type: application/json
+
+{
+"model": "qwen/qwen3.8-flash",
+"messages": [
+{"role": "user", "content": "<<PROMPT>>"}
+]
+}
+`,
+
 ]
 
 let fallbackIcon = '/icons/myshell.png';
@@ -284,6 +296,7 @@ let LLM_CONFIGS = [
   { name: 'Requesty', prompts: 40000, logo: fallbackIcon },
   { name: 'AbliteratedLLM', prompts: 40000, logo: fallbackIcon },
   { name: 'TeamoRouter', prompts: 40000, logo: fallbackIcon },
+  { name: 'LLMTR', prompts: 40000, logo: fallbackIcon },
 
 ];
 function has_image(spec) {
