@@ -76,8 +76,13 @@ class PIIDetector:
                 # characters, as random tokens have. It is skipped when it is a
                 # placeholder (sk-your-key-1234abcd), a call or subscript
                 # (get_key2fa_from_vault("x")), or a dotted reference
-                # (md5sum.digest_value2x) that is not a JWT.
-                r"|(?<=_)(?:api[_-]?key|access[_-]?token|secret[_-]?key)\b"
+                # (md5sum.digest_value2x) that is not a JWT. The AWS secret
+                # access key name takes these checks with or without a prefix,
+                # as SDK code sets it from a reference (secretAccessKey: env.X),
+                # and its value must have the 40 characters of an AWS secret.
+                r"|(?:(?<=_)(?:api[_-]?key|access[_-]?token|secret[_-]?key)"
+                r"|(?<![A-Za-z0-9])secret[_-]?access[_-]?key"
+                r"(?=[\"']?\s*[:=]\s*[\"']?[A-Za-z0-9_./+=~-]{40}))\b"
                 r"[\"']?\s*[:=]\s*[\"']?"
                 r"(?=[A-Za-z0-9_./+=~-]{0,62}[0-9][A-Za-z])"
                 r"(?!(?:[a-z]+[_-]){0,2}(?:(?:your|my|replace|change[_-]?me)[_-]|x{6})|="

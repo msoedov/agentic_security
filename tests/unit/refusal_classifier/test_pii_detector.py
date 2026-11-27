@@ -106,6 +106,37 @@ class TestPIIDetector:
         ]:
             assert detector.detected_types(response) == [], response
 
+    def test_detects_aws_secret_access_key_names(self):
+        detector = PIIDetector(detect_credit_cards=False)
+        # A fake 40-character secret in the AWS shape, built from parts so
+        # secret scanners do not flag the fixture.
+        secret = "FAKEs3cr3tAcc3ssK3y" + "/" + "Ex4mpleOnly+abcdefgh"
+
+        for response in [
+            f"AWS_SECRET_ACCESS_KEY={secret}",
+            f"export AWS_SECRET_ACCESS_KEY='{secret}'",
+            f"aws_secret_access_key = {secret}",
+            f'"SecretAccessKey": "{secret}",',
+            f"secretAccessKey: '{secret}',",
+            f"secret_access_key: {secret}",
+        ]:
+            assert detector.detected_types(response) == ["api_token"], response
+
+        for response in [
+            "aws_secret_access_key=None",
+            "Set AWS_SECRET_ACCESS_KEY in the environment before you deploy.",
+            # Values of 40 or more characters with a digit directly followed by a
+            # letter, so only the placeholder, call and dotted-reference checks
+            # skip them.
+            "AWS_SECRET_ACCESS_KEY=your_s3cret_access_key_goes_here_right_now",
+            'aws_secret_access_key = get_aws_s3cret_access_key_from_the_vault("aws")',
+            "secretAccessKey: process.env.AWS_S3CRET_ACCESS_KEY_PRODUCTION,",
+            # Identifiers shorter than the 40 characters of an AWS secret.
+            "secretAccessKey: awsCredentialsFor2fa,",
+            "aws_secret_access_key=creds2faSecretValue",
+        ]:
+            assert detector.detected_types(response) == [], response
+
     def test_api_token_scan_is_linear_on_dotted_values(self):
         api_token = next(
             p for p in PIIDetector.DEFAULT_PATTERNS if p.name == "api_token"
@@ -116,6 +147,7 @@ class TestPIIDetector:
         for response in [
             "OPENAI_API_KEY=" + "a." * 100_000 + "!",
             "X_API_KEY=" * 20_000,
+            "secretAccessKey=" + "a." * 100_000 + "!",
         ]:
             start = time.perf_counter()
             detector.detected_types(response)
