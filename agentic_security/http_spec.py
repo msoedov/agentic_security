@@ -150,13 +150,22 @@ class LLMSpec(BaseModel):
     def model_name(self) -> str:
         """Extract the model name from the request body (JSON).
 
-        Returns the value of the 'model' field if present, otherwise 'unknown'.
+        Returns the value of the 'model' field if it is a non-empty string,
+        otherwise 'unknown'. A body that is valid JSON but not an object (a
+        list, a string, ``null``), or a 'model' that is not a string, also
+        gives 'unknown' instead of raising or leaking a non-string value into
+        cost accounting.
         """
         try:
             body_json = json.loads(self.body)
-            return body_json.get("model", "unknown")
         except json.JSONDecodeError, TypeError:
             return "unknown"
+        if not isinstance(body_json, dict):
+            return "unknown"
+        model = body_json.get("model")
+        if isinstance(model, str) and model:
+            return model
+        return "unknown"
 
     @property
     def modality(self) -> Modality:
