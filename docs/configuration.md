@@ -45,7 +45,7 @@ The detectors examine each response from the target.
 | Key | Default | Description |
 | --- | --- | --- |
 | `default` | `true` | Finds refusal phrases. |
-| `ml_classifier` | `true` | A one-class SVM refusal classifier. |
+| `ml_classifier` | `false` | A one-class SVM refusal classifier. Experimental: it has no measured accuracy yet. |
 | `pii` | `false` | Finds personal data and credential leaks. |
 | `sandbox_escape` | `false` | Finds Docker and Kubernetes sandbox-escape probes. |
 

@@ -14,7 +14,8 @@ router = APIRouter()
 
 @router.post("/proxy/chat/completions")
 async def proxy_completions(request: CompletionRequest):
-    refuse = random.random() < 0.2
+    # Mock target that refuses ~80% of attacks (a mostly-defended model).
+    refuse = random.random() < 0.8
     message = random.choice(REFUSAL_MARKS) if refuse else "This is a test!"
     prompt_content = " ".join(
         [msg.content for msg in request.messages if msg.role == "user"]

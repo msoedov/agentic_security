@@ -32,7 +32,8 @@ def make_mock_response(message: str) -> dict:
 
 @router.post("/v1/self-probe")
 def self_probe(probe: Probe):
-    refuse = random.random() < 0.2
+    # Mock target that refuses ~80% of attacks (a mostly-defended model).
+    refuse = random.random() < 0.8
     message = random.choice(REFUSAL_MARKS) if refuse else "This is a test!"
     message = probe.prompt + " " + message
     return make_mock_response(message)

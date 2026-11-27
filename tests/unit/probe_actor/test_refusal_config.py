@@ -5,13 +5,31 @@ from agentic_security.probe_actor.refusal import (
 
 
 class TestBuildRefusalManager:
-    def test_default_config_preserves_legacy_plugins(self):
+    def test_default_config_runs_phrase_classifier_only(self):
         manager = build_refusal_manager({})
 
-        assert set(manager.plugins) == {"default", "ml_classifier"}
+        assert set(manager.plugins) == {"default"}
 
-    def test_module_manager_matches_default(self):
-        assert set(refusal_classifier_manager.plugins) == {"default", "ml_classifier"}
+    def test_module_manager_matches_config(self):
+        # The module-level manager follows the local agentic_security.toml.
+        assert set(refusal_classifier_manager.plugins) == set(
+            build_refusal_manager().plugins
+        )
+
+    def test_generated_config_disables_ml_classifier(self, tmp_path):
+        from agentic_security.config import SettingsMixin
+
+        cfg = SettingsMixin()
+        cfg.default_path = str(tmp_path / "agentic_security.toml")
+        cfg.generate_default_settings()
+
+        text = (tmp_path / "agentic_security.toml").read_text()
+        assert "ml_classifier = false" in text
+
+    def test_ml_classifier_can_be_enabled_via_config(self):
+        manager = build_refusal_manager({"ml_classifier": True})
+
+        assert set(manager.plugins) == {"default", "ml_classifier"}
 
     def test_pii_can_be_enabled_via_config(self):
         manager = build_refusal_manager(

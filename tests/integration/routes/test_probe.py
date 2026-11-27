@@ -87,7 +87,7 @@ def test_data_config_endpoint():
 
 
 def test_refusal_rate():
-    """Test that refusal rate is approximately 20%"""
+    """Test that refusal rate is approximately 80%"""
     random.seed(0)
     refusal_count = 0
     total_trials = 200
@@ -101,7 +101,7 @@ def test_refusal_rate():
     refusal_rate = refusal_count / total_trials
     # Allow for some statistical variation (±5%)
     assert (
-        0.15 <= refusal_rate <= 0.25
+        0.7 <= refusal_rate <= 0.9
     ), f"Refusal rate {refusal_rate} is outside expected range"
 
 
