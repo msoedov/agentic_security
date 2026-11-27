@@ -65,4 +65,4 @@ def expand_secrets(secrets: dict[str, str]) -> None:
             if env_value is not None:
                 secrets[key] = env_value
             else:
-                secrets[key] = None
+                secrets[key] = ""
