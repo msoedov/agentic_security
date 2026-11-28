@@ -38,7 +38,7 @@ include = [{ path = "integrations", format = ["sdist", "wheel"] }]
 
 [tool.poetry.dependencies]
 fastapi = "^0.141.1"
-uvicorn = "^0.38.0"
+uvicorn = "^0.54.0"
 fire = "0.7.1"
 loguru = "^0.7.3"
 httpx = "^0.28.1"
